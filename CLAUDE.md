@@ -20,7 +20,7 @@
 | **What to build** | `tasks/SPEC-{..}/` -- atomic task cards |
 | **How to build** | `HARNESS.md` -- global constraints, TDD rules, naming |
 | **What the system does** | `docs/specs/SPEC-*.md` -- authoritative specifications |
-| **Why it's designed this way** | `docs/TECH_PLAN_v3.3.md` -- architecture rationale |
+| **Why it's designed this way** | `docs/` -- architecture rationale |
 | **What's done / what's next** | `PROGRESS.md` -- dev log |
 | **Shared types & schemas** | `src/shared/` -- cross-layer contracts |
 | **Backend code** | `src/backend/` -- API, engine, agents, services |
