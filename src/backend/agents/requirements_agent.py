@@ -90,7 +90,7 @@ class RequirementsAgent:
             response_model=RequirementsLLMOutput,
         )
 
-        return {
+        raw = {
             "project_id": project_id,
             "title": title,
             "topic": topic,
@@ -111,6 +111,7 @@ class RequirementsAgent:
             "target_platform": target_platform,
             "subtitle_preferences": llm_result.subtitle_preferences.model_dump(),
         }
+        return self._to_canonical(raw).model_dump()
 
     @staticmethod
     def _to_canonical(raw: dict[str, Any]) -> Requirements:
@@ -167,4 +168,5 @@ class RequirementsAgent:
             narrative_template=raw.get("narrative_template", "chronological"),
             voice_preferences=voice_preferences,
             subtitle_preferences=subtitle_preferences,
+            clarification_needed=raw.get("clarification_needed", []),
         )

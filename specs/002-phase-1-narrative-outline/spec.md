@@ -16,6 +16,7 @@
 - Q: Fact-checking persistence and structured output → A: Fact-checking results are persisted as a standalone versioned artifact (`fact_check.json`), independently recoverable. All factual claims MUST be output in a fixed structured JSON schema; the LLM is NOT allowed to freely improvise format or add unstructured commentary.
 - Q: Agent system prompt management → A: All agent system prompts (OutlineAgent, FactChecker, OutlineReviewer) are maintained in configuration files under `config/prompts/`, not hardcoded in agent code. Prompt changes are configuration changes, not code changes.
 - Q: Fact-checking source priority → A: FactChecker prioritizes high-authority sources (government databases, regulatory filings, academic publications). Only free APIs and publicly accessible datasets are used; no paid/proprietary data services.
+- Q: Content gating — failed content exposure → A: Content that fails fact-checking or quality review MUST NOT be exposed to the user. The system internally auto-regenerates failed proposals (max 3 retries) and only displays content that has passed ALL checks. The user never sees unverified or audit-failed proposals—even with warnings.
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -180,42 +181,40 @@ The user selects one of the three proposals as the chosen content mainline. The 
 
 **Agent Prompt Configuration**
 
-- **FR-020**: All agent system prompts (OutlineAgent, FactChecker, OutlineReviewer) MUST be maintained in configuration files under a designated prompts directory (e.g., `config/prompts/`), NOT hardcoded in agent implementation code. Changing an agent's prompt MUST be achievable by editing a configuration file without modifying source code.
+- **FR-024**: All agent system prompts (OutlineAgent, FactChecker, OutlineReviewer) MUST be maintained in configuration files under a designated prompts directory (e.g., `config/prompts/`), NOT hardcoded in agent implementation code. Changing an agent's prompt MUST be achievable by editing a configuration file without modifying source code.
 
 **Quality Review Agent**
 
-- **FR-021**: System MUST automatically invoke a quality review agent (OutlineReviewer) after fact-checking is complete.
-- **FR-022**: The OutlineReviewer MUST audit four dimensions: differentiation (are the three proposals substantially different?), logical coherence (is each proposal's argument flow sound?), topic completeness (are all user-specified topics covered?), and thematic fit (does each proposal align with the user's theme and platform context?).
-- **FR-023**: The OutlineReviewer MUST output a binary verdict (PASS/FAIL) with dimension-level scores and specific findings. A FAIL on any dimension produces an overall FAIL with blocking issues listed.
-- **FR-024**: On differentiation check, the reviewer MUST compare opening types, argument structures, and closing strategies across all three proposals. If any two proposals share the same opening type AND similar argument organization, the check MUST fail.
-- **FR-025**: On topic completeness check, the reviewer MUST map every topic and viewpoint from the confirmed requirements artifact to coverage in each proposal. Any uncovered topic MUST be listed as a blocking issue.
+- **FR-025**: System MUST automatically invoke a quality review agent (OutlineReviewer) after fact-checking returns PASS. Quality review only runs on proposals that have passed fact-checking.
+- **FR-026**: The OutlineReviewer MUST audit four dimensions: differentiation (are the three proposals substantially different?), logical coherence (is each proposal's argument flow sound?), topic completeness (are all user-specified topics covered?), and thematic fit (does each proposal align with the user's theme and platform context?).
+- **FR-027**: The OutlineReviewer MUST output a binary verdict (PASS/FAIL) with dimension-level scores and specific findings. A FAIL on any dimension produces an overall FAIL with blocking issues listed.
+- **FR-028**: On differentiation check, the reviewer MUST compare opening types, argument structures, and closing strategies across all three proposals. If any two proposals share the same opening type AND similar argument organization, the check MUST fail.
+- **FR-029**: On topic completeness check, the reviewer MUST map every topic and viewpoint from the confirmed requirements artifact to coverage in each proposal. Any uncovered topic MUST be listed as a blocking issue.
 
 **User Interaction**
 
-- **FR-026**: System MUST allow users to interact with proposals via natural language chat input, maintaining the same dialog interface pattern as Phase 0. Users may provide their own requirements and opinions to request regeneration of one or more proposals.
-- **FR-027**: A Router component MUST classify Phase 1 user messages into intents: `ask_about_proposal` (question about a specific proposal), `revise_proposal` (modify a specific proposal per user feedback), `regenerate_one` (redo a single proposal per user requirements), `regenerate_all` (redo all three), `select_proposal` (choose a proposal as the mainline), `mix_proposals` (combine elements from different proposals), or `clarify` (ambiguous intent).
-- **FR-028**: On `revise_proposal`, the system MUST regenerate only the specified proposal with the user's feedback merged, leaving the other two proposals unchanged, and trigger fact-checking and re-review for the affected proposal.
-- **FR-029**: On `regenerate_all`, the system MUST discard all current proposals, regenerate three new proposals from scratch, and re-run both fact-checking and the full review.
-- **FR-030**: On `mix_proposals`, the system MUST create a new merged proposal (labeled "方案D (自定义)") combining the specified elements, without discarding the original three proposals. Fact-checking and review MUST run on the merged proposal.
-- **FR-031**: After EVERY outline update (revise, regenerate_one, regenerate_all, mix_proposals), the system MUST automatically trigger fact-checking and quality review on the affected proposals. The advance button MUST NOT become active until both fact-checking and review have completed on all current proposals.
+- **FR-030**: System MUST allow users to interact with proposals via natural language chat input, maintaining the same dialog interface pattern as Phase 0. Users may provide their own requirements and opinions to request regeneration of one or more proposals. Note: all proposals visible to the user have already passed fact-checking and quality review internally.
+- **FR-031**: A Router component MUST classify Phase 1 user messages into intents: `ask_about_proposal` (question about a specific proposal), `revise_proposal` (modify a specific proposal per user feedback), `regenerate_one` (redo a single proposal per user requirements), `regenerate_all` (redo all three), `select_proposal` (choose a proposal as the mainline), `mix_proposals` (combine elements from different proposals), or `clarify` (ambiguous intent).
+- **FR-032**: On `revise_proposal`, the system MUST regenerate only the specified proposal with the user's feedback merged, leaving the other two proposals unchanged. The regenerated proposal enters the internal verification pipeline (fact-check → review) and is only re-displayed to the user after passing both checks.
+- **FR-033**: On `regenerate_all`, the system MUST discard all current proposals, regenerate three new proposals from scratch, and run the full internal verification pipeline. Only PASS proposals are displayed.
+- **FR-034**: On `mix_proposals`, the system MUST create a new merged proposal (labeled "方案D (自定义)") combining the specified elements, without discarding the original three proposals. The merged proposal enters the internal verification pipeline and is only displayed after passing both checks.
+- **FR-035**: After EVERY outline update (revise, regenerate_one, regenerate_all, mix_proposals), the system MUST run the internal verification pipeline (fact-check → auto-regenerate on FAIL → quality review → auto-regenerate on FAIL) on affected proposals. Updated proposals are only re-displayed after passing both checks. The advance button MUST NOT become active until verification has completed with at least one PASS proposal available.
 
 **Selection and Advancement**
 
-- **FR-032**: System MUST allow the user to select any one proposal as the chosen content mainline via an explicit selection action.
-- **FR-033**: On selection confirmation, the system MUST persist the chosen proposal as the authoritative Phase 1 artifact (`outline.json`) and mark it as selected.
-- **FR-034**: A GateKeeper MUST verify before allowing advancement: outline artifact exists and passes schema validation, a proposal has been explicitly selected, fact-checking is complete with results persisted, review is complete, and all tasks are in terminal states.
-- **FR-035**: If the fact-check verdict is FAIL, the advance button MUST show a warning but remain clickable—the user may override.
-- **FR-036**: If the review verdict is FAIL, the advance button MUST show a warning but remain clickable—the user may override.
+- **FR-036**: System MUST allow the user to select any one displayed proposal as the chosen content mainline via an explicit selection action. All displayed proposals have already passed fact-checking and quality review.
+- **FR-037**: On selection confirmation, the system MUST persist the chosen proposal as the authoritative Phase 1 artifact (`outline.json`) and mark it as selected.
+- **FR-038**: A GateKeeper MUST verify before allowing advancement: outline artifact exists and passes schema validation, a proposal has been explicitly selected, all fact-checking and quality review verdicts for displayed proposals are PASS, and all tasks are in terminal states.
 
 **Artifact and State**
 
-- **FR-037**: System MUST persist the Phase 1 artifact (`outline.json`) containing: project_id, requirements_ref (link to Phase 0 artifact), three proposals with all fields, the selected proposal reference, fact-check report reference, review verdict, and generation metadata (timestamp, model, token usage).
-- **FR-038**: System MUST persist the fact-check report as a standalone versioned artifact (`fact_check.json`) containing: project_id, run_timestamp, proposals_checked, extracted claims with structured fields per FR-016, overall verdict. Each fact-check run produces a new version; old versions are retained for audit trail.
-- **FR-039**: System MUST persist all Phase 1 dialogue history and task states for recovery on browser close/reopen or server restart.
+- **FR-039**: System MUST persist the Phase 1 artifact (`outline.json`) containing: project_id, requirements_ref (link to Phase 0 artifact), displayed proposals with all fields and verification status, the selected proposal reference, fact-check report references, review verdicts, auto-regeneration history (retry counts per proposal, corrections made), and generation metadata (timestamp, model, token usage).
+- **FR-040**: System MUST persist the fact-check report as a standalone versioned artifact (`fact_check.json`) containing: project_id, run_timestamp, proposals_checked, extracted claims with structured fields per FR-016, overall verdict, regeneration attempt number. Each fact-check run (including FAIL runs from auto-regeneration cycles) produces a new version; old versions are retained for full audit trail.
+- **FR-041**: System MUST persist all Phase 1 dialogue history and task states for recovery on browser close/reopen or server restart.
 
 ### Key Entities
 
-- **Narrative Outline Proposal**: A complete content mainline for a video. Contains: proposal_id, label (A/B/C/D), opening design (type, approach), main arguments list (each with title, core_evidence, supporting_data, transition), closing design (type, approach, closing_message), rationale (explanation, target_audience, strengths, differentiation), and status (active/selected/archived).
+- **Narrative Outline Proposal**: A complete content mainline for a video. Contains: proposal_id, label (A/B/C/D), opening design (type, approach), main arguments list (each with title, core_evidence, supporting_data, transition), closing design (type, approach, closing_message), rationale (explanation, target_audience, strengths, differentiation), status (active/selected/archived/failed), and auto_regeneration_history (array of {attempt_number, failure_reason, fact_check_ref, review_ref}).
 - **Opening Design**: Defines how the video begins. Fields: type (enum: data_shock, story_anecdote, question_lead, opinion_first), approach_description (concrete execution plan).
 - **Main Argument**: A single viewpoint in the video body. Fields: title, core_evidence (central claim), supporting_data (facts/statistics/examples), transition_description.
 - **Closing Design**: Defines how the video ends. Fields: type (enum: summary_elevation, call_to_action, open_ended, callback_opening), approach_description, closing_message.
@@ -232,16 +231,18 @@ The user selects one of the three proposals as the chosen content mainline. The 
 - **SC-001**: Three substantially different narrative outline proposals are generated and displayed within 60 seconds of entering Phase 1 for a typical requirements input (3-5 viewpoints).
 - **SC-002**: The OutlineReviewer correctly flags proposals with insufficient differentiation—proposals sharing the same opening type AND argument structure receive a FAIL on differentiation with specific comparison notes.
 - **SC-003**: The topic completeness check achieves 100% coverage—every topic and viewpoint from the confirmed Phase 0 requirements is mapped to at least one argument in every proposal.
-- **SC-004**: Users can complete the full Phase 1 flow (view proposals → fact-check review → quality review → optionally revise → select → advance) in under 10 minutes for a typical requirements input.
+- **SC-004**: Users can complete the full Phase 1 flow (auto-generate → internal verification → view only PASS proposals → optionally revise → select → advance) in under 10 minutes for a typical requirements input, with the internal auto-regeneration loop adding at most 2 additional minutes per retry.
 - **SC-005**: The proposal selection and advancement gate prevents advancement when no proposal is selected (zero false-positive gate passes for unselected state).
 - **SC-006**: 90% of proposal generations produce three proposals where at least two have different opening types and different argument organization strategies on the first attempt.
 - **SC-007**: All Phase 1 state (proposals, selection, dialogue, tasks) is fully recoverable within 10 seconds of reopening the browser or after a server restart.
 - **SC-008**: The FactChecker extracts and verifies at least 80% of key factual claims present in proposals—no claim marked as "verified" is later found to be factually incorrect (zero false-positive verifications).
 - **SC-009**: 100% of claims marked as "verified" include at least one cited source reference. Zero claims are marked as "verified" with fabricated sources.
 - **SC-010**: 100% of factual claims output by the FactChecker conform to the structured schema defined in FR-016—zero instances of LLM free-form text in place of structured fields (validated by schema check after each FactChecker run).
-- **SC-011**: After every outline update (revise, regenerate, mix), both fact-checking and quality review complete automatically within 90 seconds for a typical single-proposal update—the advance button is never activatable with stale or missing fact-check/review results.
-- **SC-012**: Fact-check reports are persisted as versioned snapshots—at least the 5 most recent `fact_check.json` versions are recoverable, and each run is independently auditable by comparing versions.
+- **SC-011**: After every outline update, the internal verification pipeline (fact-check → auto-regenerate → review → auto-regenerate) completes automatically. Content that has not passed both checks is never displayed to the user—zero instances of FAIL content reaching the user interface.
+- **SC-012**: Fact-check reports are persisted as versioned snapshots—ALL versions (including FAIL runs from auto-regeneration cycles) are retained and independently auditable. At least 5 most recent `fact_check.json` versions per proposal are recoverable.
 - **SC-013**: Changing an agent's system prompt requires editing only a configuration file under `config/prompts/`—zero source code modifications are needed to update prompt behavior.
+- **SC-014**: The auto-regeneration loop resolves at least 70% of fact-check FAIL cases within 1 retry and 90% within 2 retries—fewer than 10% of proposals exhaust all 3 retries for typical financial content.
+- **SC-015**: Zero proposals with disputed or unverifiable factual claims reach the user's display. Every proposal the user sees has a fact-check PASS verdict and a quality review PASS verdict (100% content gating effectiveness).
 
 ## Assumptions
 
@@ -250,7 +251,7 @@ The user selects one of the three proposals as the chosen content mainline. The 
 - The user interacts in Chinese natural language (consistent with Phase 0).
 - All agents (OutlineAgent, FactChecker, OutlineReviewer) use the same LLM infrastructure configured in `config/model_config.json` as Phase 0 agents.
 - The proposal selection is final once confirmed—Phase 1 becomes read-only after advancement (consistent with the Phase 0 pattern).
-- The FactChecker's FAIL verdict and the OutlineReviewer's FAIL verdict are advisory (warning) for advancement, not blocking—the user may override them.
+- Content gating is strict: proposals that fail fact-checking or quality review are NEVER displayed to the user. The internal auto-regeneration loop handles all FAIL cases transparently. The user only sees PASS content. The maximum auto-regeneration retry count is 3 per proposal.
 - Custom composition (mixing elements from different proposals) creates a new proposal rather than modifying existing ones.
 - The three-proposal count is fixed for v1; future versions may allow configurable counts.
 - All user-facing language interaction content is displayed as rendered Markdown formatted text—no specialized card components, expand/collapse widgets, or complex display forms are used for content presentation.

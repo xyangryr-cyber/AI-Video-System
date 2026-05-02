@@ -2,7 +2,7 @@
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
 **Created**: 2026-05-02
-**Updated**: 2026-05-02 (post-clarification round 2)
+**Updated**: 2026-05-02 (post-clarification round 3)
 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
@@ -33,5 +33,6 @@
 ## Notes
 
 - All items pass. Spec is ready for `/speckit-plan`.
-- Round 2 clarifications applied: (1) Mandatory fact-check + review after every outline update; (2) Fact-check results persisted as versioned `fact_check.json`; (3) Agent prompts in config files; (4) High-authority sources + free APIs; (5) Structured fact output, no LLM free-form.
-- 6 user stories, 39 functional requirements, 13 success criteria, 12 edge cases, 9 key entities.
+- Round 3 clarification applied: Content gating — FAIL content never exposed to user. Internal auto-regeneration loop (max 3 retries) handles all fact-check and review failures. User only sees PASS content.
+- 6 user stories, 41 functional requirements, 15 success criteria, 15 edge cases, 9 key entities.
+- Key behavioral change: fact-check and review FAIL are now hard gates (were advisory). Content that cannot be verified is auto-regenerated internally, not shown with warnings.

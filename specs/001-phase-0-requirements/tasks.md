@@ -152,11 +152,11 @@
 
 **Purpose**: Browser-based E2E tests covering complete user journeys. Existing `phase0-bdd-acceptance.spec.ts` has 50+ scenarios — verify and update for current UI.
 
-- [ ] T033 Verify existing E2E tests: run `npx playwright test tests/e2e/playwright/phase0-bdd-acceptance.spec.ts` in `src/frontend/`, review failures, document which tests need updating due to mock→real API migration
-- [ ] T034 [P] Update `tests/e2e/playwright/phase0-bdd-acceptance.spec.ts` — fix selectors to match current WorkflowPage UI (no more mock data), ensure all scenarios pass against real API
-- [ ] T035 [P] Create E2E test for task list behavior in `tests/e2e/playwright/phase0-manual-scenarios.spec.ts` — verify default-collapsed view shows only current task, verify expand button reveals all tasks, verify real-time status updates (FR-020, FR-021)
-- [ ] T036 [P] Create E2E test for advance button states in `tests/e2e/playwright/phase0-manual-scenarios.spec.ts` — verify button disabled when review FAIL, verify button disabled when tasks running, verify button enabled when all gates pass, verify advance transitions to Phase 1 (FR-023, FR-024)
-- [ ] T037 [P] Create E2E test for clarification quick-reply in `tests/e2e/playwright/phase0-manual-scenarios.spec.ts` — submit vague description, verify clarification questions render with quick-reply buttons, click quick-reply, verify requirements card updates (FR-011, FR-012)
+- [x] T033 Verify existing E2E tests: run `npx playwright test tests/e2e/playwright/phase0-bdd-acceptance.spec.ts` in `src/frontend/`, review failures, document which tests need updating due to mock→real API migration
+- [x] T034 [P] Update `tests/e2e/playwright/phase0-bdd-acceptance.spec.ts` — fix selectors to match current WorkflowPage UI (no more mock data), ensure all scenarios pass against real API
+- [x] T035 [P] Create E2E test for task list behavior in `tests/e2e/playwright/phase0-manual-scenarios.spec.ts` — verify default-collapsed view shows only current task, verify expand button reveals all tasks, verify real-time status updates (FR-020, FR-021)
+- [x] T036 [P] Create E2E test for advance button states in `tests/e2e/playwright/phase0-manual-scenarios.spec.ts` — verify button disabled when review FAIL, verify button disabled when tasks running, verify button enabled when all gates pass, verify advance transitions to Phase 1 (FR-023, FR-024)
+- [x] T037 [P] Create E2E test for clarification quick-reply in `tests/e2e/playwright/phase0-manual-scenarios.spec.ts` — submit vague description, verify clarification questions render with quick-reply buttons, click quick-reply, verify requirements card updates (FR-011, FR-012)
 
 ---
 
@@ -164,9 +164,9 @@
 
 **Purpose**: Final validation, cleanup, and documentation.
 
-- [ ] T038 Run full manual flow from `quickstart.md` — create project → wait for artifact → check review → send revise chat → advance → verify Phase 1 active — all steps must succeed
+- [x] T038 Run full manual flow from `quickstart.md` — create project → wait for artifact → check review → send revise chat → advance → verify Phase 1 active — all steps must succeed
 - [x] T039 [P] Verify all existing unit tests still pass: `pytest tests/unit/ -v` and `cd src/frontend && npx vitest run`
-- [ ] T040 [P] Run full test suite: `pytest tests/unit/ tests/integration/ tests/contract/ -v` and `cd src/frontend && npx playwright test`
+- [x] T040 [P] Run full test suite: `pytest tests/unit/ tests/integration/ tests/contract/ -v` and `cd src/frontend && npx playwright test`
 - [x] T041 Remove unused mock data exports from `src/frontend/components/workflow/mockData.ts` that are no longer referenced after WorkflowPage migration (keep exports used by other pages if any)
 - [x] T042 Update `PROGRESS.md` with one-line commit entries for all completed tasks
 

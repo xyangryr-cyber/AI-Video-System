@@ -29,7 +29,7 @@ router = APIRouter(prefix="/api", tags=["projects"])
 
 class CreateProjectBody(BaseModel):
     title: str = Field(min_length=1)
-    description: str = ""
+    description: str = Field(default="", min_length=10)
 
 
 class ConfirmPreferencesBody(BaseModel):

@@ -64,6 +64,7 @@ class Requirements(_Strict):
     narrative_template: NarrativeTemplate
     voice_preferences: VoicePreferences
     subtitle_preferences: SubtitlePreferences
+    clarification_needed: list[dict[str, str]] = Field(default_factory=list)
 
 
 class VoiceParams(_Strict):

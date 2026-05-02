@@ -5,6 +5,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.0.1..9.3
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -49,8 +50,23 @@ class SubtitlePreferences(BaseModel):
 
 class RequirementsLLMOutput(BaseModel):
     clarified_topic: str = Field(
-        ..., description="Structured topic description, not a verbatim copy of input"
+        default="", description="Structured topic description, not a verbatim copy of input"
     )
+
+    @field_validator("clarified_topic", mode="before")
+    @classmethod
+    def _coerce_clarified_topic(cls, v: object) -> str:
+        if isinstance(v, str):
+            return v
+        if isinstance(v, dict):
+            # LLM sometimes returns a structured dict; flatten to string
+            domain = v.get("domain", "")
+            topic = v.get("topic", "")
+            angle = v.get("angle", "")
+            parts = [p for p in (domain, topic, angle) if p]
+            return " / ".join(parts) if parts else json.dumps(v, ensure_ascii=False)
+        return str(v) if v else ""
+
     voice_preferences: VoicePreferences = Field(default_factory=VoicePreferences)
     subtitle_preferences: SubtitlePreferences = Field(default_factory=SubtitlePreferences)
 
