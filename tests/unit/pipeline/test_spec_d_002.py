@@ -54,7 +54,7 @@ class TestAC2WordCountDurationConsistency:
         result = agent.produce(
             project_id="p",
             title="t",
-            topic="AI",
+            topic="AI Finance",
             duration_class="short",
             platform="web",
             category_level1="tech",
@@ -80,7 +80,7 @@ class TestAC2WordCountDurationConsistency:
             agent.produce(
                 project_id="p",
                 title="t",
-                topic="AI",
+                topic="AI Finance",
                 duration_class="short",
                 platform="web",
                 category_level1="tech",
