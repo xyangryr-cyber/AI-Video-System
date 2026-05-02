@@ -46,7 +46,9 @@ export interface Requirements {
   project_id: string;
   title: string;
   topic: string;
+  clarified_topic: string;
   duration_class: DurationClass;
+  target_duration_seconds: number;
   target_duration: TargetDuration;
   target_word_count: TargetWordCount;
   platform: PlatformEntry[];
@@ -54,6 +56,8 @@ export interface Requirements {
   narrative_template: NarrativeTemplate;
   voice_preferences: VoicePreferences;
   subtitle_preferences: SubtitlePreferences;
+  target_platform: string;
+  clarification_needed: Array<Record<string, string>>;
 }
 
 export interface VoiceParams {

@@ -51,6 +51,7 @@ class TestAC4RoughCutComposition:
 
         agent = RoughCutAgent()
         result = agent.compose(
+            project_id="test_project",
             storyboard=[
                 {
                     "shot_id": "shot_0",
@@ -58,14 +59,8 @@ class TestAC4RoughCutComposition:
                     "time_range": {"start_seconds": 0.0, "end_seconds": 10.0},
                 }
             ],
-            timeline={
-                "segments": [
-                    {"segment_id": "seg_001", "start_sec": 0.0, "end_sec": 10.0}
-                ]
-            },
-            keyframe_renders=[
-                {"shot_id": "shot_0", "render_path": "phase_8/shot_0.png"}
-            ],
+            timeline={"segments": [{"segment_id": "seg_001", "start_sec": 0.0, "end_sec": 10.0}]},
+            keyframe_renders=[{"shot_id": "shot_0", "render_path": "phase_8/shot_0.png"}],
         )
         assert "rough_cut_path" in result
         assert "duration_seconds" in result

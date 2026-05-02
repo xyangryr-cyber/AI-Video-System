@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 from datetime import UTC
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from starlette.responses import FileResponse
 
 from src.backend.core.preflight import require_critical_ok
@@ -29,7 +29,14 @@ router = APIRouter(prefix="/api", tags=["projects"])
 
 class CreateProjectBody(BaseModel):
     title: str = Field(min_length=1)
-    description: str = Field(default="", min_length=10)
+    description: str = Field(default="")
+
+    @field_validator("description")
+    @classmethod
+    def _validate_description_length(cls, v: str) -> str:
+        if v and len(v) < 10:
+            raise ValueError("description must be at least 10 characters")
+        return v
 
 
 class ConfirmPreferencesBody(BaseModel):

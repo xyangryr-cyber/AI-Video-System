@@ -161,9 +161,8 @@ class TestRequirementsAgentOutputStructure:
             result = _import_and_produce()
 
             vp = result["voice_preferences"]
-            assert vp["gender"] == "female"
-            assert vp["tone"] == "professional"
-            assert vp["speed"] == "medium"
+            assert vp["voice_id"] == "female"  # mapped from gender
+            assert vp["style"] == "professional"  # mapped from tone
 
     def test_output_contains_subtitle_preferences_from_llm(self):
         _clear_agent_cache()
@@ -176,8 +175,8 @@ class TestRequirementsAgentOutputStructure:
             result = _import_and_produce()
 
             sp = result["subtitle_preferences"]
-            assert sp["position"] == "bottom"
-            assert sp["font_size"] == "medium"
+            assert sp["style"] == "sentence"
+            assert sp["highlight_enabled"] is True
 
     def test_output_retains_original_fields(self):
         _clear_agent_cache()
@@ -193,7 +192,7 @@ class TestRequirementsAgentOutputStructure:
             assert result["project_id"] == kwargs["project_id"]
             assert result["title"] == kwargs["title"]
             assert result["duration_class"] == kwargs["duration_class"]
-            assert result["platform"] == kwargs["platform"]
+            assert result["platform"][0]["platform"] == kwargs["platform"]
             assert result["target_duration_seconds"] == kwargs["target_duration_seconds"]
 
 

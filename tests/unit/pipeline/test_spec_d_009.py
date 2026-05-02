@@ -7,6 +7,7 @@ class TestAC1FinalCutAdjustments:
 
         agent = FinalCutAgent()
         result = agent.adjust(
+            project_id="test_project",
             rough_cut_path="phase_10/rough_cut.mp4",
             adjustments={"volume_db": -2, "trim_start_seconds": 0.5},
         )

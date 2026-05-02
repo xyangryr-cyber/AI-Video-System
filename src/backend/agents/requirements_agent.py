@@ -160,7 +160,9 @@ class RequirementsAgent:
             project_id=raw.get("project_id", ""),
             title=raw.get("title", ""),
             topic=raw.get("topic", ""),
+            clarified_topic=raw.get("clarified_topic", ""),
             duration_class=raw.get("duration_class", "medium"),
+            target_duration_seconds=dur_sec,
             target_duration=target_duration,
             target_word_count=target_word_count,
             platform=platform_list,
@@ -168,5 +170,6 @@ class RequirementsAgent:
             narrative_template=raw.get("narrative_template", "chronological"),
             voice_preferences=voice_preferences,
             subtitle_preferences=subtitle_preferences,
+            target_platform=raw.get("target_platform", "web"),
             clarification_needed=raw.get("clarification_needed", []),
         )

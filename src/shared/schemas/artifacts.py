@@ -56,7 +56,9 @@ class Requirements(_Strict):
     project_id: str = Field(min_length=1)
     title: str = Field(min_length=1)
     topic: str = Field(min_length=5)
+    clarified_topic: str = Field(default="")
     duration_class: DurationClass
+    target_duration_seconds: int = Field(default=600, ge=0)
     target_duration: TargetDuration
     target_word_count: TargetWordCount
     platform: list[PlatformEntry] = Field(min_length=1)
@@ -64,6 +66,7 @@ class Requirements(_Strict):
     narrative_template: NarrativeTemplate
     voice_preferences: VoicePreferences
     subtitle_preferences: SubtitlePreferences
+    target_platform: str = Field(default="web")
     clarification_needed: list[dict[str, str]] = Field(default_factory=list)
 
 

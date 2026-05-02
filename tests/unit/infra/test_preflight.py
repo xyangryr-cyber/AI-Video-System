@@ -36,11 +36,10 @@ Strategy:
 from __future__ import annotations
 
 import sqlite3
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
-
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SCHEMA_FILE = REPO_ROOT / "src" / "backend" / "db" / "schema.sql"
@@ -60,9 +59,7 @@ def conn() -> sqlite3.Connection:
 def _ok_runners() -> dict:
     from src.backend.core.preflight import ALL_CHECKS, CheckResult
 
-    return {
-        name: (lambda: CheckResult(status="ok", message=None)) for name in ALL_CHECKS
-    }
+    return {name: (lambda: CheckResult(status="ok", message=None)) for name in ALL_CHECKS}
 
 
 def _failed(name: str, msg: str = "boom"):
@@ -100,22 +97,15 @@ class TestAC1CriticalChecksInSystemStatus:
             "llm_review",
             "sqlite",
             "media_dir",
-        }, (
-            "SPEC-14.1 names the 4 blocking checks as "
-            "llm/llm_review/sqlite/media_dir"
-        )
+        }, "SPEC-14.1 names the 4 blocking checks as llm/llm_review/sqlite/media_dir"
 
         run_full_preflight(conn)
         names = {
             r["check_name"]
-            for r in conn.execute(
-                "SELECT DISTINCT check_name FROM system_status"
-            ).fetchall()
+            for r in conn.execute("SELECT DISTINCT check_name FROM system_status").fetchall()
         }
         for critical in CRITICAL_CHECKS:
-            assert critical in names, (
-                f"critical check {critical!r} not written to system_status"
-            )
+            assert critical in names, f"critical check {critical!r} not written to system_status"
 
 
 # ---- AC-2 ------------------------------------------------------------------
@@ -141,7 +131,7 @@ class TestAC2CriticalFailureBlocksProjectCreation:
         client = TestClient(app)
         resp = client.post(
             "/api/projects",
-            json={"title": "T", "description": "D"},
+            json={"title": "T", "description": "A description long enough"},
         )
         assert resp.status_code == 403, (
             f"critical failure must return 403, got {resp.status_code}: {resp.text}"
@@ -169,10 +159,7 @@ class TestAC3DegradedServicesListed:
             "material",
             "bgm",
             "financial_data",
-        }, (
-            "SPEC-14.2 names the 5 degradable checks as "
-            "tts/web_search/material/bgm/financial_data"
-        )
+        }, "SPEC-14.2 names the 5 degradable checks as tts/web_search/material/bgm/financial_data"
 
         runners = _ok_runners()
         for name in DEGRADABLE_CHECKS:
@@ -214,7 +201,7 @@ class TestAC4DegradedDoesNotBlockCreation:
         client = TestClient(app)
         resp = client.post(
             "/api/projects",
-            json={"title": "T", "description": "D"},
+            json={"title": "T", "description": "A description long enough"},
         )
         assert resp.status_code in (200, 201), (
             f"degraded (non-critical) must not block project creation; "
@@ -231,7 +218,7 @@ class TestAC5ValidUntil24h:
     def test_valid_until_24h(self, conn):
         from src.backend.core.preflight import run_full_preflight
 
-        pinned = datetime(2026, 4, 21, 12, 0, 0, tzinfo=timezone.utc)
+        pinned = datetime(2026, 4, 21, 12, 0, 0, tzinfo=UTC)
         run_full_preflight(conn, now=pinned)
 
         rows = conn.execute(
@@ -241,9 +228,7 @@ class TestAC5ValidUntil24h:
 
         for r in rows:
             checked = datetime.fromisoformat(r["checked_at"].replace("Z", "+00:00"))
-            valid_until = datetime.fromisoformat(
-                r["valid_until"].replace("Z", "+00:00")
-            )
+            valid_until = datetime.fromisoformat(r["valid_until"].replace("Z", "+00:00"))
             assert valid_until - checked == timedelta(hours=24), (
                 f"{r['check_name']}: valid_until - checked_at != 24h "
                 f"({r['checked_at']} vs {r['valid_until']})"
@@ -278,9 +263,7 @@ class TestAC6FullPreflightOnStartup:
 
         names = {
             r["check_name"]
-            for r in conn.execute(
-                "SELECT DISTINCT check_name FROM system_status"
-            ).fetchall()
+            for r in conn.execute("SELECT DISTINCT check_name FROM system_status").fetchall()
         }
         assert names == set(ALL_CHECKS), (
             f"startup must run the full Pre-flight (9 checks); got {names}"
@@ -304,9 +287,7 @@ class TestAC7CriticalSubsetOnProjectCreate:
 
         names = {
             r["check_name"]
-            for r in conn.execute(
-                "SELECT DISTINCT check_name FROM system_status"
-            ).fetchall()
+            for r in conn.execute("SELECT DISTINCT check_name FROM system_status").fetchall()
         }
         assert names == set(CRITICAL_CHECKS), (
             f"run_critical_preflight must write the 5 critical checks only; got {names}"

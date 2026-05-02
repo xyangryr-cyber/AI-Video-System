@@ -2,13 +2,14 @@
 
 import sqlite3
 import tempfile
+from datetime import UTC
 from pathlib import Path
 
 from fastapi.testclient import TestClient
 
 from src.backend.api.main import app
-from src.backend.db.migration_runner import run_migrations
 from src.backend.api.routes import projects
+from src.backend.db.migration_runner import run_migrations
 
 
 def _make_app_with_db() -> TestClient:
@@ -20,7 +21,8 @@ def _make_app_with_db() -> TestClient:
 
     # Seed system_status so require_critical_ok passes
     from datetime import datetime, timedelta, timezone
-    now = datetime.now(timezone.utc)
+
+    now = datetime.now(UTC)
     checked_at = now.strftime("%Y-%m-%dT%H:%M:%S.000Z")
     valid_until = (now + timedelta(hours=24)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
     for name in ("llm", "llm_review", "sqlite", "media_dir"):
@@ -40,9 +42,9 @@ def test_create_project_inserts_into_db():
     """POST /api/projects must INSERT into projects table and create 12 phase rows."""
     client = _make_app_with_db()
 
-    resp = client.post("/api/projects", json={
-        "title": "Test Project", "description": "desc"
-    })
+    resp = client.post(
+        "/api/projects", json={"title": "Test Project", "description": "A description long enough"}
+    )
     assert resp.status_code == 201, resp.text
     data = resp.json()
     assert data["title"] == "Test Project"
@@ -61,9 +63,7 @@ def test_create_project_then_list_shows_it():
     """After creating a project, it should appear in GET /api/projects."""
     client = _make_app_with_db()
 
-    resp = client.post("/api/projects", json={
-        "title": "List Test", "description": ""
-    })
+    resp = client.post("/api/projects", json={"title": "List Test", "description": ""})
     assert resp.status_code == 201
     pid = resp.json()["id"]
 
@@ -84,7 +84,9 @@ def test_create_project_requires_title():
 def test_get_project_returns_200():
     """GET /api/projects/{id} should return project detail."""
     client = _make_app_with_db()
-    resp = client.post("/api/projects", json={"title": "Detail Test", "description": "d"})
+    resp = client.post(
+        "/api/projects", json={"title": "Detail Test", "description": "A description long enough"}
+    )
     pid = resp.json()["id"]
 
     detail = client.get(f"/api/projects/{pid}")
