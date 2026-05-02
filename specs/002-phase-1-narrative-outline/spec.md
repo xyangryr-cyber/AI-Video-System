@@ -53,35 +53,35 @@ The user reads the full outline details for each proposal in the chat interface 
 
 ### User Story 3 - Fact-Checking Agent Verifies Key Claims (Priority: P1)
 
-After the three proposals are generated, a fact-checking agent (FactChecker) automatically extracts key factual claims from each proposal's arguments. For each claim, the agent searches for information sources, evaluates the authenticity and accuracy of the claim, and produces a fact-check report. Claims that cannot be verified or are found to be inaccurate are flagged so the user can review them before the outline is finalized—preventing incorrect content from entering the content mainline.
+After the three proposals are generated, a fact-checking agent (FactChecker) automatically extracts key factual claims from each proposal's arguments. For each claim, the agent searches for information sources, evaluates the authenticity and accuracy of the claim, and produces a fact-check report. **Content that fails fact-checking (contains disputed or unverifiable claims) MUST NOT be exposed to the user.** When fact-checking returns FAIL, the system automatically regenerates the affected proposal internally with the fact-check findings as corrective feedback, then re-runs fact-checking. This auto-regeneration loop continues until the proposal passes fact-checking (all claims verified) or a maximum retry limit is reached. Only proposals that pass both fact-checking and quality review are presented to the user. The user sees only verified, audit-passed content.
 
-**Why this priority**: Financial content must be factually accurate. An incorrect statistic or false claim in the outline would cascade into the script and final video, damaging credibility. Fact-checking is a hard quality gate.
+**Why this priority**: Financial content must be factually accurate. An incorrect statistic or false claim in the outline would cascade into the script and final video, damaging credibility. Exposing questionable content to the user—even with warnings—creates risk of accidental acceptance. Fact-checking is a hard gate: content that cannot be verified is never shown.
 
-**Independent Test**: Can be tested by generating proposals that contain verifiable claims (e.g., specific statistics, historical events), then verifying the FactChecker produces a report identifying each claim, its verification status, and source references.
+**Independent Test**: Can be tested by generating proposals that contain verifiable claims, then verifying that proposals with FAIL verdicts are automatically regenerated internally (not displayed), and only PASS proposals appear in the user's chat interface.
 
 **Acceptance Scenarios**:
 
-1. **Given** three proposals have been generated, **When** the FactChecker completes its analysis, **Then** a fact-check report appears as rendered Markdown text listing: each extracted factual claim, its verification status (verified / unverifiable / disputed), source references (where available), and an overall fact-check verdict (PASS / FAIL).
-2. **Given** a proposal contains a claim like "2024年中国GDP增长5.2%", **When** the FactChecker evaluates it, **Then** the claim is marked as "verified" with a source reference if a matching authoritative source is found, or "unverifiable" if no reliable source confirms it.
-3. **Given** a proposal contains a claim that contradicts known facts, **When** the FactChecker identifies the contradiction, **Then** the claim is marked as "disputed" with the conflicting evidence and source cited.
-4. **Given** a fact-check report with FAIL verdict, **When** the user views it, **Then** the disputed or unverifiable claims are clearly highlighted, and the user can request regeneration of affected proposal sections with corrected information.
+1. **Given** three proposals have been generated and fact-checked, **When** all three receive fact-check PASS, **Then** the proposals proceed to quality review and are then displayed to the user. The fact-check summary (all verified, source count) is shown alongside each proposal.
+2. **Given** a proposal receives fact-check FAIL (disputed or unverifiable claims found), **When** the FAIL verdict is returned, **Then** the system does NOT display the failed proposal to the user. Instead, it automatically regenerates that proposal with the fact-check findings as corrective guidance, and re-runs fact-checking on the regenerated version.
+3. **Given** a proposal has been auto-regenerated after fact-check FAIL, **When** the regenerated version passes fact-check (PASS), **Then** it proceeds to quality review and is then displayed to the user. The internal fact-check history (how many retries, what was corrected) is recorded in the persisted fact-check artifact.
+4. **Given** a proposal fails fact-checking after the maximum retry count (3 attempts), **When** the retry limit is exhausted, **Then** the system notifies the user: "方案X 经多次事实核查仍无法通过，建议调整需求描述中的事实依据或更换主题方向" and the proposal is marked as `failed`. The user may then provide new requirements to restart generation.
 
 ---
 
 ### User Story 4 - Review Agent Validates Proposal Quality (Priority: P2)
 
-After the three proposals are generated and fact-checking is complete, a review agent automatically audits them for quality. The review checks: (1) substantial differentiation—the three proposals use genuinely different narrative approaches, not superficial variations; (2) logical coherence—each proposal's argument flow is logically sound and transitions are natural; (3) topic completeness—all topics and viewpoints from the confirmed requirements are covered without omission; (4) thematic fit—each proposal's tone and structure align with the user's stated theme and platform context.
+After proposals pass fact-checking, a quality review agent automatically audits them. The review checks: (1) substantial differentiation—the three proposals use genuinely different narrative approaches, not superficial variations; (2) logical coherence—each proposal's argument flow is logically sound and transitions are natural; (3) topic completeness—all topics and viewpoints from the confirmed requirements are covered without omission; (4) thematic fit—each proposal's tone and structure align with the user's stated theme and platform context. If a proposal fails quality review, the system internally regenerates it with the review findings as corrective feedback (same auto-regeneration loop as fact-checking, max 3 retries). Only proposals that pass BOTH fact-checking and quality review are presented to the user.
 
-**Why this priority**: Quality assurance prevents poor proposals from reaching the user. However, the user can still review proposals even if the audit fails (the audit flag is advisory, not blocking).
+**Why this priority**: Quality assurance prevents poor proposals from reaching the user. Combined with the content gating rule, the user only ever sees proposals that have passed all verification and quality checks.
 
-**Independent Test**: Can be tested by generating proposals from varied requirements inputs, then verifying the review agent produces a verdict with specific findings for each of the four checks.
+**Independent Test**: Can be tested by generating proposals from varied requirements inputs, then verifying only PASS proposals are displayed and FAIL proposals trigger internal auto-regeneration.
 
 **Acceptance Scenarios**:
 
-1. **Given** three proposals have been generated and fact-checked, **When** the review agent completes its audit, **Then** a review verdict appears as rendered Markdown text showing: overall verdict (PASS/FAIL), differentiation score with specific comparison notes, coherence assessment per proposal, topic completeness checklist mapped to requirements topics, and thematic fit evaluation.
-2. **Given** two proposals use the same opening type and argument structure with only wording changes, **When** the review agent audits differentiation, **Then** the verdict is FAIL with a specific note: "方案A 和方案B 叙事结构高度相似，缺乏实质差异".
-3. **Given** a proposal omits a topic that was specified in the confirmed requirements, **When** the review agent audits completeness, **Then** the verdict is FAIL with the missing topic explicitly listed in the blocking issues.
-4. **Given** a proposal's arguments are logically inconsistent (e.g., contradictory claims or broken reasoning chain), **When** the review agent audits coherence, **Then** the verdict is FAIL with the specific incoherence described in notes.
+1. **Given** three proposals have passed fact-checking, **When** the review agent completes its audit with all PASS, **Then** the proposals are displayed to the user as rendered Markdown text with a summary indicating all checks passed.
+2. **Given** two proposals use the same opening type and argument structure with only wording changes, **When** the review agent audits differentiation, **Then** the verdict is FAIL, the system auto-regenerates the less-differentiated proposal with guidance to use a different narrative approach, and re-runs both fact-checking and review.
+3. **Given** a proposal omits a topic that was specified in the confirmed requirements, **When** the review agent audits completeness, **Then** the verdict is FAIL, the system auto-regenerates with the missing topic as mandatory inclusion, and re-runs both fact-checking and review.
+4. **Given** a proposal fails quality review after exhausting 3 retries, **When** the retry limit is reached, **Then** the system notifies the user: "方案X 经多次质量审核仍无法通过：[具体原因]。建议调整需求描述或重新开始" and marks the proposal as `failed`.
 
 ---
 
@@ -114,11 +114,10 @@ The user selects one of the three proposals as the chosen content mainline. The 
 
 **Acceptance Scenarios**:
 
-1. **Given** three proposals are displayed with review verdict PASS and fact-check verdict PASS, **When** the user selects a proposal via the selection action, **Then** a confirmation message appears: "确认选择方案B作为内容主线？" with "确认" and "取消" options.
+1. **Given** three proposals are displayed (all have passed fact-checking and quality review), **When** the user selects a proposal via the selection action, **Then** a confirmation message appears: "确认选择方案B作为内容主线？" with "确认" and "取消" options.
 2. **Given** the user confirms the selection, **When** the system processes it, **Then** the selected proposal is persisted as the Phase 1 artifact (`outline.json`), the other two proposals are archived for reference, the selected proposal is marked as "已选择", and the advance button becomes active.
 3. **Given** a proposal is selected, **When** the user views the phase navigation, **Then** Phase 1 shows the selected proposal name and a green checkmark.
-4. **Given** a fact-check verdict of FAIL, **When** the user attempts to select a proposal, **Then** the system shows a warning: "事实核查未通过，建议先处理 disputed 或 unverifiable 的声明再选择" but still allows selection (the user may override the fact-check).
-5. **Given** a review verdict of FAIL, **When** the user attempts to select a proposal, **Then** the system shows a warning: "审核未通过，建议先处理审核意见再选择" but still allows selection.
+4. **Given** one or more proposals have been marked as `failed` (retry limit exhausted), **When** the user views the available proposals, **Then** only successfully generated PASS proposals are shown. Failed proposals are not selectable and show a "生成失败" status with the specific failure reason.
 
 ---
 
@@ -136,6 +135,9 @@ The user selects one of the three proposals as the chosen content mainline. The 
 - What happens when a proposal is revised after fact-checking? The FactChecker re-runs only on the revised proposal, checking new or modified claims while preserving existing verification results for unchanged claims.
 - What happens when the user requests regeneration of multiple proposals simultaneously (e.g., "重新生成方案A和方案C")? Both proposals are regenerated, and fact-checking plus review run on both before the advance button becomes active. The system does not allow partial advancement with unchecked proposals.
 - What happens when a user attempts to advance while fact-checking or review is still running after an update? The advance button is disabled with the message "事实核查和审核进行中，请等待完成". The button only becomes active after both agents complete.
+- What happens when the auto-regeneration loop exhausts all 3 retries? The proposal is marked as `failed` with the specific failure reason (fact-check or review, which dimension). The user sees a notification: "方案X 经多次[事实核查/质量审核]仍无法通过：[具体原因]。建议调整需求描述或更换主题方向后重试。" The user can then provide modified requirements to restart generation.
+- What happens when auto-regeneration creates a new factual error while fixing an old one? Each regeneration triggers a fresh fact-checking cycle that checks ALL claims in the regenerated proposal, not just the previously flagged ones. New errors are caught in the same loop—they do not escape to the user.
+- What happens when all three proposals exhaust retries and none can be displayed? The system shows: "所有方案均未通过审核。建议调整需求描述后重试。" with the specific failure reasons for each proposal. The advance button remains disabled until at least one proposal passes all checks.
 
 ## Requirements _(mandatory)_
 
@@ -168,6 +170,13 @@ The user selects one of the three proposals as the chosen content mainline. The 
 - **FR-017**: The FactChecker MUST output a fact-check report containing: the list of extracted claims with verification status and sources (in the structured format defined by FR-016), and an overall fact-check verdict (PASS if all claims are verified or no key claims were found; FAIL if any claim is unverifiable or disputed).
 - **FR-018**: When any proposal is updated (revised, regenerated, or mixed), the FactChecker MUST re-run on the affected proposals, re-checking new or modified claims while preserving existing verification results for unchanged claims. This is a hard rule—no outline update may skip fact-checking.
 - **FR-019**: The FactChecker's structured output (factual claims list and fact-check report) MUST be persisted as a standalone artifact (`fact_check.json`) within the project, independently recoverable and immutable per generation run. Each fact-check run produces a versioned snapshot.
+
+**Content Gating and Auto-Regeneration**
+
+- **FR-020**: Content that fails fact-checking (verdict FAIL: any claim is disputed or unverifiable) MUST NOT be displayed to the user. The system MUST internally auto-regenerate the failed proposal using the fact-check findings as corrective feedback, then re-run fact-checking. This loop repeats until PASS or the maximum retry count (3) is exhausted.
+- **FR-021**: Content that fails quality review (verdict FAIL: differentiation, coherence, completeness, or thematic fit issues) MUST NOT be displayed to the user. The system MUST internally auto-regenerate the failed proposal using the review findings as corrective feedback, then re-run both fact-checking and quality review. This loop repeats until PASS or the maximum retry count (3) is exhausted.
+- **FR-022**: The maximum auto-regeneration retry count for any single proposal is 3. If a proposal still fails after 3 retries, it is marked as `failed` with the specific failure reason, and the user is notified with actionable guidance. The failed proposal is not selectable and not counted toward the displayed proposal set.
+- **FR-023**: Only proposals that have passed BOTH fact-checking (PASS) and quality review (PASS) may be displayed to the user in the chat interface. The user must never see unverified or audit-failed content—even with warning labels.
 
 **Agent Prompt Configuration**
 
