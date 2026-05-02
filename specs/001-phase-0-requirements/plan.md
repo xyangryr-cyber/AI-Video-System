@@ -1,104 +1,120 @@
-# Implementation Plan: [FEATURE]
+# Implementation Plan: Phase 0 - AI Video Requirements Definition
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
-
-**Note**: This template is filled in by the `/speckit-plan` command. See `.specify/templates/plan-template.md` for the execution workflow.
+**Branch**: `001-phase-0-requirements` | **Date**: 2026-05-02 | **Spec**: [spec.md](./spec.md)
+**Input**: Feature specification from `/specs/001-phase-0-requirements/spec.md`
 
 ## Summary
 
-[Extract from feature spec: primary requirement + technical approach from research]
+Implement Phase 0 of the AI Video System pipeline: users create a project with a natural language description, an AI RequirementsAgent extracts structured video production requirements, a CompletenessReviewer audits the result, and the user can revise through natural language chat before advancing to Phase 1 via a gated advance button.
+
+**Current state**: Backend infrastructure (RequirementsAgent, IntentRouter, API endpoints) is largely functional. Frontend WorkflowPage uses mock data and must be wired to real APIs. The plan focuses on frontend-backend integration, fixing schema mismatches, and comprehensive testing.
 
 ## Technical Context
 
-<!--
-  ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
--->
-
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [e.g., library/cli/web-service/mobile-app/compiler/desktop-app or NEEDS CLARIFICATION]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Language/Version**: Python 3.11+ (backend), TypeScript 5.x (frontend)
+**Primary Dependencies**: FastAPI + Pydantic (backend API), React + Vite + @remotion/player (frontend), LiteLLM + Instructor (LLM calls), Huey + SQLite (task queue)
+**Storage**: SQLite (authoritative state: projects, phases, task_ledger, events, agent_call_log, preferences), File system (large artifacts: requirements.json, dialogue logs)
+**Testing**: pytest (backend unit/integration/contract), Vitest (frontend unit/component), Playwright (E2E), DeepEval (agent eval)
+**Target Platform**: Linux server (Docker Compose: 3 containers — frontend :3000, API :8000, worker)
+**Project Type**: Web application (FastAPI backend + React SPA frontend)
+**Performance Goals**: Requirements generation within 30s of submission (SC-001), project state recovery within 10s (SC-006), real-time task status updates via WebSocket
+**Constraints**: Single-user single-project single-tab (V1), WAL-mode SQLite, stateless agents, deterministic FSM skeleton
+**Scale/Scope**: Phase 0 of 12-phase pipeline, ~26 functional requirements, 4 user stories
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+Based on HARNESS.md and TECH_PLAN_v3.3 design philosophy:
+
+| Principle | Status | Evidence |
+|-----------|--------|----------|
+| **I. Deterministic FSM + Stateless LLM** | PASS | RequirementsAgent is a pure function; IntentRouter is stateless; WorkflowEngine controls flow deterministically |
+| **II. SQLite Single Source of Truth** | PASS | All state in `projects`, `phases`, `task_ledger` tables; artifacts on filesystem as read-only snapshots |
+| **III. TDD Mandatory** | PASS | Tests exist before implementation changes; RED-GREEN-REFACTOR cycle per task card |
+| **IV. Contract-First Development** | PASS | Shared schemas in `src/shared/schemas/artifacts.py`; API contracts documented before implementation |
+| **V. LLM Content-Only, No Flow Control** | PASS | IntentRouter classifies intent deterministically; GateKeeper is hard-coded; LLM only fills requirements JSON |
+| **VI. Real-Time Observability** | PASS | WebSocket events for task status; agent_call_log for cost/token tracking; events table for audit trail |
+| **VII. Failure Visibility** | PASS | Failed tasks show red badge; LLM errors surface as user-facing messages; retry buttons for recoverable failures |
+| **VIII. Single-Worker Sequential Execution** | PASS | Huey worker=1 for Phase 0 tasks; no concurrency conflicts |
+
+**Gate Result**: ALL PASS — proceed to Phase 0 research.
 
 ## Project Structure
 
 ### Documentation (this feature)
 
 ```text
-specs/[###-feature]/
-├── plan.md              # This file (/speckit-plan command output)
-├── research.md          # Phase 0 output (/speckit-plan command)
-├── data-model.md        # Phase 1 output (/speckit-plan command)
-├── quickstart.md        # Phase 1 output (/speckit-plan command)
-├── contracts/           # Phase 1 output (/speckit-plan command)
-└── tasks.md             # Phase 2 output (/speckit-tasks command - NOT created by /speckit-plan)
+specs/001-phase-0-requirements/
+├── plan.md              # This file
+├── research.md          # Phase 0 output — technical decisions
+├── data-model.md        # Phase 1 output — entity definitions
+├── quickstart.md        # Phase 1 output — dev setup & workflow
+├── contracts/           # Phase 1 output — API contracts
+│   ├── rest-api.md      # REST endpoint contracts
+│   └── websocket.md     # WebSocket event contracts
+└── tasks.md             # Phase 2 output (/speckit-tasks — NOT created here)
 ```
 
 ### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+├── backend/
+│   ├── agents/
+│   │   ├── requirements_agent.py      # RequirementsAgent (EXISTS — refine schema output)
+│   │   ├── completeness_reviewer.py   # CompletenessReviewer (EXISTS — re-export from reviewers/)
+│   │   └── intent_router.py           # IntentRouter (EXISTS — no changes needed)
+│   ├── api/
+│   │   └── routes/
+│   │       └── projects.py            # Phase 0 endpoints (EXISTS — verify correctness)
+│   ├── engine/
+│   │   ├── workflow_engine.py         # FSM engine (EXISTS — no changes)
+│   │   └── gatekeeper.py             # GateKeeper (EXISTS — verify GateP0 registration)
+│   ├── gates/
+│   │   ├── gate_p0.py                 # GateP0 (EXISTS — register in gate_registry.py)
+│   │   └── gate_registry.py           # Gate registry (MODIFY — add GateP0)
+│   └── reviewers/
+│       └── __init__.py                # (MODIFY — re-export CompletenessReviewer)
+├── frontend/
+│   ├── pages/
+│   │   └── WorkflowPage.tsx           # (MODIFY — replace mock data with API calls)
+│   ├── components/
+│   │   ├── previews/
+│   │   │   └── P0RequirementsView.tsx # (EXISTS — verify integration)
+│   │   └── workflow/
+│   │       └── mockData.ts            # (REFERENCE — data shapes to match)
+│   └── hooks/
+│       ├── useProjectState.ts         # (VERIFY — correct state fetching)
+│       └── useChat.ts                 # (EXISTS — verify chat integration)
+└── shared/
+    └── schemas/
+        └── artifacts.py               # Requirements schema (EXISTS — align agent output)
 
 tests/
-├── contract/
+├── unit/
+│   └── pipeline/
+│       └── test_spec_d_002.py         # Phase 0 unit tests (EXISTS — verify coverage)
 ├── integration/
-└── unit/
-
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+│   └── test_phase0_flow.py            # (CREATE — integration test for full Phase 0 flow)
+├── contract/
+│   └── test_phase0_contracts.py       # (CREATE — API contract tests)
+└── e2e/
+    └── playwright/
+        └── phase0-bdd-acceptance.spec.ts  # (EXISTS — verify against updated UI)
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Structure Decision**: Web application (Option 2). The existing `src/backend/` + `src/frontend/` + `src/shared/` layout is preserved. No new directories needed.
 
 ## Complexity Tracking
 
-> **Fill ONLY if Constitution Check has violations that must be justified**
+No constitution violations. No complexity justifications required.
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+---
+
+## Phase 0 Artifacts (Generated)
+
+1. [research.md](./research.md) — Technical decisions and rationale
+2. [data-model.md](./data-model.md) — Entity definitions, relationships, state transitions
+3. [quickstart.md](./quickstart.md) — Development setup and workflow
+4. [contracts/](./contracts/) — REST and WebSocket API contracts

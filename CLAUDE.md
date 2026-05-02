@@ -5,6 +5,12 @@
 
 ---
 
+<!-- SPECKIT START -->
+**Active Plan**: [specs/001-phase-0-requirements/plan.md](specs/001-phase-0-requirements/plan.md)
+**Spec**: [specs/001-phase-0-requirements/spec.md](specs/001-phase-0-requirements/spec.md)
+**Branch**: `001-phase-0-requirements`
+<!-- SPECKIT END -->
+
 ## Quick Orientation
 
 **What is this?** A web-based AI video production system for financial content creators.

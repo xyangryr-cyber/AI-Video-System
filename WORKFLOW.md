@@ -10,41 +10,56 @@
 
 | # | 组件 | 职责 | 触发方式 | 当前状态 |
 |---|---|---|---|---|
-| 1 | **SPEC-KIT**（14 个 `/speckit-*` skill） | 新功能流程：specify→plan→tasks→implement | Claude Code 里输入 `/speckit-xxx` | ✅ 已装 |
+| 1 | **SPEC-KIT**（14 个 `/speckit-*` skill） | 新功能流程：specify→plan→tasks→implement | **你手动**输入 `/speckit-xxx` | ✅ 已装 |
 | 2 | **Bug-fix 4 skill**（自建） | Bug 流程：report→analyze→fix→verify | `/fix-report` 等 | ⏳ 待建 |
-| 3 | **Claude Code Stop hook** | 我每次回完话自动跑 unit test | `~/.claude/settings.json` | ⏳ 待配 |
-| 4 | **pre-commit framework** | 本地提交门禁（lint/format/type/unit） | `git commit` 时自动 | ⏳ 待装 |
-| 5 | **GitHub Actions（分层 CI）** | 远程门禁：fast 层 + slow 层 | `git push` / PR 时 | ⚠️ 已有但未分层 |
-| 6 | **commit-task.sh** | 提交 + PROGRESS.md SHA 反填 | 手动调用 | ✅ 已有 |
-| 7 | **ship.sh**（自建） | 开 PR + 等 CI + 合并提示 | 手动调用 | ⏳ 待建 |
-| 8 | **GitHub Branch Protection + auto-merge** | 强制 CI 全绿才能合 | GitHub web 配置 | ⏳ 待配 |
-| 9 | **superpowers:using-git-worktrees** | 多任务并行加速 | 按需 `/superpowers-using-git-worktrees` | ✅ 已装（按需启用） |
+| 3 | **PostToolUse hook（自动测试-修复循环）** | 我每次改代码后自动跑相关测试，失败我自动修 | Edit/Write 工具触发 | ⏳ 待配 |
+| 4 | **`/done` slash command（自建）** | 完成一个 task 时自动：verify→质量门禁→commit→（必要时）开 PR | **你手动**输入 `/done SPEC-X-NNN "subject"` | ⏳ 待建 |
+| 5 | **pre-commit framework**（含架构/覆盖率门禁） | 本地提交门禁：lint/type/madge/coverage/unit | `git commit` 时自动 | ⏳ 待装 |
+| 6 | **GitHub Actions（分层 CI + flaky 检测）** | 远程门禁：fast 层 + slow 层（含同测试跑 3 次） | `git push` / PR 时 | ⚠️ 已有但未分层 |
+| 7 | **commit-task.sh** | 提交 + PROGRESS.md SHA 反填 | 由 `/done` 自动调用 | ✅ 已有 |
+| 8 | **ship.sh**（自建） | 开 PR + 等 CI + 合并提示 | 由 `/done` 在最后一个 task 完成时自动调用 | ⏳ 待建 |
+| 9 | **GitHub Branch Protection + auto-merge** | 强制 CI 全绿才能合 | GitHub web 配置 | ⏳ 待配 |
+| 10 | **superpowers:using-git-worktrees** | 多任务并行加速 | 按需 `/superpowers-using-git-worktrees` | ✅ 已装（按需启用） |
 
 > 图例：✅ 可立即用 / ⏳ 待落地 / ⚠️ 部分可用
+> **角色分工**：组件 1/4/10 你主动触发；2/3/5/6/7/8/9 自动触发或被动响应。
 
 ---
 
 ## 2. 日常使用：6 个典型场景
 
-### 场景 A — 开发一个新功能
+### 场景 A — 开发一个新功能（你主导，AI 在最后一公里接管）
 
 ```
-你 → Claude Code 会话:
-  "我想做 X 功能，需求是 ..."
+阶段 1：规划（你手动驱动 SPEC-KIT，按需调用）
+  /speckit-specify "X 功能..."     ← 生成 specs/<NNN>-<slug>/spec.md（自动建 git 分支）
+  /speckit-clarify                 ← 可选：5 个澄清问题，单人项目可跳过
+  /speckit-plan                    ← 生成 plan.md
+  /speckit-tasks                   ← 生成 tasks.md（T001/T002...）
+  /speckit-analyze                 ← 必跑，跨文档一致性扫描
 
-Claude → 自动按下面流程走（所有命令在 Claude Code 里输入）:
-  /speckit-specify "X 功能..."          ← 生成 specs/<NNN>-<slug>/spec.md（自动建 git 分支）
-  /speckit-clarify                      ← 5 个澄清问题，回灌 spec
-  /speckit-plan                         ← 生成 plan.md（架构、技术选型）
-  /speckit-tasks                        ← 生成 tasks.md（T001/T002...）
-  /speckit-analyze                      ← 跨文档一致性扫描（必跑，是免费保险）
-  /speckit-implement                    ← 按 tasks.md 顺序执行 TDD
+阶段 2：开发（你 + 我协作，PostToolUse hook 自动跑测试）
+  - 你写代码 / 让我写代码
+  - 每次 Edit/Write 触发 → PostToolUse hook 自动跑相关测试
+  - 测试失败 → 我下一轮看到失败，自动用 TDD + systematic-debugging 修
+  - 连续修 3 次还红 → hook 输出 "STOP: human intervention needed"，我停下问你
+  - 直到全绿（你不需要等待，看到 hook 输出就知道状态）
 
-每个任务完成 → 我自动调 commit-task.sh 提交 + 反填 PROGRESS.md。
-全部任务完 → 你输入 "ship"，我调 ship.sh 开 PR。
+阶段 3：完成（你打一行命令，AI 全自动接管最后一公里）
+  /done SPEC-X-NNN "implement project service"
+  
+  ↓ /done 自动链:
+    ① 跑 task card 的 verification_commands         ← 失败 → 停，输出报告
+    ② 跑质量门禁：madge 架构循环 + coverage 阈值     ← 失败 → 停，输出报告
+    ③ 全过 → commit-task.sh（提交 + 反填 PROGRESS）
+    ④ 检查 tasks.md：该 SPEC 还有 [ ] 未完成？
+        - 是 → 提示"还剩 N 个任务"，结束
+        - 否 → 自动调 ship.sh（push + 开 PR + 等 CI + 提示合并）
 ```
 
-**单人项目可以跳过 `/speckit-clarify`**，需求自己写清楚就行。
+**为什么这样设计**：
+- 你的反馈：开发完容易忘记 commit + PR → `/done` 是单一触发器，避免遗忘
+- 你不主导 SPEC-KIT 流程时（比如只是改个小 bug），不用走 `/speckit-*`，直接进阶段 2/3
 
 ### 场景 B — 修一个 bug（待建 skill 到位后）
 
@@ -114,14 +129,37 @@ Claude:
 
 **触发条件**：只有 2+ 个 SPEC 真的可以独立推进时才用。单 SPEC 不要开。
 
-### 场景 F — 我不想守着等测试（Stop hook 落地后）
+### 场景 F — AI 自动测试-修复循环（PostToolUse hook 落地后）
 
-```
-你不需要做什么。Claude Code 每次回完话都会自动跑 pytest tests/unit -x，
-失败结果会回灌到下一轮对话里，我看到红了会自动尝试修。
+**这是你 Q4 要的能力。不需要你做任何操作，自动发生。**
 
-你只要做：观察 → 在我修不动时介入。
+机制：
 ```
+我（或你）改了 src/backend/services/foo.py
+  ↓ PostToolUse hook 触发（监听 Edit/Write 工具）
+  ↓ 推断关联测试：tests/unit/services/test_foo.py
+  ↓ 跑 pytest tests/unit/services/test_foo.py -x --tb=short
+  ↓
+  ├─ 全绿 → 静默继续，loop_count 清零
+  └─ 红 → 失败信息打到 stdout
+       ↓ 我下一轮回话自动看到失败
+       ↓ 我用 superpowers:test-driven-development + systematic-debugging 修
+       ↓ 修完 → 又触发 hook → 再跑 → ...
+       
+失控保护:
+  - .claude/loop_count 文件累计连续失败次数
+  - 第 3 次还红 → hook 输出加 "STOP: 3 consecutive failures, human intervention needed"
+  - 我看到 STOP 信号会主动停下，告诉你"我修不动了，原因是..."
+```
+
+**不能完全自动的两类**（必须你介入）：
+1. **测试本身写错**（弱测试通过但代码其实坏） → 在 ship 前用 reviewer subagent 审一次
+2. **需要架构变更的 bug** → 我发现 fix 越改越复杂时会停下问你
+
+**你的角色**：
+- 平时：观察 hook 输出，看到红又绿是正常的
+- STOP 信号出现：介入决策
+- 重要 PR 前：手动跑一次 reviewer 看测试质量
 
 ---
 
@@ -130,27 +168,33 @@ Claude:
 > 全部完成约 **半天工作量**。可以一次做完，也可以按需要分批。
 > 每步落地后这份文档对应组件的"状态"列改成 ✅。
 
-### Step 1️⃣ — pre-commit（30 分钟，零风险）
+### Step 1️⃣ — pre-commit（含架构 + 覆盖率门禁，45 分钟）
 
 ```bash
 # 1. 安装
-pip install pre-commit
+pip install pre-commit pytest-cov
+npm install -g madge   # 架构依赖循环检查
 
 # 2. 在仓库根写 .pre-commit-config.yaml
 cat > .pre-commit-config.yaml <<'YAML'
 repos:
+  # ── 代码风格 ──
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.6.9
     hooks:
       - id: ruff
         args: [--fix]
       - id: ruff-format
+
+  # ── Python 类型 ──
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.13.0
     hooks:
       - id: mypy
         files: ^src/backend/
         additional_dependencies: [pydantic, fastapi, sqlalchemy]
+
+  # ── 本地钩子 ──
   - repo: local
     hooks:
       - id: tsc
@@ -159,65 +203,146 @@ repos:
         language: system
         files: ^src/frontend/.*\.(ts|tsx)$
         pass_filenames: false
+
+      # ★ 新增：架构依赖循环检查（HARNESS §10.2）
+      - id: madge-backend
+        name: Madge circular dependency (backend)
+        entry: madge --circular src/backend
+        language: system
+        files: ^src/backend/.*\.py$
+        pass_filenames: false
+      - id: madge-frontend
+        name: Madge circular dependency (frontend)
+        entry: madge --circular --extensions ts,tsx src/frontend
+        language: system
+        files: ^src/frontend/.*\.(ts|tsx)$
+        pass_filenames: false
+
+      # ★ 新增：单测 + 覆盖率门禁
       - id: pytest-unit
-        name: Pytest unit tests (fast)
-        entry: pytest tests/unit -x --tb=short
+        name: Pytest unit + coverage (>=80%)
+        entry: pytest tests/unit -x --tb=short --cov=src/backend --cov-fail-under=80
         language: system
         files: ^(src/backend/|tests/unit/).*\.py$
+        pass_filenames: false
+      - id: vitest-unit
+        name: Vitest + coverage (>=70%)
+        entry: pnpm --filter frontend exec vitest run --coverage --coverage.thresholds.lines=70
+        language: system
+        files: ^src/frontend/.*\.(ts|tsx)$
         pass_filenames: false
 YAML
 
 # 3. 启用
 pre-commit install
 
-# 4. 验证：故意写个错的 import 试试
-echo "import nonexistent_module" >> src/backend/services/foo.py
-git add src/backend/services/foo.py
-git commit -m "test pre-commit"   # 应该被拦下来
-git restore --staged --worktree src/backend/services/foo.py
+# 4. 验证（4 个测试场景）
+# ① lint 错
+echo "import nonexistent" >> src/backend/services/foo.py
+git add . && git commit -m "test"   # 应被 ruff 拦
+git restore --staged --worktree .
+
+# ② 架构循环（手动制造一个 import 循环）
+# ③ 覆盖率不足（删掉一个测试看是否 80% 触发）
+# ④ TS 类型错（改 .tsx 加 const x: number = "string"）
 ```
 
-**对应 HARNESS §10.1**——把那一节列的命令落地成自动门禁。
+**对应 HARNESS §10.1 + §10.2** —— 把那两节列的命令全部落地成自动门禁。
+**性能注意**：pytest 覆盖率会比纯单测慢 2-3 倍。如果太慢，把 coverage 移到 CI fast 层，pre-commit 只跑纯单测。
 
-### Step 2️⃣ — Claude Code Stop hook（10 分钟）
+### Step 2️⃣ — Claude Code Hook：自动测试-修复循环（30 分钟）
+
+**这是实现"AI 自动测试-修复循环"的核心**。配置项目级 hook（`.claude/settings.json`），不污染全局。
 
 ```bash
-# 编辑 ~/.claude/settings.json（不是项目内的，是全局）
-# 或者只对本项目：在项目根 .claude/settings.json
-```
+# 1. 写一个智能测试 runner（按改动文件推断要跑哪些测试）
+mkdir -p .claude/hooks
+cat > .claude/hooks/run_related_tests.sh <<'BASH'
+#!/usr/bin/env bash
+# 输入：$CLAUDE_FILE_PATH（被编辑的文件绝对路径）
+# 行为：推断关联测试 → 跑 → 失败计数累加 → 超阈值输出 STOP
+set -uo pipefail
 
-写入（如果文件已存在，合并 hooks 段）：
+REPO_ROOT="/Users/xyangryr/Desktop/硅基员工/AI-Video-System"
+COUNT_FILE="$REPO_ROOT/.claude/loop_count"
+MAX_LOOPS=3
+FILE="${CLAUDE_FILE_PATH:-}"
 
-```json
+[ -z "$FILE" ] && exit 0
+cd "$REPO_ROOT" || exit 0
+
+# 推断测试路径
+if [[ "$FILE" == *src/backend/*.py ]]; then
+  REL="${FILE#*src/backend/}"
+  TEST="tests/unit/${REL%.py}.py"
+  TEST_ALT="tests/unit/$(dirname "$REL")/test_$(basename "$REL")"
+  for t in "$TEST" "$TEST_ALT"; do
+    [ -f "$t" ] && CMD="pytest $t -x --tb=short" && break
+  done
+elif [[ "$FILE" == *src/frontend/*.tsx || "$FILE" == *src/frontend/*.ts ]]; then
+  REL="${FILE#*src/frontend/}"
+  TEST="src/frontend/${REL%.*}.test.${REL##*.}"
+  [ -f "$TEST" ] && CMD="pnpm --filter frontend exec vitest run $TEST"
+elif [[ "$FILE" == *tests/*.py ]]; then
+  CMD="pytest $FILE -x --tb=short"
+fi
+
+[ -z "${CMD:-}" ] && exit 0
+
+# 跑测试
+OUTPUT=$(eval "$CMD" 2>&1)
+RC=$?
+
+if [ $RC -eq 0 ]; then
+  echo "0" > "$COUNT_FILE"
+  echo "✓ Tests passed: $CMD"
+else
+  COUNT=$(cat "$COUNT_FILE" 2>/dev/null || echo 0)
+  COUNT=$((COUNT + 1))
+  echo "$COUNT" > "$COUNT_FILE"
+  echo "✗ Tests failed (consecutive failures: $COUNT/$MAX_LOOPS)"
+  echo "$OUTPUT" | tail -40
+  if [ "$COUNT" -ge "$MAX_LOOPS" ]; then
+    echo ""
+    echo "STOP: $MAX_LOOPS consecutive failures, human intervention needed."
+    echo "Suggest: review test correctness, check for architectural issue, or revert."
+  fi
+fi
+exit 0
+BASH
+chmod +x .claude/hooks/run_related_tests.sh
+
+# 2. 配置 .claude/settings.json
+cat > .claude/settings.json <<'JSON'
 {
   "hooks": {
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cd /Users/xyangryr/Desktop/硅基员工/AI-Video-System && pytest tests/unit -x --tb=short 2>&1 | tail -50"
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "if [[ \"$CLAUDE_FILE_PATH\" == *.py ]]; then ruff check --fix \"$CLAUDE_FILE_PATH\" 2>&1 | tail -5; fi"
+            "command": "/Users/xyangryr/Desktop/硅基员工/AI-Video-System/.claude/hooks/run_related_tests.sh"
           }
         ]
       }
     ]
   }
 }
+JSON
 ```
 
-**重启 Claude Code 会话**生效。验证：让我编辑一个 .py 文件，看是否自动 ruff；让我说 "done"，看是否自动跑 pytest。
+**重启 Claude Code 会话生效**。
+
+**验证**：
+- 让我编辑一个 .py 文件 → 应看到 hook 输出 "✓ Tests passed" 或 "✗ Tests failed"
+- 故意让我改坏一个函数 → 看到 ✗，我会自动尝试修
+- 改坏 3 次 → 看到 STOP 信号，我会主动停下问你
+
+**为什么用 PostToolUse 而不是 Stop**：
+- Stop hook 每次回完话都跑，纯调研对话也跑很烦
+- PostToolUse + Edit/Write matcher 只在改了代码时才跑
+- 而且按文件路径推断关联测试，比跑全量快 10-50 倍
 
 ### Step 3️⃣ — Bug-fix 4 个 skill（半天）
 
@@ -262,9 +387,9 @@ Establish a deterministic, minimal reproduction. Output a failing test that capt
 
 其余 3 个 skill 套这个结构填内容（analyze 调 systematic-debugging；implement 走 TDD 红绿；verify 调 commit-task.sh）。
 
-### Step 4️⃣ — 分层 CI（1 小时）
+### Step 4️⃣ — 分层 CI（含 flaky 检测，1.5 小时）
 
-把现有 `.github/workflows/ci.yml` 拆成两个 job：
+把现有 `.github/workflows/ci.yml` 拆成两层：
 
 ```yaml
 # .github/workflows/ci.yml
@@ -274,29 +399,49 @@ on:
   push: { branches: [main] }
 
 jobs:
-  fast:                          # 应该 < 2 分钟
+  fast:                          # 应该 < 2 分钟，秒级反馈
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.11" }
       - run: pip install -r requirements.txt jsonschema
-      - run: ruff check src/backend/
-      - run: pytest tests/unit/ tests/contract/ -x
+      - name: Lint
+        run: ruff check src/backend/
+      - name: Architecture (no circular deps)
+        run: |
+          npm install -g madge
+          madge --circular src/backend
+          madge --circular --extensions ts,tsx src/frontend
+      - name: Unit + coverage
+        run: pytest tests/unit/ tests/contract/ -x --cov=src/backend --cov-fail-under=80
 
-  slow:                          # 5-10 分钟
-    needs: fast                  # fast 没过就别跑 slow，省 CI 配额
+  slow:                          # 5-10 分钟，含 flaky 检测
+    needs: fast                  # fast 没过就别跑 slow
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: docker compose -f docker-compose.dev.yml up -d
-      - run: pytest tests/integration/
-      - run: curl -sf http://localhost:3000/api/projects | python3 -c "import json,sys; json.load(sys.stdin)"
+      - name: Start services
+        run: docker compose -f docker-compose.dev.yml up -d
+      - name: Integration (run 3x to detect flaky)   # ★ 新增 flaky 检测
+        run: |
+          pip install pytest-repeat
+          pytest tests/integration/ --count=3 --tb=short
+      - name: Smoke
+        run: curl -sf http://localhost:3000/api/projects | python3 -c "import json,sys; json.load(sys.stdin)"
       - if: always()
         run: docker compose -f docker-compose.dev.yml down
+
+  # 可选第三层：mutation testing（每周 nightly 跑，不在 PR 上跑）
+  # 已经存在 .github/workflows/eval_regression.yml，按相同模式新增 mutation.yml 即可
 ```
 
-**好处**：lint/unit 错的 PR 在 2 分钟内显红，不用等 10 分钟。`needs: fast` 让快层失败时整个 slow 层不跑，省 CI 时间。
+**好处**：
+- lint/架构/unit 错的 PR 在 2 分钟内显红，不用等 10 分钟
+- `needs: fast` 让快层失败时整个 slow 层不跑，省 CI 时间
+- `pytest-repeat --count=3` 同测试跑 3 次，全过才算（flaky 检测，HARNESS §10.2 要求的延伸）
+
+**测试质量审查**（"Would a stub pass this test?"，HARNESS §4.2）：放到 `ship.sh` 里调一次 reviewer subagent，约 $0.05/PR。不在 CI 里自动跑因为成本不可控。
 
 ### Step 5️⃣ — ship.sh（2 小时）
 
@@ -339,7 +484,84 @@ fi
 
 `chmod +x scripts/ship.sh` 后即可用。
 
-### Step 6️⃣ — GitHub Branch Protection（5 分钟，web 操作）
+### Step 6️⃣ — `/done` slash command（解决"经常忘记 commit/PR"问题，1 小时）
+
+**这是核心新增**——你完成一个 task 时打一行命令，后面全自动。
+
+```bash
+mkdir -p .claude/skills/done
+cat > .claude/skills/done/SKILL.md <<'MD'
+---
+name: done
+description: Use when a task implementation is complete. Runs verification, quality gates, commits, and opens PR if this is the last task in the SPEC.
+user-invocable: true
+argument-hint: "<task_id> \"<imperative subject>\""
+---
+
+## Goal
+Single-command "finish this task" trigger. Replaces the easy-to-forget manual chain of verify → commit → PR.
+
+## Steps
+
+1. **Parse arguments**: `$ARGUMENTS` should be `SPEC-X-NNN "subject"`. If missing, ask once.
+
+2. **Locate task card**: Read `tasks/SPEC-X/<NNN>-*.md`. Extract `verification_commands` and `allowed_files`.
+
+3. **Run verification** (sequential, halt on first failure):
+   ```bash
+   for cmd in <verification_commands>; do
+     bash -c "$cmd" || { echo "FAILED: $cmd"; exit 1; }
+   done
+   ```
+   On failure → output the failing command + last 30 lines of output → STOP. Do NOT commit.
+
+4. **Run quality gates** (additional to pre-commit, in case of bypass):
+   ```bash
+   madge --circular src/backend src/frontend
+   pytest --cov=src/backend --cov-fail-under=80 -q
+   ```
+   On failure → STOP.
+
+5. **Verify staged files match `allowed_files`**:
+   - `git diff --cached --name-only` ⊆ task card's `allowed_files`?
+   - If extra files staged → STOP, ask user to confirm scope.
+
+6. **Commit**: `bash commit-task.sh "<task_id>" "<subject>"`
+
+7. **Check completion of SPEC**:
+   - Read `tasks/SPEC-X/` task cards, count remaining `status: pending|in_progress`.
+   - If > 0 → output "Remaining tasks in SPEC-X: N. Run /done again when next task completes." → STOP.
+   - If = 0 → proceed to step 8.
+
+8. **Auto-ship**: `bash scripts/ship.sh`
+   - Pushes branch, opens PR, watches CI.
+   - On CI green → outputs PR URL with merge instruction.
+   - On CI red → outputs failed log + suggests next debugging step (do NOT auto-fix on main path).
+
+## Constraints
+- NEVER commit if verification fails.
+- NEVER open PR if there are uncommitted changes after step 6.
+- NEVER merge automatically (red light per AGENTS.md decision matrix).
+- If `loop_count >= 3` from PostToolUse hook → STOP step 3, advise human review.
+
+## Reset on success
+After successful commit, reset `.claude/loop_count` to 0.
+MD
+```
+
+**使用**：
+```
+你 → Claude Code:
+  /done SPEC-C-012 "implement ProjectService.create()"
+  
+我 → 自动跑 verify → 质量门禁 → commit → 检查 SPEC 是否完成 → 必要时开 PR
+```
+
+**为什么这是核心**：你说会忘记 commit + PR——`/done` 把易忘的多步操作压成一行。
+
+---
+
+### Step 7️⃣ — GitHub Branch Protection（5 分钟，web 操作）
 
 GitHub 仓库 → Settings → Branches → Add branch protection rule:
 
@@ -354,20 +576,24 @@ GitHub 仓库 → Settings → Branches → Add branch protection rule:
 
 ---
 
-## 4. 每天最常用的 3 条命令
+## 4. 每天最常用的 2 条命令
 
-```bash
-# 1. 完成一个 task card 后提交
-./commit-task.sh SPEC-X-NNN "<imperative subject>"
+```
+1. 在 Claude Code 里启动新功能（你主动）
+   /speckit-specify "<需求>"
+   ... /speckit-plan / /speckit-tasks / /speckit-analyze ...
 
-# 2. 整个 feature 完成，开 PR
-./scripts/ship.sh
-
-# 3. 在 Claude Code 里启动新功能
-/speckit-specify "<需求>"
+2. 完成一个 task card（你主动，AI 接管后续全部）
+   /done SPEC-X-NNN "<imperative subject>"
 ```
 
-其他都是被自动触发的（pre-commit / Stop hook / CI / auto-merge）。
+**就这两条**。其他全部自动：
+- `commit-task.sh` 由 `/done` 自动调
+- `ship.sh` 由 `/done` 在最后一个 task 完成时自动调
+- pre-commit 在 `git commit` 时自动跑（被 commit-task.sh 触发）
+- PostToolUse hook 在每次 Edit/Write 时自动跑测试
+- CI 在 `git push` / 开 PR 时自动跑
+- auto-merge 在 CI 全绿时由 GitHub 自动合（如开了 Branch Protection）
 
 ---
 
@@ -390,25 +616,30 @@ GitHub 仓库 → Settings → Branches → Add branch protection rule:
 - **HARNESS.md** 是宪法（目录权限、TDD 强制、PROGRESS 格式等）。本流程**遵守它**，不替代它。
 - **CLAUDE.md** 是地图（去哪找文件、SPEC 依赖顺序）。本流程**用它导航**。
 - **AGENTS.md §决策权限矩阵** 决定我什么时候自己做、什么时候停下问。本流程**符合矩阵**：
-  - 🟢 commit-task.sh / pre-commit / Stop hook → AI 自己跑
-  - 🟡 ship.sh 开 PR → AI 跑（PR 是可逆的，不动 main）
-  - 🔴 在 GitHub 上点 Merge → 永远人工，不自动
+  - 🟢 PostToolUse hook 跑测试 / pre-commit / commit-task.sh / madge / coverage → AI 自动
+  - 🟡 `/done` 触发的 ship.sh 开 PR → AI 自动（PR 可逆，不动 main）
+  - 🟡 PostToolUse 检测到测试红，AI 自动 TDD 修复（最多 3 轮）→ AI 自动，超阈值停下问你
+  - 🔴 在 GitHub web 上点 Merge → 永远人工，绝不自动
+  - 🔴 修改 HARNESS.md / CLAUDE.md / AGENTS.md → 永远人工
 
 ---
 
-## 7. 落地优先级（如果只能做一部分）
+## 7. 落地优先级（按你的核心诉求重排）
 
-| 优先级 | Step | 价值 | 成本 |
+你的核心诉求：**(a) 完成时不忘 commit/PR  (b) 自动测试-修复循环  (c) 质量门禁**
+
+| 优先级 | Step | 解决的诉求 | 成本 |
 |---|---|---|---|
-| 🔴 必做 | Step 1 (pre-commit) | 防止低级错误污染 git 历史 | 30min |
-| 🔴 必做 | Step 4 (分层 CI) | CI 反馈从 10min 缩到 2min | 1h |
-| 🟡 强烈建议 | Step 3 (bug-fix skills) | 覆盖 50%+ 真实工作（bug） | 半天 |
-| 🟡 强烈建议 | Step 5 (ship.sh) | 省手动开 PR + 守 CI 的时间 | 2h |
-| 🟢 锦上添花 | Step 2 (Stop hook) | 全自动测试反馈，体验提升 | 10min |
-| 🟢 锦上添花 | Step 6 (Branch Protection) | 防御性，对单人项目意义不大 | 5min |
+| 🔴 必做 | **Step 6 (`/done` skill)** | (a) 一行触发完整收尾链 | 1h |
+| 🔴 必做 | **Step 2 (PostToolUse hook)** | (b) AI 自动测试-修复循环 + 失控保护 | 30min |
+| 🔴 必做 | **Step 1 (pre-commit + madge + coverage)** | (c) 本地强制门禁 | 45min |
+| 🔴 必做 | **Step 5 (ship.sh)** | `/done` 依赖它 | 2h |
+| 🟡 强烈建议 | Step 4 (分层 CI + flaky 检测) | (c) 远程门禁 + 反馈提速 | 1h |
+| 🟡 强烈建议 | Step 3 (bug-fix 4 skill) | 覆盖 50%+ 真实工作（bug 修复） | 半天 |
+| 🟢 锦上添花 | Step 7 (Branch Protection) | 单人项目防御性，团队必须 | 5min |
 
-**最小可用集**：Step 1 + Step 4，**90 分钟搞定**，立刻见效。
-**完整体验**：全部 6 步，**约 1 个工作日**。
+**核心组合（必做 4 项）**：Step 1 + 2 + 5 + 6，**约 4.5 小时**，落地后就实现了你的全部 3 个核心诉求。
+**完整体验**：全部 7 步，**约 1.5 个工作日**。
 
 ---
 
