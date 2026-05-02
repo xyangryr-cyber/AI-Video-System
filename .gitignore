@@ -1,0 +1,58 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node / frontend (anticipatory)
+node_modules/
+.next/
+dist/
+build/
+
+# Driver artefacts — verifier reports are ephemeral per-run state
+.verify/
+
+# Local settings / secrets
+.env
+.env.*
+!.env.example
+.claude/settings.local.json
+
+# Runtime DB & runtime artifacts (audio, projects, db)
+data/db/
+data/audio/
+data/projects/
+
+# Worktrees
+.worktrees/
+
+# Virtualenv
+.venv/
+.venv*
+
+# Build artifacts
+*.egg-info/
+
+# Vite dev server temp files
+*.timestamp-*.mjs
+
+# Editor
+.vscode/
+.idea/
+
+# Test reports & tooling caches
+test-results/
+src/frontend/test-results/
+src/frontend/playwright-report/
+.deepeval/
+.pnpm-store/
+
+# Document backup files
+docs/*.bak
+docs/*.bak2
+docs/*.backup

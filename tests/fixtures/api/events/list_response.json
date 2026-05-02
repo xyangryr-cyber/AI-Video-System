@@ -1,0 +1,5 @@
+[
+  {"id": "e1", "type": "phase.advanced", "project_id": "proj_001", "timestamp": "2026-04-17T10:00:00Z", "payload": {"agent_name": "ScriptAgent", "action": "generate", "progress": "100%"}},
+  {"id": "e2", "type": "agent.call", "project_id": "proj_001", "timestamp": "2026-04-17T10:05:00Z", "payload": {"agent_name": "TTSAgent", "action": "synthesize", "result": "ok"}},
+  {"id": "e3", "type": "gate.failed", "project_id": "proj_001", "timestamp": "2026-04-17T10:07:00Z", "payload": {"agent_name": "GateAgent", "action": "check", "result": "fail"}}
+]

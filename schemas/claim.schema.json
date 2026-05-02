@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-video-system/schemas/claim.schema.json",
+  "title": "Claim",
+  "description": "SPEC-A-100 / SPEC-0A.8: unified cross-phase claim record (fact/data/event/citation/image_backed). Mirrors src/shared/schemas/claim.py::Claim and src/shared/types/claim.ts::Claim.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "claim_id",
+    "claim_type",
+    "text",
+    "source_phase",
+    "source_artifact",
+    "blocking_level",
+    "verification_status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "claim_id": {
+      "type": "string",
+      "pattern": "^(?:claim_[A-Za-z0-9_]+|dp_[A-Za-z0-9_-]+)$",
+      "description": "Canonical `claim_{phase}_{seq}` or legacy v3.15 `dp_*` (key_data_point.data_point_id)."
+    },
+    "claim_type": {
+      "type": "string",
+      "enum": ["fact", "data", "event", "citation", "image_backed"]
+    },
+    "text": { "type": "string", "minLength": 1 },
+    "value": {
+      "oneOf": [
+        { "type": "number" },
+        { "type": "string" }
+      ]
+    },
+    "unit": { "type": "string" },
+    "entity": { "type": "string" },
+    "time_range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "type": "string" },
+        "end": { "type": "string" }
+      }
+    },
+    "source_phase": {
+      "type": "string",
+      "enum": ["P2", "P7", "P8", "P9", "user_input"]
+    },
+    "source_artifact": { "type": "string", "minLength": 1 },
+    "source_span": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_char", "end_char"],
+      "properties": {
+        "start_char": { "type": "integer", "minimum": 0 },
+        "end_char": { "type": "integer", "minimum": 0 },
+        "segment_id": { "type": "string" }
+      }
+    },
+    "blocking_level": {
+      "type": "string",
+      "enum": ["hard", "soft", "none"]
+    },
+    "verification_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "verifying",
+        "verified",
+        "failed",
+        "stale",
+        "superseded",
+        "user_disputed"
+      ]
+    },
+    "created_at": { "type": "string", "minLength": 1 },
+    "updated_at": { "type": "string", "minLength": 1 }
+  }
+}

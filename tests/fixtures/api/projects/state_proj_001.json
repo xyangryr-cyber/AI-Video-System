@@ -1,0 +1,26 @@
+{
+  "project": {
+    "project_id": "proj_001",
+    "title": "波动率大师",
+    "description": "期权策略解析",
+    "current_phase": 3,
+    "status": "active",
+    "category": "期权策略",
+    "updated_at": "2026-04-17T10:00:00Z"
+  },
+  "phases": [
+    { "phase_num": 0, "phase_name": "需求收集", "status": "completed", "artifact_version": 1, "artifact_status": "ok", "artifact_url": null, "review_status": null, "preferences_confirmed": true, "style_lock_path": null },
+    { "phase_num": 1, "phase_name": "研究规划", "status": "completed", "artifact_version": 1, "artifact_status": "ok", "artifact_url": null, "review_status": null, "preferences_confirmed": true, "style_lock_path": null },
+    { "phase_num": 2, "phase_name": "脚本生成", "status": "completed", "artifact_version": 1, "artifact_status": "ok", "artifact_url": null, "review_status": null, "preferences_confirmed": true, "style_lock_path": null },
+    { "phase_num": 3, "phase_name": "视觉优化", "status": "active", "artifact_version": 0, "artifact_status": null, "artifact_url": null, "review_status": "pending", "preferences_confirmed": false, "style_lock_path": null }
+  ],
+  "active_tasks": [],
+  "preferences": {
+    "pending_candidates": 0,
+    "last_confirmed_at": null
+  },
+  "system_status": {
+    "all_critical_ok": true,
+    "degraded_services": []
+  }
+}

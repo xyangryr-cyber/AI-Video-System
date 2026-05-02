@@ -1,0 +1,22 @@
+[
+  {
+    "data_point_id": "dp_gold_2024",
+    "label": "2024 黄金均价",
+    "value": 2650.5,
+    "unit": "USD/oz",
+    "source": "World Gold Council",
+    "trust_level": "source_verified",
+    "segment_id": "seg_001",
+    "usage": "S2E1 / P4 / P6",
+    "link": "https://www.gold.org/"
+  },
+  {
+    "data_point_id": "dp_inflation",
+    "label": "通胀率",
+    "value": "3.2%",
+    "unit": "",
+    "source": "国家统计局",
+    "trust_level": "user_verified",
+    "segment_id": "seg_002"
+  }
+]

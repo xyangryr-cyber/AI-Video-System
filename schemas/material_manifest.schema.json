@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-video-system.local/schemas/material_manifest.schema.json",
+  "title": "MaterialManifest",
+  "description": "P7A material manifest: per-project inventory of shot-level materials (chart/fact/news/figure/icon/image/video/quote) with verification-status state machine. Authority: SPEC_REVISION_REQ_v3.17 A-AUDP7A-3.",
+  "type": "object",
+  "unevaluatedProperties": false,
+  "required": ["project_id", "phase", "materials"],
+  "properties": {
+    "project_id": {"type": "string", "minLength": 1},
+    "phase": {"const": "7A"},
+    "materials": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "unevaluatedProperties": false,
+        "required": [
+          "material_id",
+          "shot_id",
+          "material_type",
+          "required",
+          "source",
+          "verification_status",
+          "fetched_at",
+          "rationale"
+        ],
+        "properties": {
+          "material_id": {"type": "string", "pattern": "^mat_\\d{3,}$"},
+          "shot_id": {"type": "string", "pattern": "^shot_\\d{2,}$"},
+          "material_type": {
+            "enum": [
+              "chart",
+              "fact",
+              "news",
+              "figure",
+              "icon",
+              "image",
+              "video",
+              "quote"
+            ]
+          },
+          "required": {"enum": ["hard", "soft"]},
+          "source": {
+            "type": "object",
+            "unevaluatedProperties": false,
+            "required": ["kind", "ref"],
+            "properties": {
+              "kind": {"enum": ["api", "url", "internal"]},
+              "ref": {"type": "string", "minLength": 1}
+            }
+          },
+          "verification_status": {
+            "enum": ["pending", "verified", "rejected", "missing"],
+            "description": "State machine: pending -> {verified | rejected | missing}. A transition back to `pending` from any terminal state is only legal via an explicit supplement flow (see validate_verification_status_transition in src/shared/schemas/material_manifest.py)."
+          },
+          "fetched_at": {"type": "string", "format": "date-time"},
+          "verified_at": {"type": "string", "format": "date-time"},
+          "rationale": {"type": "string", "minLength": 1},
+          "evidence_ref": {"type": "string"}
+        }
+      }
+    }
+  }
+}

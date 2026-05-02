@@ -1,0 +1,16 @@
+{
+  "list_response.json": {"schema": "project_state.ProjectSummary", "list": true},
+  "detail_p3.json": {"schema": "project_state.ProjectInfo"},
+  "key_data_points.json": {"schema": "shared_types.KeyDataPoint", "list": true},
+  "requirements_p0.json": {"schema": "artifacts.Requirements"},
+  "phase3_polished.json": {"schema": "artifacts.PolishedScriptArtifact"},
+  "candidates_p5.json": {"schema": "candidate.Candidate", "list": true},
+  "phase6_annotation_spans.json": {"schema": "artifacts.AnnotationSpan", "list": true},
+  "phase8_asset_sourcing.json": {"schema": "artifacts.AssetSourcingEntry", "list": true},
+  "phase9_keyframes.json": {"schema": "artifacts.KeyframeRenderEntry", "list": true},
+  "phase10_broll.json": {"schema": "artifacts.BRollEntry", "list": true},
+  "phase12_delivery_variants.json": {"schema": "artifacts.DeliveryVariant", "list": true},
+  "phase12_subtitle_downloads.json": {"schema": "artifacts.SubtitleDownload", "list": true},
+  "create_response.json": {"schema": "project_state.ProjectSummary"},
+  "state_proj_001.json": {"schema": "project_state.ProjectState"}
+}

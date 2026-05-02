@@ -1,0 +1,44 @@
+# [SPEC-B-100] claim_verification alerts.
+#
+# Authority:
+#   docs/specs/SPEC-B-infra-deploy.md §B-BDD-1.2 (v3.16 alert rule set)
+#   tasks/SPEC-B/B-100-claim-verification-worker.md (AC-3 threshold narrowing)
+#
+# Task card AC-3 fixes the operational thresholds at:
+#   - pending_count > 100  -> fire claim_verification_pending_over_100
+#   - dead_letter_count > 5 -> fire claim_verification_dead_letter_over_5
+# (SPEC-B §B-BDD-1.2 describes additional yellow/red pairs keyed on
+# a 50/200 ladder; those remain the higher-tier operational alerts, while
+# B-100 installs this tighter gating as the enforced CI/runtime rule set.)
+#
+# Alert fan-out: owner = Backend DRI, severity per SPEC-14.4; alert sink
+# is the structured-logging emitter consumed by scripts/dashboard_metrics.py.
+version: 1
+
+alerts:
+  - name: claim_verification_pending_over_100
+    metric: pending_count
+    condition: greater_than
+    threshold: 100
+    severity: ERROR
+    owner: backend-dri
+    description: >-
+      Pending claim_verification tasks exceed 100 — worker throughput is
+      saturated or a systemic failure is filling the queue.
+    action: >-
+      Inspect worker logs; verify provider availability; consider
+      temporary scale-up of the claim_verification Huey consumer.
+
+  - name: claim_verification_dead_letter_over_5
+    metric: dead_letter_count
+    condition: greater_than
+    threshold: 5
+    severity: ERROR
+    owner: backend-dri
+    description: >-
+      More than 5 claim_verification tasks have exhausted retries
+      (verification_records.verdict='inconclusive'). Indicates upstream
+      provider outage or persistent claim-format regression.
+    action: >-
+      Inspect verification_records with verdict='inconclusive'; triage
+      provider health; human-review the affected claims.

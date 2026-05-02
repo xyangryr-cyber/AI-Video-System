@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-video-system.local/schemas/style_lock.schema.json",
+  "title": "StyleLock",
+  "type": "object",
+  "required": [
+    "project_id",
+    "locked_at",
+    "locked_by",
+    "color_palette",
+    "font_family",
+    "chart_style"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "project_id": {"type": "string", "minLength": 1},
+    "locked_at": {"type": "string", "format": "date-time"},
+    "locked_by": {"type": "string", "enum": ["user_confirmed", "auto_recommended"]},
+    "color_palette": {
+      "type": "object",
+      "required": ["primary", "secondary", "accent", "background"],
+      "additionalProperties": false,
+      "properties": {
+        "primary": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
+        "secondary": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
+        "accent": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
+        "background": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"}
+      }
+    },
+    "font_family": {"type": "string", "minLength": 1},
+    "chart_style": {
+      "type": "object",
+      "required": ["axis_color", "grid_color", "label_font_size"],
+      "additionalProperties": false,
+      "properties": {
+        "axis_color": {"type": "string", "minLength": 1},
+        "grid_color": {"type": "string", "minLength": 1},
+        "label_font_size": {"type": "integer", "minimum": 1}
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+[project]
+name = "ai-video-system"
+version = "0.0.0"
+description = "AI video production system — internal."
+requires-python = ">=3.11"
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "pytest-bdd>=7.1",
+  "pytest-xdist>=3.5",
+  "deepeval>=1.0",
+  "pydantic>=2.5",
+  "ruff>=0.4",
+  "mypy>=1.8",
+  "pyyaml>=6.0",
+  "types-PyYAML>=6.0",
+  "types-jsonschema>=4.20",
+]
+
+[tool.pytest.ini_options]
+markers = [
+  "eval: agent eval set; run with `pytest tests/eval/ --eval-mode` (HARNESS §10.2). Skipped in default unit/integration runs.",
+  "bdd: pytest-bdd scenario wrapper; tag-selectable via `-m '<tag>'`.",
+  "router: IntentRouter BDD scenarios (auto-tagged by pytest-bdd from @router feature tag).",
+  "preferences: PreferenceExtractor BDD scenarios (auto-tagged by pytest-bdd from @preferences feature tag).",
+  "safety: SafetyPolicyEngine BDD scenarios (auto-tagged by pytest-bdd from @safety feature tag).",
+  "observability: Observability / alerting BDD scenarios (auto-tagged by pytest-bdd from @observability feature tag).",
+  "gatekeeper: GateKeeper BDD scenarios (auto-tagged by pytest-bdd from @gatekeeper feature tag).",
+  "phase4: Phase 4 TTS / async audio generation BDD scenarios (auto-tagged by pytest-bdd from @phase4 feature tag).",
+  "phase5: Phase 5 BGM generation / skip-branch BDD scenarios (auto-tagged by pytest-bdd from @phase5 feature tag).",
+  "phase6: Phase 6 SFX planning / overlay BDD scenarios (auto-tagged by pytest-bdd from @phase6 feature tag).",
+  "phase8: Phase 8 keyframe render / degradation BDD scenarios (auto-tagged by pytest-bdd from @phase8 feature tag).",
+  "phase10: Phase 10 rough-cut composition BDD scenarios (auto-tagged by pytest-bdd from @phase10 feature tag).",
+  "phase11: Phase 11 final-delivery / completion BDD scenarios (auto-tagged by pytest-bdd from @phase11 feature tag).",
+  "preferences-2: Audio writeback / scope-suggestion BDD scenarios for features/preferences-2.feature.",
+  "error_ux: Error-tier / modal-vs-toast / recovery-action BDD scenarios for features/error_ux.feature.",
+  "navigation: Project-list / workflow navigation / history-view BDD scenarios (auto-tagged by pytest-bdd from @navigation feature tag).",
+  "performance: Nonfunctional latency / reconnect-recovery BDD scenarios (auto-tagged by pytest-bdd from @performance feature tag).",
+  "classification: Intent classification BDD scenarios (auto-tagged by pytest-bdd from @classification feature tag).",
+]
+bdd_features_base_dir = "tests"
+
+[tool.mypy]
+explicit_package_bases = true

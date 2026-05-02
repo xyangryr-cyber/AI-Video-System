@@ -1,0 +1,1 @@
+{"input": {"messages": [{"role": "user", "content": "Write a 30-second finance intro"}], "phase": 1}, "expected_output": {"sections": [{"type": "intro", "duration_seconds": 30}]}, "eval_criteria": ["has_intro_section", "duration_approx_30"], "tags": ["script", "P1", "smoke"]}

@@ -1,0 +1,52 @@
+# [SPEC-B-001] Three-service topology: web (Vite) / api (FastAPI) / worker (Huey).
+#
+# Notes:
+# - SPEC-B card names the web service "Next.js"; actual frontend is Vite+React 19
+#   (see src/frontend/package.json). docker-compose reflects the implemented stack.
+# - `build.context: .` so pyproject.toml at repo root is accessible to Python builds.
+# - api/worker do NOT have running entrypoints until SPEC-B-003 (Huey) and
+#   SPEC-B-004 (async tasks API) land; `docker compose up` will succeed on `web`
+#   and fail-fast on `api`/`worker` until those tasks ship.
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: src/frontend/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src/frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+    depends_on: [api]
+
+  api:
+    build:
+      context: .
+      dockerfile: src/backend/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+    command: uvicorn src.backend.api.main:app --host 0.0.0.0 --port 8000 --reload
+
+  worker:
+    build:
+      context: .
+      dockerfile: src/backend/Dockerfile
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+    command: python -m src.backend.workers.run
+    depends_on:
+      - api

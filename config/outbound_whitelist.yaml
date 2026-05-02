@@ -1,0 +1,33 @@
+# [SPEC-B-016] Outbound gateway whitelist configuration.
+#
+# Authority:
+#   docs/specs/SPEC_REVISION_REQ_v3.17_2026-04-17.md §B-AUDP7A-4
+#   (SPEC-12 outbound gateway + SPEC-13.2 security + SPEC-14.4 alert owner)
+#
+# Each entry under `outbound_whitelist` is a per-agent policy:
+#   - agent:         Agent name as seen by the gateway dispatcher.
+#   - allowed_hosts: Whitelisted hostnames (exact match, case-insensitive).
+#   - blocked_apis:  API identifiers explicitly forbidden for this agent.
+#   - on_block:      Action contract when the gateway refuses an egress.
+#   - alert:         SPEC-14.4 alert owner + severity on block.
+#
+# Gateway code: src/backend/infra/outbound_gateway.py
+# Validator:    scripts/infra/validate_outbound_config.py
+version: 1
+
+outbound_whitelist:
+  - agent: KeyframeRenderAgent
+    allowed_hosts:
+      - cdn.internal.aivs        # internal CDN (P7A verified materials)
+      - financial-data.internal  # internal DataService (chart materials)
+      - localhost                # local Remotion bundle + dev loopback
+    blocked_apis:
+      - b_roll_search
+      - news_search
+      - any LLM-generated URL fetch
+    on_block:
+      log_level: ERROR
+      raise: OutboundBlockedException
+    alert:
+      severity: P0
+      owner: render-team

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "proj_001",
+    "project_id": "proj_001",
+    "title": "黄金价格走势分析",
+    "description": "分析近期黄金价格走势及投资展望",
+    "category": "行业分析",
+    "current_phase": 2,
+    "latest_reached_phase": 5,
+    "progress": 25,
+    "status": "in_progress",
+    "updated_at": "2026-04-17T08:30:00Z"
+  },
+  {
+    "id": "proj_002",
+    "project_id": "proj_002",
+    "title": "十五五规划解读",
+    "description": "解读十五五规划政策要点",
+    "category": "政策解读",
+    "current_phase": 1,
+    "latest_reached_phase": 1,
+    "progress": 10,
+    "status": "awaiting_user",
+    "updated_at": "2026-04-17T07:00:00Z"
+  },
+  {
+    "id": "proj_003",
+    "project_id": "proj_003",
+    "title": "AI 行业周报",
+    "description": "人工智能行业最新动态周报",
+    "category": "行业分析",
+    "current_phase": 8,
+    "latest_reached_phase": 8,
+    "progress": 70,
+    "status": "completed",
+    "updated_at": "2026-04-16T20:00:00Z"
+  }
+]

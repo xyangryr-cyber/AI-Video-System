@@ -1,0 +1,15 @@
+[
+  {
+    "file_name": "broll_gold_bars.mp4",
+    "duration_sec": 15.0,
+    "match_label": "gold ingots, financial close-up",
+    "license": "Pexels (CC0)",
+    "source_url": "https://www.pexels.com/video/12345"
+  },
+  {
+    "file_name": "broll_chart_screen.mp4",
+    "duration_sec": 12.0,
+    "match_label": "trading screen, candlestick chart",
+    "license": "Internal asset library"
+  }
+]

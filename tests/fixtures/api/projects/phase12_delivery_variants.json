@@ -1,0 +1,18 @@
+[
+  {
+    "platform": "bilibili",
+    "resolution": "1920x1080",
+    "codec": "H.264",
+    "aspect_ratio": "16:9",
+    "file_size_mb": 180.0,
+    "download_url": "https://cdn/final_bilibili.mp4"
+  },
+  {
+    "platform": "douyin",
+    "resolution": "1080x1920",
+    "codec": "H.265",
+    "aspect_ratio": "9:16",
+    "file_size_mb": 165.0,
+    "download_url": "https://cdn/final_douyin.mp4"
+  }
+]

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-video-system.local/schemas/timeline.schema.json",
+  "title": "Timeline",
+  "type": "object",
+  "required": ["segments", "total_duration_sec", "sample_rate"],
+  "additionalProperties": false,
+  "properties": {
+    "segments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "segment_id",
+          "text",
+          "start_sec",
+          "end_sec",
+          "audio_path",
+          "voice_params",
+          "word_count"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "segment_id": {"type": "string", "minLength": 1},
+          "text": {"type": "string"},
+          "start_sec": {"type": "number", "minimum": 0},
+          "end_sec": {"type": "number", "minimum": 0},
+          "audio_path": {"type": "string", "minLength": 1},
+          "voice_params": {
+            "type": "object",
+            "required": ["rate_multiplier", "emotion"],
+            "additionalProperties": false,
+            "properties": {
+              "rate_multiplier": {"type": "number", "exclusiveMinimum": 0},
+              "emotion": {"type": "string", "minLength": 1}
+            }
+          },
+          "word_count": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "total_duration_sec": {"type": "number", "minimum": 0},
+    "sample_rate": {"type": "integer", "minimum": 1}
+  }
+}

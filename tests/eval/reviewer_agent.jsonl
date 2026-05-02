@@ -1,0 +1,1 @@
+{"input": {"messages": [{"role": "user", "content": "Review this script section"}], "phase": 3}, "expected_output": {"decision": "approve"}, "eval_criteria": ["valid_decision", "has_reasons"], "tags": ["reviewer", "P3", "smoke"]}

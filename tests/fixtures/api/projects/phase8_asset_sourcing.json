@@ -1,0 +1,16 @@
+[
+  {
+    "shot_id": "S1E1",
+    "status": "not_needed",
+    "need": null,
+    "action": null,
+    "data": null
+  },
+  {
+    "shot_id": "S2E3",
+    "status": "fetched",
+    "need": "historical gold price chart 2014-2024",
+    "action": "fetched from World Gold Council CSV",
+    "data": {"source_url": "https://www.gold.org/data.csv", "row_count": 120}
+  }
+]

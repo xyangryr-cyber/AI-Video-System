@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-video-system.local/schemas/requirements.schema.json",
+  "title": "Requirements",
+  "type": "object",
+  "required": [
+    "project_id",
+    "title",
+    "topic",
+    "duration_class",
+    "target_duration",
+    "target_word_count",
+    "platform",
+    "category",
+    "narrative_template",
+    "voice_preferences",
+    "subtitle_preferences"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "project_id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "topic": {"type": "string", "minLength": 5},
+    "duration_class": {"type": "string", "enum": ["short", "medium", "long"]},
+    "target_duration": {
+      "type": "object",
+      "required": ["min_sec", "max_sec"],
+      "additionalProperties": false,
+      "properties": {
+        "min_sec": {"type": "integer", "minimum": 0},
+        "max_sec": {"type": "integer", "minimum": 0}
+      }
+    },
+    "target_word_count": {
+      "type": "object",
+      "required": ["min", "max"],
+      "additionalProperties": false,
+      "properties": {
+        "min": {"type": "integer", "minimum": 0},
+        "max": {"type": "integer", "minimum": 0}
+      }
+    },
+    "platform": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["platform", "role"],
+        "additionalProperties": false,
+        "properties": {
+          "platform": {"type": "string", "minLength": 1},
+          "role": {"type": "string", "enum": ["primary", "secondary"]}
+        }
+      }
+    },
+    "category": {
+      "type": "object",
+      "required": ["level1", "level2"],
+      "additionalProperties": false,
+      "properties": {
+        "level1": {"type": "string", "minLength": 1},
+        "level2": {"type": "string", "minLength": 1}
+      }
+    },
+    "narrative_template": {
+      "type": "string",
+      "enum": [
+        "chronological",
+        "progressive",
+        "comparative",
+        "problem_solution",
+        "storytelling"
+      ]
+    },
+    "voice_preferences": {
+      "type": "object",
+      "required": ["voice_id", "style"],
+      "additionalProperties": false,
+      "properties": {
+        "voice_id": {"type": "string", "minLength": 1},
+        "style": {"type": "string", "minLength": 1}
+      }
+    },
+    "subtitle_preferences": {
+      "type": "object",
+      "required": ["style", "highlight_enabled"],
+      "additionalProperties": false,
+      "properties": {
+        "style": {"type": "string", "enum": ["word_by_word", "sentence"]},
+        "highlight_enabled": {"type": "boolean"}
+      }
+    }
+  }
+}

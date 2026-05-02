@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-video-system.local/schemas/shot_material_bindings.schema.json",
+  "title": "ShotMaterialBindings",
+  "description": "P7A shot -> material bindings (required vs optional). Cross-artifact invariant: every material_id referenced here MUST exist in the companion material_manifest.json. Authority: SPEC_REVISION_REQ_v3.17 A-AUDP7A-3.",
+  "type": "object",
+  "unevaluatedProperties": false,
+  "required": ["bindings"],
+  "properties": {
+    "bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "unevaluatedProperties": false,
+        "required": ["shot_id", "required_materials", "optional_materials"],
+        "properties": {
+          "shot_id": {"type": "string", "pattern": "^shot_\\d{2,}$"},
+          "required_materials": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^mat_\\d{3,}$"}
+          },
+          "optional_materials": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^mat_\\d{3,}$"}
+          }
+        }
+      }
+    }
+  }
+}

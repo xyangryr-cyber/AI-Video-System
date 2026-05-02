@@ -1,0 +1,29 @@
+# [SPEC-B-012] Eval regression gate.
+# Triggered on PRs that touch prompts/ or agents/ directories.
+name: Eval Regression
+
+on:
+  pull_request:
+    paths:
+      - 'config/prompts/**'
+      - 'src/backend/agents/**'
+      - 'src/backend/services/llm_service.py'
+  push:
+    branches: [main]
+    paths:
+      - 'config/prompts/**'
+      - 'src/backend/agents/**'
+      - 'src/backend/services/llm_service.py'
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Run eval suite
+        run: pytest tests/eval/ --eval-mode -v

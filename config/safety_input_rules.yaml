@@ -1,0 +1,28 @@
+# [SPEC-C-100] Input safety rules (v3.15 SPEC-4.5 重编号).
+#
+# First-match-wins, ordered by severity (refuse > restrict > transfer_human > clarify).
+# default_decision is applied when no rule matches. Hot-reloaded by InputClassifier
+# via file mtime check (AC-5 covers the templates side; same mechanism here).
+
+rules:
+  - id: refuse_self_harm_violence_illegal
+    decision: refuse
+    pattern: '(?i)(制毒|毒品|自杀|自残|炸弹|炸药|化学武器|生物武器|核武器|生化武器|枪支|恐怖袭击|谋杀|暗杀|下毒|投毒|杀人|爆炸物|\b(?:bomb|bombs|suicide|self[-\s]?harm|kill|killing|murder|weapon|weapons|narcotics|meth|methamphetamine|sarin|explosive|explosives|cocaine|assassin|assassinate|illegal\s+drugs?|drugs?\s+synthesis)\b)'
+
+  - id: refuse_credential_extraction
+    decision: refuse
+    pattern: '(?i)(api.?key|api.?密钥|密钥|token|密码|凭据|系统内部配置|access.?key|secret.?key|sk-[a-zA-Z0-9]|Bearer\s+[a-zA-Z0-9])'
+
+  - id: restrict_pii_request
+    decision: restrict
+    pattern: '(?i)(手机号|身份证|社保号|银行卡|账号密码|家庭住址|\b(?:phone\s+number|password|ID\s+number|social\s+security|credit\s+card)\b)'
+
+  - id: transfer_human_complaint_legal
+    decision: transfer_human
+    pattern: '(投诉|账户被盗|法律问题|退款|诈骗报案|报案)'
+
+  - id: clarify_financial_ambiguous
+    decision: clarify
+    pattern: '(股票|基金|炒.?币|理财|投资建议|投资方案)'
+
+default_decision: allow

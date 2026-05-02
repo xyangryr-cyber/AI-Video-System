@@ -1,0 +1,46 @@
+name: ci
+on:
+  pull_request:
+  push: { branches: [main] }
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -r requirements.txt jsonschema
+      - run: python scripts/emit_json_schemas.py
+      - run: python scripts/validate_fixtures.py
+      - run: pytest tests/unit/ tests/contract/ -v
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - run: corepack enable
+      - run: pnpm install
+      - run: pnpm --filter frontend tsc
+      - run: pnpm --filter frontend test
+  container-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start services
+        run: docker compose -f docker-compose.dev.yml up -d
+      - name: Wait for backend
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8000/health && break
+            sleep 2
+          done
+      - name: Backend health check
+        run: curl -sf http://localhost:8000/health
+      - name: Frontend reachable
+        run: curl -sf http://localhost:3000
+      - name: API proxy verification
+        run: curl -sf http://localhost:3000/api/projects | python3 -c "import json,sys; json.load(sys.stdin)"
+      - name: Stop services
+        if: always()
+        run: docker compose -f docker-compose.dev.yml down

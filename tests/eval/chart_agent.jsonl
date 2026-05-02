@@ -1,0 +1,1 @@
+{"input": {"messages": [{"role": "user", "content": "Show AAPL price chart"}], "phase": 7}, "expected_output": {"chart_type": "line"}, "eval_criteria": ["valid_chart_type", "has_symbol"], "tags": ["chart", "P7", "smoke"]}

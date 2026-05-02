@@ -1,0 +1,1 @@
+{"input": {"messages": [{"role": "user", "content": "AAPL revenue grew 5% in Q3 2025"}], "phase": 2}, "expected_output": {"claims": [{"type": "fact", "entity": "AAPL"}]}, "eval_criteria": ["has_claim", "correct_entity"], "tags": ["claims", "P2", "smoke"]}

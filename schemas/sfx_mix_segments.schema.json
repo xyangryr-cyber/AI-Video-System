@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-video-system.local/schemas/sfx_mix_segments.schema.json",
+  "title": "SfxMixSegments",
+  "type": "object",
+  "unevaluatedProperties": false,
+  "required": ["base_master", "segments"],
+  "properties": {
+    "base_master": {
+      "type": "string",
+      "pattern": "^(phase_5/bgm_mix_master|phase_4/narration_master)\\.mp3$"
+    },
+    "segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "unevaluatedProperties": false,
+        "required": [
+          "segment_id",
+          "file_path",
+          "applied_triggers",
+          "checksum",
+          "version"
+        ],
+        "properties": {
+          "segment_id": {"type": "string", "pattern": "^seg_\\d{2,}$"},
+          "file_path": {
+            "type": "string",
+            "pattern": "^phase_6/sfx_applied_segments/seg_\\d{2,}\\.mp3$"
+          },
+          "applied_triggers": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^trg_\\d{3,}$"}
+          },
+          "checksum": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "version": {"type": "integer", "minimum": 1}
+        }
+      }
+    }
+  }
+}

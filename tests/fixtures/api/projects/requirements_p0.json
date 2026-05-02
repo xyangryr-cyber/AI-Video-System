@@ -1,0 +1,16 @@
+{
+  "project_id": "proj_002",
+  "title": "十五五规划解读",
+  "topic": "十五五规划对资本市场的影响",
+  "duration_class": "medium",
+  "target_duration": {"min_sec": 480, "max_sec": 720},
+  "target_word_count": {"min": 1500, "max": 2200},
+  "platform": [
+    {"platform": "bilibili", "role": "primary"},
+    {"platform": "douyin", "role": "secondary"}
+  ],
+  "category": {"level1": "财经", "level2": "政策解读"},
+  "narrative_template": "problem_solution",
+  "voice_preferences": {"voice_id": "voice_male_calm", "style": "neutral"},
+  "subtitle_preferences": {"style": "sentence", "highlight_enabled": true}
+}

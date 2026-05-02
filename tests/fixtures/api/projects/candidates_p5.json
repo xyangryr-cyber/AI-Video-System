@@ -1,0 +1,24 @@
+[
+  {
+    "candidate_id": "cand_bgm_001",
+    "preview_url": "https://cdn/bgm/preview_001.mp3",
+    "preview_type": "audio",
+    "style_tags": ["corporate", "calm"],
+    "description": "Corporate Tech Cinematic - 30s preview",
+    "is_recommended": true,
+    "adjustable_params": {"volume_db": -18},
+    "rationale": "Matches narrative tempo and key data callouts",
+    "raw_bgm_url": "https://cdn/bgm/full_001.mp3"
+  },
+  {
+    "candidate_id": "cand_bgm_002",
+    "preview_url": "https://cdn/bgm/preview_002.mp3",
+    "preview_type": "audio",
+    "style_tags": ["uplifting"],
+    "description": "Uplifting Future - 30s preview",
+    "is_recommended": false,
+    "adjustable_params": {"volume_db": -16},
+    "rationale": "Brighter alternative if narrative shifts to optimistic tone",
+    "raw_bgm_url": "https://cdn/bgm/full_002.mp3"
+  }
+]

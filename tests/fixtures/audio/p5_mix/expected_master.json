@@ -1,0 +1,17 @@
+{
+  "based_on_phase": 5,
+  "checksum": "sha256:b4d82c8b18dc958df5a9d0a6dc85f4a8a8041aad6b5abe5d8c015896666cacbd",
+  "derived_from_segments": [
+    "seg_01",
+    "seg_02",
+    "seg_03"
+  ],
+  "file_path": "phase_5/bgm_mix_master.mp3",
+  "kind": "bgm_mix_master",
+  "source_ref": {
+    "checksum": "sha256:43c859e2fd400962d26d51123d95e5e9214660238de136753edd1d57879c611e",
+    "kind": "narration_master"
+  },
+  "total_duration_seconds": 1.645688,
+  "version": 2
+}

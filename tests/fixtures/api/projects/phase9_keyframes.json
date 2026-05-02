@@ -1,0 +1,14 @@
+[
+  {
+    "shot_id": "S1E1",
+    "render_status": "rendered",
+    "file_name": "keyframe_S1E1.png",
+    "thumbnail_url": "https://cdn/thumb_S1E1.jpg"
+  },
+  {
+    "shot_id": "S2E1",
+    "render_status": "pending_broll",
+    "file_name": null,
+    "thumbnail_url": null
+  }
+]

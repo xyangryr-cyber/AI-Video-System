@@ -1,0 +1,58 @@
+# [SPEC-B-015] Huey queue configuration.
+#
+# Authority: docs/specs/SPEC-B-infra-deploy.md §B-BDD-1.1 (v3.16 claim_*
+# queues) + SPEC_REVISION_REQ_v3.17_2026-04-17.md §B-AUDP7A-3 (phase_7a).
+#
+# The `worker_queues` list is the canonical source for the worker's `-Q`
+# CLI argument; src/backend/workers/p7a_tasks.WORKER_QUEUE_NAMES mirrors
+# this list. Keep them in lockstep.
+
+worker_queues:
+  - default
+  - claim_verification
+  - claim_verification_priority
+  - phase_7a
+
+queues:
+  default:
+    description: "Built-in Huey default queue (legacy tasks + misc)."
+    priority: normal
+
+  claim_verification:
+    description: "Claim evidence verification (v3.16 B-BDD-1.1)."
+    priority: normal
+    retry_delays_sec: [30, 120, 600]
+    max_attempts: 3
+    dead_letter_handler: "verification_records.verdict=inconclusive"
+
+  claim_verification_priority:
+    description: "User-triggered challenge_claim re-verification (high-prio)."
+    priority: high
+    retry_delays_sec: [30, 120, 600]
+    max_attempts: 3
+
+  phase_7a:
+    description: >-
+      P7A MaterialFetcher / MaterialVerifier / ChartMaterialFetcher tasks.
+      Independent from claim_verification and phase_8 render queues so
+      fetch/verify latency cannot block rendering.
+    priority: normal
+    tasks:
+      - name: material_fetch
+        priority: 5
+        retries: 3
+        timeout: 60
+      - name: material_verify
+        priority: 5
+        retries: 2
+        timeout: 30
+      - name: chart_material_fetch
+        priority: 4
+        retries: 3
+        timeout: 90
+    provider_throttle:
+      # Per-provider concurrency caps; see p7a_throttle.ProviderThrottle.
+      default_quota: 2
+      quotas:
+        unsplash: 2
+        pexels: 2

@@ -1,0 +1,16 @@
+[
+  {
+    "span_id": "span_001",
+    "text_range": [120, 145],
+    "effect": "emphasis",
+    "rationale": "Highlight 2024 黄金均价 data point",
+    "narrative_role": "data_callout"
+  },
+  {
+    "span_id": "span_002",
+    "text_range": [200, 220],
+    "effect": "pause",
+    "rationale": "Allow viewer to absorb policy implication",
+    "narrative_role": "conclusion_pause"
+  }
+]

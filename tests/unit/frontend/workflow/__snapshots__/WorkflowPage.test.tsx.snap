@@ -1,0 +1,1101 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`WorkflowPage (new UI) > 快照：默认渲染（phase=12） 1`] = `
+<DocumentFragment>
+  <div
+    class="h-screen flex flex-col bg-[#f8fafc] overflow-hidden p-4 sm:p-5 gap-5 text-[#1e293b]"
+  >
+    <div
+      class="flex-1 flex overflow-hidden gap-4"
+    >
+      <main
+        class="flex-1 flex flex-col min-w-0 z-10 bg-white border-2 border-slate-200 rounded-2xl shadow-sm overflow-hidden"
+      >
+        <div
+          class="px-5 py-4 border-b border-slate-100 bg-white flex justify-between items-center shrink-0"
+        >
+          <div
+            class="flex items-center space-x-3"
+          >
+            <button
+              aria-label="返回项目列表"
+              class="p-1.5 text-slate-500 hover:bg-slate-100 rounded-md transition-colors"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-arrow-left w-5 h-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m12 19-7-7 7-7"
+                />
+                <path
+                  d="M19 12H5"
+                />
+              </svg>
+            </button>
+            <div
+              class="font-bold text-slate-800 text-base"
+            >
+              黄金价格走势分析与投资展望
+              <span
+                class="text-slate-400 font-normal ml-2 text-xs"
+              >
+                proj_001
+              </span>
+            </div>
+          </div>
+          <div
+            class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 py-1 bg-slate-100 rounded"
+          >
+            P12 · 最终输出
+          </div>
+        </div>
+        <div
+          class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/30"
+        />
+        <div
+          class="px-5 py-3 bg-white border-t border-slate-100 shrink-0"
+        >
+          <button
+            class="w-full py-2.5 rounded-xl text-sm font-bold transition-all
+                bg-slate-100 text-slate-400 cursor-not-allowed
+              "
+            data-testid="advance-button"
+            disabled=""
+            title="等待门禁条件满足"
+            type="button"
+          >
+            确认进入下一阶段
+          </button>
+        </div>
+        <div
+          class="p-5 bg-white border-t border-slate-100 shrink-0 relative flex flex-col gap-3"
+        >
+          <div
+            class="bg-slate-50 rounded-2xl flex flex-col border border-slate-200 overflow-hidden transition-all duration-300 shadow-sm"
+            data-testid="task-card"
+          >
+            <button
+              aria-expanded="false"
+              aria-label="切换任务列表"
+              class="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-100 transition-colors text-left"
+              type="button"
+            >
+              <div
+                class="flex items-center gap-4"
+              >
+                <div
+                  class="w-12 h-10 bg-white rounded-lg border border-slate-200 shadow-sm flex items-center justify-center shrink-0"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-message-square w-4 h-4 text-slate-500"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"
+                    />
+                  </svg>
+                </div>
+                <div
+                  class="flex items-center gap-3 text-slate-800 text-sm font-medium"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-circle-check w-5 h-5 text-green-500 shrink-0"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                    />
+                    <path
+                      d="m9 12 2 2 4-4"
+                    />
+                  </svg>
+                  <span
+                    class="truncate"
+                  >
+                    向用户报告并发送APP集成清单
+                  </span>
+                </div>
+              </div>
+              <div
+                class="flex items-center gap-4 text-slate-500 shrink-0 ml-4"
+              >
+                <span
+                  class="text-sm font-mono"
+                >
+                  5 / 5
+                </span>
+                <span
+                  aria-hidden="true"
+                  class="hover:text-slate-800 transition-colors"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-chevron-up w-4 h-4"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m18 15-6-6-6 6"
+                    />
+                  </svg>
+                </span>
+              </div>
+            </button>
+          </div>
+          <div
+            class="bg-slate-50 border border-slate-200 rounded-3xl flex flex-col pt-4 pb-3 px-4 relative transition-colors focus-within:border-blue-400 focus-within:bg-white shadow-sm"
+            data-testid="chat-input"
+          >
+            <textarea
+              aria-label="消息输入框"
+              class="w-full bg-transparent text-slate-800 px-2 text-[15px] focus:outline-none resize-none placeholder-slate-400 min-h-[40px]"
+              placeholder="发送消息给 Agent"
+              rows="1"
+            />
+            <div
+              class="flex justify-end items-center mt-2 px-1"
+            >
+              <button
+                aria-label="发送消息"
+                class="w-9 h-9 rounded-full bg-[#1e293b] flex items-center justify-center hover:bg-black transition-colors text-white shadow-md disabled:opacity-50"
+                disabled=""
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-arrow-up w-5 h-5"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="m5 12 7-7 7 7"
+                  />
+                  <path
+                    d="M12 19V5"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+      <aside
+        class="w-[320px] lg:w-[480px] xl:w-[560px] flex flex-col min-w-0 h-full gap-4 pb-1 overflow-hidden"
+      >
+        <section
+          class="flex-[3] bg-white border-2 border-slate-200 rounded-2xl flex flex-col min-h-0 overflow-hidden shadow-sm relative group"
+        >
+          <div
+            class="px-5 py-4 border-b border-slate-100 bg-white flex justify-between items-center shrink-0"
+          >
+            <h2
+              class="text-[0.75rem] font-black text-[#1e293b] uppercase tracking-[0.1em] flex items-center"
+            >
+              <span
+                class="w-2.5 h-2.5 rounded-sm bg-blue-600 mr-2"
+              />
+              阶段产物 (ARTIFACTS)
+            </h2>
+          </div>
+          <div
+            class="flex-1 overflow-y-auto p-4 bg-slate-50"
+          >
+            <div
+              class="w-full flex flex-col gap-2"
+              data-testid="artifact-list"
+            >
+              <button
+                aria-label="查看阶段 12 产物"
+                class="w-full text-left bg-white border-2 border-slate-100 rounded-xl p-4 hover:border-blue-400 hover:shadow-md transition-all flex justify-between items-center group"
+                type="button"
+              >
+                <div>
+                  <div
+                    class="text-[10px] font-bold text-slate-400 mb-1"
+                  >
+                    PHASE 12
+                    <span
+                      class="ml-2 px-1.5 py-0.5 bg-blue-100 text-blue-600 rounded uppercase font-black tracking-widest text-[8px]"
+                      data-testid="in-progress-badge"
+                    >
+                      In Progress
+                    </span>
+                  </div>
+                  <div
+                    class="text-sm font-bold text-slate-800"
+                  >
+                    最终输出
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-left w-4 h-4 text-slate-400 group-hover:text-blue-600 rotate-180"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m12 19-7-7 7-7"
+                    />
+                    <path
+                      d="M19 12H5"
+                    />
+                  </svg>
+                </div>
+              </button>
+              <button
+                aria-label="查看阶段 11 产物"
+                class="w-full text-left bg-white border-2 border-slate-100 rounded-xl p-4 hover:border-blue-400 hover:shadow-md transition-all flex justify-between items-center group"
+                type="button"
+              >
+                <div>
+                  <div
+                    class="text-[10px] font-bold text-slate-400 mb-1"
+                  >
+                    PHASE 11
+                  </div>
+                  <div
+                    class="text-sm font-bold text-slate-800"
+                  >
+                    精剪交付
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-left w-4 h-4 text-slate-400 group-hover:text-blue-600 rotate-180"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m12 19-7-7 7-7"
+                    />
+                    <path
+                      d="M19 12H5"
+                    />
+                  </svg>
+                </div>
+              </button>
+              <button
+                aria-label="查看阶段 10 产物"
+                class="w-full text-left bg-white border-2 border-slate-100 rounded-xl p-4 hover:border-blue-400 hover:shadow-md transition-all flex justify-between items-center group"
+                type="button"
+              >
+                <div>
+                  <div
+                    class="text-[10px] font-bold text-slate-400 mb-1"
+                  >
+                    PHASE 10
+                  </div>
+                  <div
+                    class="text-sm font-bold text-slate-800"
+                  >
+                    粗剪合成
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-left w-4 h-4 text-slate-400 group-hover:text-blue-600 rotate-180"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m12 19-7-7 7-7"
+                    />
+                    <path
+                      d="M19 12H5"
+                    />
+                  </svg>
+                </div>
+              </button>
+              <button
+                aria-label="查看阶段 9 产物"
+                class="w-full text-left bg-white border-2 border-slate-100 rounded-xl p-4 hover:border-blue-400 hover:shadow-md transition-all flex justify-between items-center group"
+                type="button"
+              >
+                <div>
+                  <div
+                    class="text-[10px] font-bold text-slate-400 mb-1"
+                  >
+                    PHASE 9
+                  </div>
+                  <div
+                    class="text-sm font-bold text-slate-800"
+                  >
+                    B-Roll素材
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-left w-4 h-4 text-slate-400 group-hover:text-blue-600 rotate-180"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m12 19-7-7 7-7"
+                    />
+                    <path
+                      d="M19 12H5"
+                    />
+                  </svg>
+                </div>
+              </button>
+              <button
+                aria-label="查看阶段 8 产物"
+                class="w-full text-left bg-white border-2 border-slate-100 rounded-xl p-4 hover:border-blue-400 hover:shadow-md transition-all flex justify-between items-center group"
+                type="button"
+              >
+                <div>
+                  <div
+                    class="text-[10px] font-bold text-slate-400 mb-1"
+                  >
+                    PHASE 8
+                  </div>
+                  <div
+                    class="text-sm font-bold text-slate-800"
+                  >
+                    关键画面
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-left w-4 h-4 text-slate-400 group-hover:text-blue-600 rotate-180"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m12 19-7-7 7-7"
+                    />
+                    <path
+                      d="M19 12H5"
+                    />
+                  </svg>
+                </div>
+              </button>
+              <button
+                aria-label="查看阶段 7 产物"
+                class="w-full text-left bg-white border-2 border-slate-100 rounded-xl p-4 hover:border-blue-400 hover:shadow-md transition-all flex justify-between items-center group"
+                type="button"
+              >
+                <div>
+                  <div
+                    class="text-[10px] font-bold text-slate-400 mb-1"
+                  >
+                    PHASE 7
+                  </div>
+                  <div
+                    class="text-sm font-bold text-slate-800"
+                  >
+                    分镜脚本
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-left w-4 h-4 text-slate-400 group-hover:text-blue-600 rotate-180"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m12 19-7-7 7-7"
+                    />
+                    <path
+                      d="M19 12H5"
+                    />
+                  </svg>
+                </div>
+              </button>
+              <button
+                aria-label="查看阶段 6 产物"
+                class="w-full text-left bg-white border-2 border-slate-100 rounded-xl p-4 hover:border-blue-400 hover:shadow-md transition-all flex justify-between items-center group"
+                type="button"
+              >
+                <div>
+                  <div
+                    class="text-[10px] font-bold text-slate-400 mb-1"
+                  >
+                    PHASE 6
+                  </div>
+                  <div
+                    class="text-sm font-bold text-slate-800"
+                  >
+                    音效设计
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-left w-4 h-4 text-slate-400 group-hover:text-blue-600 rotate-180"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m12 19-7-7 7-7"
+                    />
+                    <path
+                      d="M19 12H5"
+                    />
+                  </svg>
+                </div>
+              </button>
+              <button
+                aria-label="查看阶段 5 产物"
+                class="w-full text-left bg-white border-2 border-slate-100 rounded-xl p-4 hover:border-blue-400 hover:shadow-md transition-all flex justify-between items-center group"
+                type="button"
+              >
+                <div>
+                  <div
+                    class="text-[10px] font-bold text-slate-400 mb-1"
+                  >
+                    PHASE 5
+                  </div>
+                  <div
+                    class="text-sm font-bold text-slate-800"
+                  >
+                    背景音乐
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-left w-4 h-4 text-slate-400 group-hover:text-blue-600 rotate-180"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m12 19-7-7 7-7"
+                    />
+                    <path
+                      d="M19 12H5"
+                    />
+                  </svg>
+                </div>
+              </button>
+              <button
+                aria-label="查看阶段 4 产物"
+                class="w-full text-left bg-white border-2 border-slate-100 rounded-xl p-4 hover:border-blue-400 hover:shadow-md transition-all flex justify-between items-center group"
+                type="button"
+              >
+                <div>
+                  <div
+                    class="text-[10px] font-bold text-slate-400 mb-1"
+                  >
+                    PHASE 4
+                  </div>
+                  <div
+                    class="text-sm font-bold text-slate-800"
+                  >
+                    人声旁白
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-left w-4 h-4 text-slate-400 group-hover:text-blue-600 rotate-180"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m12 19-7-7 7-7"
+                    />
+                    <path
+                      d="M19 12H5"
+                    />
+                  </svg>
+                </div>
+              </button>
+              <button
+                aria-label="查看阶段 3 产物"
+                class="w-full text-left bg-white border-2 border-slate-100 rounded-xl p-4 hover:border-blue-400 hover:shadow-md transition-all flex justify-between items-center group"
+                type="button"
+              >
+                <div>
+                  <div
+                    class="text-[10px] font-bold text-slate-400 mb-1"
+                  >
+                    PHASE 3
+                  </div>
+                  <div
+                    class="text-sm font-bold text-slate-800"
+                  >
+                    脚本润色
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-left w-4 h-4 text-slate-400 group-hover:text-blue-600 rotate-180"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m12 19-7-7 7-7"
+                    />
+                    <path
+                      d="M19 12H5"
+                    />
+                  </svg>
+                </div>
+              </button>
+              <button
+                aria-label="查看阶段 2 产物"
+                class="w-full text-left bg-white border-2 border-slate-100 rounded-xl p-4 hover:border-blue-400 hover:shadow-md transition-all flex justify-between items-center group"
+                type="button"
+              >
+                <div>
+                  <div
+                    class="text-[10px] font-bold text-slate-400 mb-1"
+                  >
+                    PHASE 2
+                  </div>
+                  <div
+                    class="text-sm font-bold text-slate-800"
+                  >
+                    口播脚本
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-left w-4 h-4 text-slate-400 group-hover:text-blue-600 rotate-180"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m12 19-7-7 7-7"
+                    />
+                    <path
+                      d="M19 12H5"
+                    />
+                  </svg>
+                </div>
+              </button>
+              <button
+                aria-label="查看阶段 1 产物"
+                class="w-full text-left bg-white border-2 border-slate-100 rounded-xl p-4 hover:border-blue-400 hover:shadow-md transition-all flex justify-between items-center group"
+                type="button"
+              >
+                <div>
+                  <div
+                    class="text-[10px] font-bold text-slate-400 mb-1"
+                  >
+                    PHASE 1
+                  </div>
+                  <div
+                    class="text-sm font-bold text-slate-800"
+                  >
+                    内容主线
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-left w-4 h-4 text-slate-400 group-hover:text-blue-600 rotate-180"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m12 19-7-7 7-7"
+                    />
+                    <path
+                      d="M19 12H5"
+                    />
+                  </svg>
+                </div>
+              </button>
+              <button
+                aria-label="查看阶段 0 产物"
+                class="w-full text-left bg-white border-2 border-slate-100 rounded-xl p-4 hover:border-blue-400 hover:shadow-md transition-all flex justify-between items-center group"
+                type="button"
+              >
+                <div>
+                  <div
+                    class="text-[10px] font-bold text-slate-400 mb-1"
+                  >
+                    PHASE 0
+                  </div>
+                  <div
+                    class="text-sm font-bold text-slate-800"
+                  >
+                    需求定义
+                  </div>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-arrow-left w-4 h-4 text-slate-400 group-hover:text-blue-600 rotate-180"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m12 19-7-7 7-7"
+                    />
+                    <path
+                      d="M19 12H5"
+                    />
+                  </svg>
+                </div>
+              </button>
+            </div>
+          </div>
+        </section>
+        <div
+          class="p-5 bg-white border-2 border-slate-200 rounded-2xl flex flex-col flex-[2] min-h-[250px] shadow-sm overflow-hidden"
+        >
+          <div
+            class="flex justify-between items-center mb-4 shrink-0"
+          >
+            <h4
+              class="text-[0.75rem] font-black text-[#1e293b] uppercase tracking-[0.1em] flex items-center"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-shield-check w-3.5 h-3.5 mr-2 text-slate-400"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+                />
+                <path
+                  d="m9 12 2 2 4-4"
+                />
+              </svg>
+              关键事实核实
+            </h4>
+            <span
+              class="text-[9px] bg-slate-100 text-slate-500 font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest"
+            >
+              Global Facts
+            </span>
+          </div>
+          <div
+            class="flex-1 overflow-y-auto p-3 pr-1 bg-white border border-slate-200 rounded-xl"
+          >
+            <ul
+              class="space-y-3"
+              data-testid="fact-list"
+            >
+              <li
+                class="flex gap-3 text-sm text-slate-700 leading-relaxed group"
+              >
+                <span
+                  class="shrink-0 mt-2 w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-blue-400 transition-colors"
+                />
+                <div
+                  class="flex flex-col gap-1.5 w-full"
+                >
+                  <div
+                    class="text-[13px] font-medium text-slate-900"
+                  >
+                    2025年第一季度全球央行净购金量为290吨
+                  </div>
+                  <div
+                    class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500"
+                  >
+                    <span
+                      class="font-mono text-slate-400"
+                    >
+                      ID:F1
+                    </span>
+                    <a
+                      class="flex items-center hover:text-blue-600 transition-colors"
+                      href="https://www.gold.org/goldhub/data/gold-demand-trends"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="lucide lucide-external-link w-3 h-3 mr-1"
+                        fill="none"
+                        height="24"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M15 3h6v6"
+                        />
+                        <path
+                          d="M10 14 21 3"
+                        />
+                        <path
+                          d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                        />
+                      </svg>
+                      世界黄金协会 (WGC)
+                    </a>
+                    <span
+                      class="flex items-center text-emerald-600"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="lucide lucide-shield-check w-3 h-3 mr-0.5"
+                        fill="none"
+                        height="24"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+                        />
+                        <path
+                          d="m9 12 2 2 4-4"
+                        />
+                      </svg>
+                      已核实
+                    </span>
+                  </div>
+                </div>
+              </li>
+              <li
+                class="flex gap-3 text-sm text-slate-700 leading-relaxed group"
+              >
+                <span
+                  class="shrink-0 mt-2 w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-blue-400 transition-colors"
+                />
+                <div
+                  class="flex flex-col gap-1.5 w-full"
+                >
+                  <div
+                    class="text-[13px] font-medium text-slate-900"
+                  >
+                    LBMA 黄金现货价格 2024 年至今上涨约 12.5%
+                  </div>
+                  <div
+                    class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500"
+                  >
+                    <span
+                      class="font-mono text-slate-400"
+                    >
+                      ID:F2
+                    </span>
+                    <a
+                      class="flex items-center hover:text-blue-600 transition-colors"
+                      href="https://www.lbma.org.uk/prices-and-data"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="lucide lucide-external-link w-3 h-3 mr-1"
+                        fill="none"
+                        height="24"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M15 3h6v6"
+                        />
+                        <path
+                          d="M10 14 21 3"
+                        />
+                        <path
+                          d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                        />
+                      </svg>
+                      LBMA 实时报价接口
+                    </a>
+                    <span
+                      class="flex items-center text-emerald-600"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="lucide lucide-shield-check w-3 h-3 mr-0.5"
+                        fill="none"
+                        height="24"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+                        />
+                        <path
+                          d="m9 12 2 2 4-4"
+                        />
+                      </svg>
+                      已核实
+                    </span>
+                  </div>
+                </div>
+              </li>
+              <li
+                class="flex gap-3 text-sm text-slate-700 leading-relaxed group"
+              >
+                <span
+                  class="shrink-0 mt-2 w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-blue-400 transition-colors"
+                />
+                <div
+                  class="flex flex-col gap-1.5 w-full"
+                >
+                  <div
+                    class="text-[13px] font-medium text-slate-900"
+                  >
+                    美联储 2025 年 3 月放风维持利率不变
+                  </div>
+                  <div
+                    class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500"
+                  >
+                    <span
+                      class="font-mono text-slate-400"
+                    >
+                      ID:F3
+                    </span>
+                    <a
+                      class="flex items-center hover:text-blue-600 transition-colors"
+                      href="https://www.federalreserve.gov/newsevents.htm"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="lucide lucide-external-link w-3 h-3 mr-1"
+                        fill="none"
+                        height="24"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M15 3h6v6"
+                        />
+                        <path
+                          d="M10 14 21 3"
+                        />
+                        <path
+                          d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                        />
+                      </svg>
+                      美联储官网新闻稿
+                    </a>
+                    <span
+                      class="flex items-center text-emerald-600"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="lucide lucide-shield-check w-3 h-3 mr-0.5"
+                        fill="none"
+                        height="24"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+                        />
+                        <path
+                          d="m9 12 2 2 4-4"
+                        />
+                      </svg>
+                      已核实
+                    </span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-video-system.local/schemas/audio_master.schema.json",
+  "title": "MasterAudioArtifact",
+  "type": "object",
+  "unevaluatedProperties": false,
+  "required": [
+    "kind",
+    "file_path",
+    "based_on_phase",
+    "derived_from_segments",
+    "total_duration_seconds",
+    "checksum",
+    "version"
+  ],
+  "properties": {
+    "kind": {
+      "enum": ["narration_master", "bgm_mix_master", "final_audio_master"]
+    },
+    "file_path": {
+      "type": "string",
+      "pattern": "^phase_[456a]/.+\\.(mp3|wav)$"
+    },
+    "based_on_phase": {"enum": [4, 5, 6]},
+    "source_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "checksum"],
+      "properties": {
+        "kind": {"enum": ["narration_master", "bgm_mix_master"]},
+        "checksum": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      }
+    },
+    "derived_from_segments": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^seg_\\d{2,}$"}
+    },
+    "total_duration_seconds": {"type": "number", "minimum": 0},
+    "checksum": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "version": {"type": "integer", "minimum": 1}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"kind": {"const": "narration_master"}},
+        "required": ["kind"]
+      },
+      "then": {"not": {"required": ["source_ref"]}}
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {"enum": ["bgm_mix_master", "final_audio_master"]}
+        },
+        "required": ["kind"]
+      },
+      "then": {"required": ["source_ref"]}
+    }
+  ]
+}

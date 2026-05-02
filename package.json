@@ -1,0 +1,15 @@
+{
+  "name": "ai-video-system",
+  "private": true,
+  "packageManager": "pnpm@9.12.0",
+  "scripts": {
+    "lint:fe": "pnpm --filter frontend lint",
+    "test:fe": "pnpm --filter frontend test",
+    "test:fe:watch": "pnpm --filter frontend test:watch",
+    "build:fe": "pnpm --filter frontend build",
+    "tsc:fe": "pnpm --filter frontend tsc"
+  },
+  "devDependencies": {
+    "typescript": "5.8.3"
+  }
+}

@@ -1,0 +1,48 @@
+name: nightly-e2e
+on:
+  schedule:
+    - cron: "0 18 * * *"   # 18:00 UTC = 02:00 CST next day
+  workflow_dispatch:
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: corepack enable && pnpm install && pip install -r requirements.txt
+      - run: docker compose -f docker-compose.dev.yml up -d
+      - run: |
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            curl -sf http://localhost:8000/health && break || sleep 3
+          done
+      - run: python scripts/seed_dev_db.py
+      - id: check_consecutive
+        run: |
+          if [ -f .nightly_failure_count ]; then
+            COUNT=$(cat .nightly_failure_count)
+          else
+            COUNT=0
+          fi
+          echo "consecutive_failures=$COUNT" >> $GITHUB_OUTPUT
+      - id: run_e2e
+        run: BASE_URL=http://localhost:3000 pnpm --filter frontend exec playwright test --grep @e2e-real
+        continue-on-error: true
+      - if: steps.run_e2e.outcome == 'failure'
+        run: |
+          NEW_COUNT=$(( ${{ steps.check_consecutive.outputs.consecutive_failures }} + 1 ))
+          echo $NEW_COUNT > .nightly_failure_count
+          echo "## :x: Nightly e2e failed ($NEW_COUNT/3 consecutive failures)" > .nightly_failure.txt
+          echo "" >> .nightly_failure.txt
+          echo "Run ID: ${{ github.run_id }}" >> .nightly_failure.txt
+          echo "Run URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> .nightly_failure.txt
+      - if: steps.run_e2e.outcome == 'success'
+        run: echo "0" > .nightly_failure_count
+      - if: steps.run_e2e.outcome == 'failure' && fromJSON(steps.check_consecutive.outputs.consecutive_failures) >= 2
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "[nightly-e2e] 3 consecutive failures on run ${{ github.run_id }}"
+          content-filepath: .nightly_failure.txt
+          labels: nightly-e2e

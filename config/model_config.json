@@ -1,0 +1,12 @@
+{
+  "intent_router_primary": "claude-haiku-4-5",
+  "reviewer": "claude-sonnet",
+  "gatekeeper": "claude-sonnet",
+  "producer": "openai/deepseek-v4-flash",
+  "subtask": "openai/deepseek-v4-flash",
+  "requirements_agent": "openai/deepseek-v4-flash",
+  "outline_agent": "openai/deepseek-v4-flash",
+  "script_agent": "openai/deepseek-v4-flash",
+  "polish_agent": "openai/deepseek-v4-flash",
+  "speech_rate": 240
+}

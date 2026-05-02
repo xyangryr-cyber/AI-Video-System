@@ -1,0 +1,16 @@
+# [SPEC-C-100] Safety response templates (v3.15 SPEC-4.5 重编号).
+#
+# Keyed by PolicyDecision.decision. "allow" stays empty (engine returns empty
+# response → caller proceeds with normal LLM path). Non-allow paths are pure
+# template returns — never LLM-backed (AC-2).
+#
+# Hot-reloaded via ResponseGenerator mtime check (AC-5: within 60 s).
+
+templates:
+  allow: ""
+  clarify: "您的需求涉及多种可能性,能否补充更多细节(时间范围/标的/偏好)以便我更准确地协助?"
+  restrict: "抱歉,涉及个人身份或敏感信息的请求我们无法直接处理。请脱敏后再试,或向我们的人工客服咨询。"
+  refuse: "抱歉,我无法协助该请求。如有紧急情况,请拨打当地紧急电话或寻求专业帮助。"
+  transfer_human: "该问题需要人工跟进处理,正在为您转接人工客服,请稍候。"
+
+reload_interval_s: 60

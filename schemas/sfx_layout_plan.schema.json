@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-video-system.local/schemas/sfx_layout_plan.schema.json",
+  "title": "SfxLayoutPlan",
+  "type": "object",
+  "unevaluatedProperties": false,
+  "required": ["plan_version", "triggers"],
+  "properties": {
+    "plan_version": {"type": "integer", "minimum": 1},
+    "triggers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "unevaluatedProperties": false,
+        "required": [
+          "trigger_id",
+          "script_anchor",
+          "keyword_span",
+          "planned_time_sec",
+          "sfx_type",
+          "rationale",
+          "narrative_role",
+          "volume_db",
+          "duration_seconds"
+        ],
+        "properties": {
+          "trigger_id": {"type": "string", "pattern": "^trg_\\d{3,}$"},
+          "script_anchor": {
+            "type": "object",
+            "unevaluatedProperties": false,
+            "required": ["span_id", "text"],
+            "properties": {
+              "span_id": {"type": "string", "minLength": 1},
+              "text": {"type": "string", "minLength": 1}
+            }
+          },
+          "keyword_span": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {"type": "integer", "minimum": 0}
+          },
+          "planned_time_sec": {"type": "number", "minimum": 0},
+          "sfx_type": {"type": "string", "minLength": 1},
+          "rationale": {"type": "string", "minLength": 1},
+          "narrative_role": {"type": "string", "minLength": 1},
+          "volume_db": {"type": "number"},
+          "duration_seconds": {"type": "number", "minimum": 0}
+        }
+      }
+    }
+  }
+}

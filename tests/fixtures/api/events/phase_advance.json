@@ -1,0 +1,9 @@
+{
+  "project_id": "proj_001",
+  "title": "placeholder",
+  "description": "TODO(SPEC-A-105): replace with PhaseAdvanceEvent fixture once event schema exists",
+  "current_phase": 3,
+  "status": "active",
+  "category": "行业分析",
+  "updated_at": "2026-04-17T00:00:00Z"
+}

@@ -1,0 +1,10 @@
+{
+  "bilibili": {
+    "audio": { "sample_rate": 44100, "channels": 2, "bitrate": "192k" },
+    "video": { "width": 1920, "height": 1080, "fps": 30, "codec": "h264", "bitrate": "8M" }
+  },
+  "douyin": {
+    "audio": { "sample_rate": 44100, "channels": 2, "bitrate": "128k" },
+    "video": { "width": 1080, "height": 1920, "fps": 30, "codec": "h264", "bitrate": "6M" }
+  }
+}

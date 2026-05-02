@@ -1,0 +1,56 @@
+services:
+  api:
+    image: python:3.11-slim
+    working_dir: /app
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./:/app
+      - backend_venv:/opt/venv
+    environment:
+      - PYTHONPATH=/app
+      - DATABASE_URL=sqlite:////app/data/db/dev.sqlite3
+    command: >
+      bash -c "
+        mkdir -p /app/data/db /app/data/media &&
+        pip install -q -r requirements.txt &&
+        uvicorn src.backend.api.main:app --host 0.0.0.0 --port 8000 --reload
+      "
+    ports: ["8000:8000"]
+
+  web:
+    image: node:22-bookworm-slim
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - frontend_node_modules:/app/node_modules
+    command: >
+      bash -c "
+        corepack enable &&
+        pnpm install --frozen-lockfile &&
+        pnpm --filter frontend dev
+      "
+    environment:
+      - VITE_API_TARGET=http://api:8000
+    ports: ["3000:3000"]
+    depends_on: [api]
+
+  worker:
+    image: python:3.11-slim
+    working_dir: /app
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./:/app
+      - backend_venv:/opt/venv
+    environment:
+      - PYTHONPATH=/app
+      - DATABASE_URL=sqlite:////app/data/db/dev.sqlite3
+    command: python -m src.backend.workers.run
+    depends_on: [api]
+
+volumes:
+  backend_venv:
+  frontend_node_modules:
