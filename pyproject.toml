@@ -73,6 +73,8 @@ ignore = [
   "N806",  # function-level constants use _UPPER_CASE
   "N815",  # shared schemas mirror TypeScript mixedCase
   "N818",  # exception naming conventions
+  "UP042", # StrEnum style (py3.11+)
+  "UP045", # X | None style
   "SIM",   # refactoring suggestions, not errors
   "UP007", # X | Y annotation style
   "UP038", # isinstance union style

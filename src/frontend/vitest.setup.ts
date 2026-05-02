@@ -18,8 +18,8 @@ vi.mock("remotion", async () => {
       component: Comp,
       defaultProps,
     }: {
-      component: React.ComponentType<any>;
-      defaultProps: Record<string, any>;
+      component: React.ComponentType<Record<string, unknown>>;
+      defaultProps: Record<string, unknown>;
     }) => React.createElement(Comp, defaultProps),
     useCurrentFrame: vi.fn(() => 0),
     useVideoConfig: vi.fn(() => ({
