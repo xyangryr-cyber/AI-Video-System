@@ -57,7 +57,7 @@ def sweep_orphans_on_startup(db_path: str = _APP_DB_PATH) -> None:
 
 
 def main() -> None:
-    from huey.consumer import Consumer  # type: ignore[import-not-found]
+    from huey.consumer import Consumer
 
     sweep_orphans_on_startup()
 

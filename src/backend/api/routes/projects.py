@@ -95,7 +95,7 @@ def list_projects(db: sqlite3.Connection = Depends(get_db)) -> list[dict[str, An
 def create_project(
     body: CreateProjectBody,
     db: sqlite3.Connection = Depends(get_db),
-    background_tasks: BackgroundTasks = None,
+    background_tasks: BackgroundTasks | None = None,
 ) -> dict[str, Any]:
     """Create a project and initialise its 12 phase rows."""
     if background_tasks is None:
@@ -1009,7 +1009,7 @@ def _verify_artifact_files(artifact_path: str, project_dir: str):
     return "ok", []
 
 
-def _collect_path_like_values(obj: any, out: list[str], parent_key: str = "") -> None:
+def _collect_path_like_values(obj: Any, out: list[str], parent_key: str = "") -> None:
     """Recursively find all string values whose keys end in path-like suffixes.
 
     Targets: ``*_path``, ``file_path``, ``render_path``.
@@ -1458,7 +1458,7 @@ def _execute_rough_cut_agent(
     # Override with measured TTS duration if available (canonical timeline.json)
     measured = _read_measured_duration(project_id)
     if measured is not None:
-        total_dur = measured
+        total_dur = int(measured)
 
     total_dur = max(total_dur, 60)
     output_dir = os.path.join("data", "projects", project_id, "phase_10")
@@ -1586,7 +1586,7 @@ def _execute_rough_cut_agent(
             # Last frame needs to be repeated for concat demuxer
             f.write(f"file '{os.path.abspath(png_files[-1])}'\n")
 
-        cmd: list[str] = [
+        concat_cmd: list[str] = [
             ffmpeg_bin,
             "-y",
             "-f",
@@ -1597,10 +1597,10 @@ def _execute_rough_cut_agent(
             concat_file,
         ]
         if has_audio:
-            cmd.extend(["-i", audio_path])
+            concat_cmd.extend(["-i", audio_path])
         else:
-            cmd.extend(["-f", "lavfi", "-i", "anoisesrc=d=60:c=pink:a=0.01"])
-        cmd.extend(
+            concat_cmd.extend(["-f", "lavfi", "-i", "anoisesrc=d=60:c=pink:a=0.01"])
+        concat_cmd.extend(
             [
                 "-vf",
                 "fps=30,scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=#0a1628",
@@ -1623,9 +1623,9 @@ def _execute_rough_cut_agent(
                 "-shortest",
             ]
         )
-        cmd.append(output_path)
+        concat_cmd.append(output_path)
 
-        result = subprocess.run(cmd, capture_output=True, timeout=300)
+        result = subprocess.run(concat_cmd, capture_output=True, timeout=300)
         if os.path.exists(concat_file):
             os.remove(concat_file)
         if result.returncode != 0:
@@ -1935,7 +1935,8 @@ def _read_measured_duration(project_id: str) -> float | None:
     try:
         with open(timeline_path, encoding="utf-8") as f:
             data = json.load(f)
-        return data.get("measured_duration_sec")
+        val = data.get("measured_duration_sec")
+        return float(val) if isinstance(val, (int, float)) else None
     except Exception:
         return None
 
@@ -2115,69 +2116,3 @@ def _generate_narration_audio(project_id: str, narration_json_path: str) -> str 
                 return mp3_path
 
     return None
-
-
-def _read_measured_duration(project_id: str) -> float | None:
-    """Read measured_duration_sec from canonical timeline.json (P4 output).
-
-    Returns None if timeline.json does not exist or is malformed.
-    """
-    timeline_path = os.path.join("data", "projects", project_id, "timeline.json")
-    if not os.path.exists(timeline_path):
-        return None
-    try:
-        with open(timeline_path, encoding="utf-8") as f:
-            data = json.load(f)
-        return data.get("measured_duration_sec")
-    except Exception:
-        return None
-
-
-def _write_measured_timeline(project_id: str, audio_dir: str) -> None:
-    """Measure actual audio duration via ffprobe and write canonical timeline.json.
-
-    TECH_PLAN v3.3: timeline.json from P4 is the single time source for the
-    entire pipeline.
-    """
-    import logging
-    import subprocess
-
-    _logger = logging.getLogger(__name__)
-    master_audio = os.path.join(audio_dir, "narration_master.mp3")
-
-    if not os.path.exists(master_audio):
-        _logger.warning("No master audio at %s, skipping timeline.json write", master_audio)
-        return
-
-    try:
-        result = subprocess.run(
-            [
-                "ffprobe",
-                "-v",
-                "error",
-                "-show_entries",
-                "format=duration",
-                "-of",
-                "default=noprint_wrappers=1:nokey=1",
-                master_audio,
-            ],
-            capture_output=True,
-            text=True,
-            timeout=30,
-        )
-        measured_duration_sec = float(result.stdout.strip())
-
-        timeline_path = os.path.join("data", "projects", project_id, "timeline.json")
-        timeline_data = {
-            "project_id": project_id,
-            "phase": 4,
-            "measured_duration_sec": measured_duration_sec,
-            "source": "ffprobe",
-        }
-        with open(timeline_path, "w", encoding="utf-8") as f:
-            json.dump(timeline_data, f, ensure_ascii=False, indent=2)
-    except Exception:
-        _logger.warning(
-            "ffprobe measurement failed for project %s, timeline.json not written",
-            project_id,
-        )

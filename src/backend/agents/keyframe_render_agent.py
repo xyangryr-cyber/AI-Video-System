@@ -212,6 +212,8 @@ class KeyframeRenderAgent:
         draw = ImageDraw.Draw(img)
 
         # Try to use a font, fall back to default
+        font_large: ImageFont.FreeTypeFont | ImageFont.ImageFont
+        font_small: ImageFont.FreeTypeFont | ImageFont.ImageFont
         try:
             font_large = ImageFont.truetype("/System/Library/Fonts/PingFang.ttc", 72)
             font_small = ImageFont.truetype("/System/Library/Fonts/PingFang.ttc", 36)

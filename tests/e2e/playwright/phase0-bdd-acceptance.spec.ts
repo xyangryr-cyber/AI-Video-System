@@ -69,7 +69,8 @@ test.describe("1. 项目创建与 Phase 0 进入 (主流程)", () => {
   test("TC-1.1 用户输入完整信息创建项目，成功进入 Phase 0", async ({ page }) => {
     // 步骤1-2: 访问首页，观察"+ 新建项目"按钮
     await page.goto(`${BASE_URL}/projects`);
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(2000);
 
     const newProjectBtn = page.locator("button", { hasText: "新建项目" });
     const btnVisible = await newProjectBtn.isVisible().catch(() => false);
@@ -168,8 +169,9 @@ test.describe("1. 项目创建与 Phase 0 进入 (主流程)", () => {
       await page.waitForURL((url) => url.pathname.includes(`/projects/${projectId}`), {
         timeout: 15000,
       });
-      await page.waitForLoadState("networkidle");
-      await page.waitForTimeout(1000);
+      // Use domcontentloaded — project detail page has WebSocket that prevents networkidle
+      await page.waitForLoadState("domcontentloaded");
+      await page.waitForTimeout(2000);
 
       // 检查 Phase 0 在左侧导航中是否高亮
       const p0Nav = page.locator('[data-testid="phase-nav-0"]');
@@ -204,7 +206,8 @@ test.describe("1. 项目创建与 Phase 0 进入 (主流程)", () => {
   test("TC-1.2 RequirementsAgent 生成完毕后前端展示结构化需求摘要", async ({ page }) => {
     // Create project first
     await page.goto(`${BASE_URL}/projects/new`);
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(2000);
     await page.locator("#title").fill("结构化需求测试");
     await page.locator("#desc").fill("分析近期A股市场走势，时长约5分钟，发在B站，面向普通投资者");
 
@@ -212,14 +215,16 @@ test.describe("1. 项目创建与 Phase 0 进入 (主流程)", () => {
       (r) => r.url().includes("/api/projects") && r.request().method() === "POST",
       { timeout: 15000 },
     );
-    await page.locator("button[type='submit']").click();
+    const submitBtn = page.locator("button[type='submit']", { hasText: "开始制作" });
+    await expect(submitBtn).toBeEnabled({ timeout: 3000 });
+    await submitBtn.click();
     const resp = await respPromise;
     const body = await resp.json();
     const projectId = body.id;
 
     await page.waitForURL((url) => url.pathname.includes(projectId), { timeout: 15000 });
-    await page.waitForLoadState("networkidle");
-    await page.waitForTimeout(3000);
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(8000); // Wait for agent processing
 
     // Check if artifact preview panel has content
     const previewPanel = page.locator('[data-testid="artifact-preview-panel"]');
@@ -1366,7 +1371,8 @@ test.describe("9. Phase 0 状态持久化与恢复", () => {
   test("TC-9.1 浏览器关闭后重新打开，Phase 0 状态完整恢复", async ({ page }) => {
     // Create project, then navigate away and back
     await page.goto(`${BASE_URL}/projects/new`);
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(2000);
     await page.locator("#title").fill("状态恢复测试");
     await page.locator("#desc").fill("分析黄金走势，时长约5分钟，发在B站，面向投资新手");
 
@@ -1380,7 +1386,7 @@ test.describe("9. Phase 0 状态持久化与恢复", () => {
     const projectId = body.id;
 
     await page.waitForURL((url) => url.pathname.includes(projectId), { timeout: 15000 });
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
     const titleBefore = await page
       .locator("header")
       .textContent()
@@ -1393,7 +1399,7 @@ test.describe("9. Phase 0 状态持久化与恢复", () => {
 
     // Navigate back to the project
     await page.goto(`${BASE_URL}/projects/${projectId}`);
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
     await page.waitForTimeout(2000);
 
     const titleAfter = await page

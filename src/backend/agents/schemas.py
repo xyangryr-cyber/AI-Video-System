@@ -196,7 +196,9 @@ class PolishedSegment(BaseModel):
     key_data_points: list[dict[str, Any]] = Field(default_factory=list)
     emotion_tone: str = "neutral"
     transition_note: str = ""
-    voice_direction: VoiceDirection = Field(default_factory=VoiceDirection)
+    voice_direction: VoiceDirection = Field(
+        default_factory=lambda: VoiceDirection(emotion="neutral", pace="medium", energy="medium")
+    )
 
 
 class PolishLLMOutput(BaseModel):

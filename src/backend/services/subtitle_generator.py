@@ -28,7 +28,7 @@ class SubtitleGenerator:
         Returns None if whisper is not installed or if alignment fails.
         """
         try:
-            import whisper  # type: ignore[import-untyped]
+            import whisper
         except ImportError:
             return None
 

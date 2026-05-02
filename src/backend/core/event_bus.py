@@ -14,6 +14,7 @@ clients.
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import Any
 
 EventCallback = Callable[..., object]
 
@@ -21,7 +22,7 @@ EventCallback = Callable[..., object]
 class EventBus:
     """In-process async event bus with optional WebSocket broadcast."""
 
-    def __init__(self, connection_manager: object | None = None):
+    def __init__(self, connection_manager: Any | None = None):
         self._subscribers: dict[str, list[EventCallback]] = {}
         self._connection_manager = connection_manager
 
@@ -59,7 +60,7 @@ class EventBus:
         if self._connection_manager is not None:
             await self._connection_manager.broadcast(project_id, event_type, payload)
 
-    def wire(self, connection_manager: object) -> None:
+    def wire(self, connection_manager: Any) -> None:
         """Inject the ConnectionManager dependency (called at startup)."""
         self._connection_manager = connection_manager
 

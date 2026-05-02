@@ -20,7 +20,7 @@ import time
 from collections.abc import Callable
 from pathlib import Path
 
-from huey import SqliteHuey  # type: ignore[import-untyped]
+from huey import SqliteHuey
 
 from src.backend.agents.bgm_agent import BGMAgent
 from src.backend.agents.final_cut_agent import FinalCutAgent
@@ -302,6 +302,7 @@ def run_phase10_rough_cut(task_id: str, params: dict) -> None:
 
         agent = RoughCutAgent()
         agent.compose(
+            project_id=task["project_id"],
             storyboard=params["storyboard"],
             timeline=params["timeline"],
             keyframe_renders=params["keyframe_renders"],
@@ -357,6 +358,7 @@ def run_phase11_final_cut(task_id: str, params: dict) -> None:
 
         agent = FinalCutAgent()
         agent.adjust(
+            project_id=task["project_id"],
             rough_cut_path=params["rough_cut_path"],
             adjustments=params["adjustments"],
         )

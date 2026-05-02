@@ -108,7 +108,7 @@ def _default_completion(**kwargs: Any) -> Any:
     via monkeypatch).
     """
     try:
-        import litellm  # type: ignore[import-not-found]
+        import litellm
     except ImportError as exc:  # pragma: no cover -- exercised in env without litellm
         raise LLMServiceError(
             "litellm is not installed; add it to requirements.txt or inject "
