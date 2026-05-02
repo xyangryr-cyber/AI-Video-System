@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 import logging
 import re
-from typing import Any, Dict
+from typing import Any
 
 from src.backend.agents.schemas import OutlineLLMOutput
 from src.backend.services.llm_service import LLMFormatError, chat_completion
@@ -36,10 +36,10 @@ class OutlineAgent:
     def produce(
         self,
         *,
-        requirements: Dict[str, Any],
+        requirements: dict[str, Any],
         topic: str,
         duration_seconds: int,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         try:
             llm_result: OutlineLLMOutput = chat_completion(
                 role="outline_agent",
@@ -65,9 +65,7 @@ class OutlineAgent:
         return result
 
 
-def _build_messages(
-    topic: str, duration_seconds: int, requirements: Dict[str, Any]
-) -> list[dict]:
+def _build_messages(topic: str, duration_seconds: int, requirements: dict[str, Any]) -> list[dict]:
     """Build the system + user messages for the outline LLM call."""
     return [
         {
@@ -87,8 +85,8 @@ def _build_messages(
                 '      "key_points": ["actual narrative sentence in Chinese"],\n'
                 '      "supporting_data": ["specific fact: S&P 500 fell 2.3% in 2025 Q3"],\n'
                 '      "transition_to_next": "..."}\n'
-                '   ]}\n'
-                ']}\n'
+                "   ]}\n"
+                "]}\n"
                 "Rules:\n"
                 "- key_points must be REAL narrative sentences, "
                 "NOT 'Key point N for X'\n"
@@ -129,7 +127,4 @@ def _validate_no_placeholders(result: dict) -> None:
     for pattern in _PLACEHOLDER_PATTERNS:
         found.extend(re.findall(pattern, text))
     if found:
-        raise ValueError(
-            f"OutlineAgent output contains {len(found)} placeholder(s): "
-            f"{found[:10]}"
-        )
+        raise ValueError(f"OutlineAgent output contains {len(found)} placeholder(s): {found[:10]}")

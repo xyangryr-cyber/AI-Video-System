@@ -60,7 +60,7 @@ export async function fetchBrandKit(): Promise<BrandKit | null> {
  */
 export function mergeBrandKit(
   brandKit: BrandKit | null,
-  projectOverrides: Partial<BrandKit>
+  projectOverrides: Partial<BrandKit>,
 ): BrandKit {
   const base = brandKit ?? SYSTEM_DEFAULTS;
 
@@ -86,10 +86,7 @@ export function resolveBrandKit(brandKit: BrandKit | null): BrandKit {
  * Get the primary color for rendering.
  * Project override wins over brand_kit default over system default.
  */
-export function getPrimaryColor(
-  brandKit: BrandKit | null,
-  overrideColor?: string
-): string {
+export function getPrimaryColor(brandKit: BrandKit | null, overrideColor?: string): string {
   if (overrideColor) return overrideColor;
   if (brandKit?.color_palette.primary) return brandKit.color_palette.primary;
   return SYSTEM_DEFAULTS.color_palette.primary;

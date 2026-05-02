@@ -18,8 +18,7 @@ V15_KILLSWITCH = {
 }
 
 P4_SINGLE_STATE_TARGET = (
-    "SQLite is the only structured state write target. "
-    "No file-as-DB, no dual-write to filesystem."
+    "SQLite is the only structured state write target. No file-as-DB, no dual-write to filesystem."
 )
 
 P5_STATELESS_AGENT_RULE = (

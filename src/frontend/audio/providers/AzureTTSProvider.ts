@@ -26,7 +26,7 @@ export class AzureTTSProvider extends BaseTTSProvider {
   protected async synthesizeInternal(
     text: string,
     ssmlTags?: string,
-    voiceParams?: VoiceParams
+    voiceParams?: VoiceParams,
   ): Promise<AudioResult> {
     const body = ssmlTags ?? text;
     const isSSML = ssmlTags != null;

@@ -120,7 +120,7 @@ const BrandOverlay: FC<BrandOverlayProps> = ({
 };
 
 function getWatermarkPosition(
-  position: "top_left" | "top_right" | "bottom_left" | "bottom_right"
+  position: "top_left" | "top_right" | "bottom_left" | "bottom_right",
 ): Record<string, string | number> {
   const positions: Record<string, Record<string, string | number>> = {
     top_left: { top: "2%", left: "2%" },

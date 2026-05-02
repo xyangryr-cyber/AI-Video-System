@@ -23,7 +23,7 @@ P7A pipeline MUST route every status update through it.
 from __future__ import annotations
 
 from enum import Enum
-from typing import List, Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -77,15 +77,15 @@ class MaterialEntry(_Strict):
     source: MaterialSource
     verification_status: VerificationStatus
     fetched_at: str = Field(min_length=1)
-    verified_at: Optional[str] = None
+    verified_at: str | None = None
     rationale: str = Field(min_length=1)
-    evidence_ref: Optional[str] = None
+    evidence_ref: str | None = None
 
 
 class MaterialManifest(_Strict):
     project_id: str = Field(min_length=1)
     phase: Literal["7A"]
-    materials: List[MaterialEntry]
+    materials: list[MaterialEntry]
 
 
 _TERMINAL_STATES = {
@@ -110,9 +110,7 @@ def validate_verification_status_transition(
 
     Every other transition raises ValueError. Non-enum inputs raise TypeError.
     """
-    if not isinstance(old, VerificationStatus) or not isinstance(
-        new, VerificationStatus
-    ):
+    if not isinstance(old, VerificationStatus) or not isinstance(new, VerificationStatus):
         raise TypeError(
             "old/new must be VerificationStatus enum members; "
             f"got old={type(old).__name__}, new={type(new).__name__}"
@@ -132,9 +130,7 @@ def validate_verification_status_transition(
             "explicit supplement flow (pass via_supplement=True)"
         )
 
-    raise ValueError(
-        f"illegal verification_status transition: {old.value} -> {new.value}"
-    )
+    raise ValueError(f"illegal verification_status transition: {old.value} -> {new.value}")
 
 
 __all__ = [

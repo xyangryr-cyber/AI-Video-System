@@ -42,9 +42,7 @@ class MaterialManifestRepo:
     def load(self) -> MaterialManifest | None:
         if not self._path.exists():
             return None
-        return MaterialManifest.model_validate_json(
-            self._path.read_text(encoding="utf-8")
-        )
+        return MaterialManifest.model_validate_json(self._path.read_text(encoding="utf-8"))
 
     def save(self, manifest: MaterialManifest) -> None:
         """Atomic write: tmp file + rename."""

@@ -7,7 +7,7 @@ Placed outside reviewers/ package to avoid circular import.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 from src.backend.agents.l1_reviewer import L1Reviewer
 from src.backend.agents.l2_reviewer import L2Reviewer
@@ -23,7 +23,7 @@ class DualLayerReviewer:
         self._l1 = l1_reviewer
         self._l2 = l2_reviewer
 
-    def review(self, artifact: Any) -> Dict[str, Any]:
+    def review(self, artifact: Any) -> dict[str, Any]:
         l1_result = self._l1.review(artifact)
 
         if l1_result["verdict"] == "FAIL":
@@ -44,6 +44,5 @@ class DualLayerReviewer:
             "blocking_issues": merged_blocking,
             "notes": l1_result.get("notes", []) + l2_result.get("notes", []),
             "l2_triggered": True,
-            "l2_token_cost": l2_result.get("input_tokens", 0)
-            + l2_result.get("output_tokens", 0),
+            "l2_token_cost": l2_result.get("input_tokens", 0) + l2_result.get("output_tokens", 0),
         }

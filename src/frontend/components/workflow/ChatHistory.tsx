@@ -1,8 +1,8 @@
-import type { ReactElement } from "react"
-import type { ChatMessage } from "./mockData"
+import type { ReactElement } from "react";
+import type { ChatMessage } from "./mockData";
 
 interface ChatHistoryProps {
-  messages: ChatMessage[]
+  messages: ChatMessage[];
 }
 
 export function ChatHistory({ messages }: ChatHistoryProps): ReactElement {
@@ -35,5 +35,5 @@ export function ChatHistory({ messages }: ChatHistoryProps): ReactElement {
         ),
       )}
     </div>
-  )
+  );
 }

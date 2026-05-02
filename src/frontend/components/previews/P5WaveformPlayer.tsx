@@ -1,5 +1,5 @@
-import { useRef, useState, useCallback } from 'react';
-import { Play, Pause, Music, Waves, CheckCircle2, Download } from 'lucide-react';
+import { useRef, useState, useCallback } from "react";
+import { Play, Pause, Music, Waves, CheckCircle2, Download } from "lucide-react";
 
 interface P5WaveformPlayerProps {
   audio_url?: string;
@@ -8,7 +8,7 @@ interface P5WaveformPlayerProps {
 
 /** Seed-based random for stable waveform heights */
 function seededRandom(seed: number): number {
-  let x = Math.sin(seed * 9301 + 49297) * 233280;
+  const x = Math.sin(seed * 9301 + 49297) * 233280;
   return x - Math.floor(x);
 }
 
@@ -31,7 +31,9 @@ export function P5WaveformPlayer({ audio_url, duration_sec }: P5WaveformPlayerPr
     }
   }, [playing, audio_url]);
 
-  const totalDuration = duration_sec ? `${Math.floor(duration_sec / 60)}:${String(duration_sec % 60).padStart(2, '0')}` : '2:27';
+  const totalDuration = duration_sec
+    ? `${Math.floor(duration_sec / 60)}:${String(duration_sec % 60).padStart(2, "0")}`
+    : "2:27";
 
   if (!audio_url) {
     return (
@@ -46,7 +48,7 @@ export function P5WaveformPlayer({ audio_url, duration_sec }: P5WaveformPlayerPr
     );
   }
 
-  const moodHeights = ['30%', '40%', '60%', '80%', '90%', '70%', '50%', '60%'];
+  const moodHeights = ["30%", "40%", "60%", "80%", "90%", "70%", "50%", "60%"];
 
   return (
     <div data-testid="preview-p5" className="space-y-6">
@@ -78,12 +80,8 @@ export function P5WaveformPlayer({ audio_url, duration_sec }: P5WaveformPlayerPr
           <div className="flex items-center">
             <Music className="w-8 h-8 p-1.5 bg-indigo-100 text-indigo-600 rounded-lg mr-3" />
             <div>
-              <div className="text-sm font-bold text-slate-800">
-                全局配乐混合试听 (BGM + Voice)
-              </div>
-              <div className="text-xs text-slate-500 mt-0.5">
-                主轨: Corporate Tech Cinematic
-              </div>
+              <div className="text-sm font-bold text-slate-800">全局配乐混合试听 (BGM + Voice)</div>
+              <div className="text-xs text-slate-500 mt-0.5">主轨: Corporate Tech Cinematic</div>
             </div>
           </div>
         </div>
@@ -111,13 +109,9 @@ export function P5WaveformPlayer({ audio_url, duration_sec }: P5WaveformPlayerPr
             <button
               onClick={handleToggle}
               className="w-10 h-10 rounded-full bg-white text-slate-900 flex items-center justify-center hover:bg-slate-100 transition-colors shrink-0 shadow-md"
-              aria-label={playing ? 'Pause' : 'Play'}
+              aria-label={playing ? "Pause" : "Play"}
             >
-              {playing ? (
-                <Pause className="w-4 h-4" />
-              ) : (
-                <Play className="w-4 h-4 ml-0.5" />
-              )}
+              {playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
             </button>
             <div className="mx-4 flex-1 h-8 flex items-center relative">
               {/* Background waveform layer (indigo) */}

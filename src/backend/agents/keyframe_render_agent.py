@@ -11,7 +11,7 @@ from __future__ import annotations
 import json
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 from PIL import Image
@@ -51,7 +51,7 @@ class KeyframeRenderAgent:
     """P8 Keyframe renderer: renders template-type shots via 3-layer engine.
     v3.17: includes degradation dichotomy and outbound isolation."""
 
-    def __init__(self, *, outbound_whitelist: Optional[set[str]] = None) -> None:
+    def __init__(self, *, outbound_whitelist: set[str] | None = None) -> None:
         self._engine_selector = RenderEngineSelector()
         self._outbound_whitelist = outbound_whitelist or set()
 
@@ -64,15 +64,15 @@ class KeyframeRenderAgent:
         *,
         shot_id: str,
         template_type: str = "text_card",
-        material_url: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        material_url: str | None = None,
+    ) -> dict[str, Any]:
         """Render a single shot with degradation fallback.
 
         Returns a dict with at least: shot_id, error_code, render_path.
         error_code is None on success, or one of:
           'render_failed', 'material_missing', 'material_unverified'.
         """
-        result: Dict[str, Any] = {
+        result: dict[str, Any] = {
             "shot_id": shot_id,
             "error_code": None,
             "render_path": "",
@@ -135,7 +135,7 @@ class KeyframeRenderAgent:
         material_path: str,
         shot_id: str,
         material_status: str = "verified",
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Pre-render check: material availability and verification status.
 
         Returns a readiness dict with error_code.
@@ -197,7 +197,7 @@ class KeyframeRenderAgent:
         *,
         shot_id: str,
         template_type: str = "text_card",
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Execute the actual render using Pillow to generate real PNG images."""
         from PIL import Image, ImageDraw, ImageFont
 
@@ -215,14 +215,14 @@ class KeyframeRenderAgent:
         try:
             font_large = ImageFont.truetype("/System/Library/Fonts/PingFang.ttc", 72)
             font_small = ImageFont.truetype("/System/Library/Fonts/PingFang.ttc", 36)
-        except (OSError, IOError):
+        except OSError:
             font_large = ImageFont.load_default()
             font_small = ImageFont.load_default()
 
         # Draw shot ID
         draw.text((80, 400), f"Shot: {shot_id}", fill="#ffffff", font=font_large)
         draw.text((80, 500), f"Type: {template_type}", fill="#8899aa", font=font_small)
-        draw.text((80, 560), f"Resolution: 1920x1080", fill="#8899aa", font=font_small)
+        draw.text((80, 560), "Resolution: 1920x1080", fill="#8899aa", font=font_small)
 
         # Draw decorative elements
         for i in range(5):
@@ -254,10 +254,8 @@ class KeyframeRenderAgent:
     # Original render_keyframes (v3.15 compat)
     # ------------------------------------------------------------------
 
-    def render_keyframes(
-        self, *, storyboard: List[Dict[str, Any]]
-    ) -> List[Dict[str, Any]]:
-        results: List[Dict[str, Any]] = []
+    def render_keyframes(self, *, storyboard: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        results: list[dict[str, Any]] = []
         for shot in storyboard:
             if shot.get("type") != "template":
                 continue
@@ -273,7 +271,7 @@ class KeyframeRenderAgent:
         return results
 
     @staticmethod
-    def handle_failed_shot(*, shot_id: str, reason: str) -> Dict[str, Any]:
+    def handle_failed_shot(*, shot_id: str, reason: str) -> dict[str, Any]:
         return {
             "shot_id": shot_id,
             "degraded": True,

@@ -151,11 +151,7 @@ export function ChartConfirmDialog({
         <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md space-y-4 text-center">
           <h2 className="text-lg font-bold text-green-600">完成</h2>
           <p className="text-sm text-gray-500">图表已成功渲染。</p>
-          <button
-            type="button"
-            className="px-4 py-1 bg-gray-200 rounded text-sm"
-            onClick={onClose}
-          >
+          <button type="button" className="px-4 py-1 bg-gray-200 rounded text-sm" onClick={onClose}>
             关闭
           </button>
         </div>
@@ -169,11 +165,7 @@ export function ChartConfirmDialog({
         <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md space-y-4 text-center">
           <h2 className="text-lg font-bold text-gray-500">已取消</h2>
           <p className="text-sm text-gray-500">图表请求已取消。</p>
-          <button
-            type="button"
-            className="px-4 py-1 bg-gray-200 rounded text-sm"
-            onClick={onClose}
-          >
+          <button type="button" className="px-4 py-1 bg-gray-200 rounded text-sm" onClick={onClose}>
             关闭
           </button>
         </div>
@@ -210,11 +202,7 @@ export function ChartConfirmDialog({
           </div>
         )}
 
-        <AxisEditor
-          axisConfig={axisConfig}
-          onChange={setAxisConfig}
-          disabled={isDisabled}
-        />
+        <AxisEditor axisConfig={axisConfig} onChange={setAxisConfig} disabled={isDisabled} />
 
         <StyleEditor
           styleConfig={styleConfig}

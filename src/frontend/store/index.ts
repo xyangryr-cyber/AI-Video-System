@@ -1,23 +1,22 @@
-import { create } from "zustand"
-import type { AgentEvent } from "../types/events"
+import { create } from "zustand";
+import type { AgentEvent } from "../types/events";
 
-export type { AgentEvent }
+export type { AgentEvent };
 
 interface AppState {
-  events: AgentEvent[]
-  pushEvent: (evt: AgentEvent) => void
-  clearEvents: () => void
+  events: AgentEvent[];
+  pushEvent: (evt: AgentEvent) => void;
+  clearEvents: () => void;
 }
 
-const MAX_EVENTS = 50
+const MAX_EVENTS = 50;
 
 export const useAppStore = create<AppState>((set) => ({
   events: [],
-  pushEvent: (evt) =>
-    set((s) => ({ events: [...s.events, evt].slice(-MAX_EVENTS) })),
+  pushEvent: (evt) => set((s) => ({ events: [...s.events, evt].slice(-MAX_EVENTS) })),
   clearEvents: () => set({ events: [] }),
-}))
+}));
 
 export function resetAppStore(): void {
-  useAppStore.setState({ events: [] })
+  useAppStore.setState({ events: [] });
 }

@@ -1,10 +1,10 @@
-import type { ReactElement } from "react"
-import { QueryClientProvider } from "@tanstack/react-query"
-import { Toaster } from "sonner"
-import { AppRouter } from "./pages/AppRouter"
-import { createQueryClient } from "./lib/queryClient"
+import type { ReactElement } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "sonner";
+import { AppRouter } from "./pages/AppRouter";
+import { createQueryClient } from "./lib/queryClient";
 
-const queryClient = createQueryClient()
+const queryClient = createQueryClient();
 
 export function App(): ReactElement {
   return (
@@ -12,5 +12,5 @@ export function App(): ReactElement {
       <AppRouter />
       <Toaster position="top-right" />
     </QueryClientProvider>
-  )
+  );
 }

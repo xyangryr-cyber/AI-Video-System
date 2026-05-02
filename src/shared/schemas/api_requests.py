@@ -10,7 +10,7 @@ mutating routes (`/skip`, `/tasks/{id}/cancel`,
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -34,7 +34,7 @@ class AdvanceRequest(_Strict):
     the advance request; otherwise the field is omitted.
     """
 
-    confirmed_preferences: Optional[List[Dict[str, Any]]] = None
+    confirmed_preferences: list[dict[str, Any]] | None = None
 
 
 class RollbackRequest(_Strict):
@@ -54,13 +54,13 @@ class PreferenceDecision(_Strict):
 
     id: str = Field(min_length=1)
     action: str = Field(min_length=1)
-    text: Optional[str] = None
+    text: str | None = None
 
 
 class PreferencesConfirmRequest(_Strict):
     """POST /api/projects/{id}/preferences/confirm body."""
 
-    decisions: List[PreferenceDecision]
+    decisions: list[PreferenceDecision]
 
 
 __all__ = [

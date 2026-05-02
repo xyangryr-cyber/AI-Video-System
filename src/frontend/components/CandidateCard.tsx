@@ -1,14 +1,19 @@
-import type { ReactElement } from "react"
-import type { CandidateLike } from "../types/candidates"
+import type { ReactElement } from "react";
+import type { CandidateLike } from "../types/candidates";
 
 interface Props<T extends CandidateLike> {
-  candidate: T
-  isActive: boolean
-  onPreview: () => void
-  onSelect: () => void
+  candidate: T;
+  isActive: boolean;
+  onPreview: () => void;
+  onSelect: () => void;
 }
 
-export function CandidateCard<T extends CandidateLike>({ candidate, isActive, onPreview, onSelect }: Props<T>): ReactElement {
+export function CandidateCard<T extends CandidateLike>({
+  candidate,
+  isActive,
+  onPreview,
+  onSelect,
+}: Props<T>): ReactElement {
   return (
     <div
       data-testid="candidate-card"
@@ -22,8 +27,13 @@ export function CandidateCard<T extends CandidateLike>({ candidate, isActive, on
       </div>
       <button
         className="mt-2 px-2 py-1 text-xs border rounded"
-        onClick={(e) => { e.stopPropagation(); onSelect() }}
-      >选择</button>
+        onClick={(e) => {
+          e.stopPropagation();
+          onSelect();
+        }}
+      >
+        选择
+      </button>
     </div>
-  )
+  );
 }

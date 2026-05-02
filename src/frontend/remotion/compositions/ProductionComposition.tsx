@@ -7,11 +7,7 @@ import type { TemplateProps } from "@shared/types/template_props";
 import { getRenderConfig } from "../utils/render_mode_controller";
 import ChartTemplate from "../components/ChartTemplate";
 
-export interface ProductionCompositionProps extends TemplateProps {
-  // Mode is fixed to 'production' for this composition.
-  // Shared data (data_points, axis_spec, chart_style_overrides)
-  // are passed via TemplateProps and NOT duplicated/forked.
-}
+export type ProductionCompositionProps = TemplateProps;
 
 /**
  * ProductionComposition renders full animation at 1080p.
@@ -33,10 +29,7 @@ const ProductionComposition: FC<ProductionCompositionProps> = (props) => {
         position: "relative",
       }}
     >
-      <ChartTemplate
-        {...props}
-        source_verified={true}
-      />
+      <ChartTemplate {...props} source_verified={true} />
     </div>
   );
 };

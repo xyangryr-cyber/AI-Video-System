@@ -14,10 +14,9 @@ Keep in lockstep with ``src/shared/types/feedback_protocol.ts``.
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
-
 
 CommentType = Literal["layout_feedback", "mix_feedback"]
 FeedbackAction = Literal["add", "remove", "modify"]
@@ -40,10 +39,10 @@ class SfxReviewerFeedback(BaseModel):
     comment_type: CommentType
     target: str = Field(min_length=1)
     action: FeedbackAction
-    payload: Dict[str, Any] = Field(default_factory=dict)
+    payload: dict[str, Any] = Field(default_factory=dict)
 
     @model_validator(mode="after")
-    def _target_matches_comment_type(self) -> "SfxReviewerFeedback":
+    def _target_matches_comment_type(self) -> SfxReviewerFeedback:
         if self.comment_type == "layout_feedback":
             if not _TRIGGER_ID_RE.match(self.target):
                 raise ValueError(

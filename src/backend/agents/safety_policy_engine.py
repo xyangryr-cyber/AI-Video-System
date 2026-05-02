@@ -8,13 +8,13 @@ input (HARNESS §8/§11: never persist raw user text).
 from __future__ import annotations
 
 import hashlib
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable, Optional, Tuple
+from typing import Any
 
 from src.backend.agents.safety.input_classifier import InputClassifier
 from src.backend.agents.safety.policy_decision import PolicyDecision
 from src.backend.agents.safety.response_generator import ResponseGenerator
-
 
 EventSink = Callable[[dict[str, Any]], None]
 
@@ -34,7 +34,7 @@ class SafetyPolicyEngine:
         *,
         rules_path: str | Path,
         templates_path: str | Path,
-        event_sink: Optional[EventSink] = None,
+        event_sink: EventSink | None = None,
         llm_client: Any = None,
     ) -> None:
         self._classifier = InputClassifier(rules_path)
@@ -42,7 +42,7 @@ class SafetyPolicyEngine:
         self._event_sink = event_sink
         self._llm_client = llm_client  # retained for interface parity only
 
-    def evaluate(self, user_input: str) -> Tuple[PolicyDecision, str]:
+    def evaluate(self, user_input: str) -> tuple[PolicyDecision, str]:
         decision = self._classifier.classify(user_input)
         response = self._response.render(decision.decision)
         if decision.decision != "allow":

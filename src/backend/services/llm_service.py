@@ -43,13 +43,13 @@ import json
 import logging
 import re
 import time
+from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
-from typing import Any, Callable, Mapping, Sequence, Type, TypeVar
+from typing import Any, TypeVar
 
 from pydantic import BaseModel, ValidationError
 
 from src.backend.core.redaction import SECRET_REGEXES
-
 
 log = logging.getLogger(__name__)
 
@@ -145,9 +145,7 @@ def resolve_model(role: str, *, config_path: str | Path | None = None) -> str:
         raise UnknownRoleError(f"model config at {path} is not an object")
     value = cfg.get(role)
     if not isinstance(value, str) or not value.strip():
-        raise UnknownRoleError(
-            f"role {role!r} missing or non-string in {path}: {value!r}"
-        )
+        raise UnknownRoleError(f"role {role!r} missing or non-string in {path}: {value!r}")
     return value
 
 
@@ -178,7 +176,7 @@ def _extract_assistant_content(response: Any) -> str:
     return str(content)
 
 
-def _parse_structured(content: str, response_model: Type[M]) -> M:
+def _parse_structured(content: str, response_model: type[M]) -> M:
     """Parse ``content`` as JSON, then validate against ``response_model``."""
     data = json.loads(content)
     return response_model.model_validate(data)
@@ -191,7 +189,7 @@ def chat_completion(
     *,
     role: str,
     messages: Sequence[Mapping[str, Any]],
-    response_model: Type[M] | None = None,
+    response_model: type[M] | None = None,
     config_path: str | Path | None = None,
     _completion_fn: Callable[..., Any] | None = None,
     _agent_call_logger: Any = None,
@@ -246,9 +244,7 @@ def chat_completion(
         t0 = time.monotonic()
         response = completion(model=model, messages=list(messages), **extra)
         if _agent_call_logger is not None:
-            _log_agent_call(
-                _agent_call_logger, role, model, messages, response, t0, extra
-            )
+            _log_agent_call(_agent_call_logger, role, model, messages, response, t0, extra)
         return response
 
     # Structured path: Instructor-style retry up to MAX_ATTEMPTS.
@@ -261,9 +257,7 @@ def chat_completion(
         response = completion(model=model, messages=conversation, **extra)
         last_raw = _extract_assistant_content(response)
         if _agent_call_logger is not None:
-            _log_agent_call(
-                _agent_call_logger, role, model, conversation, response, t0, extra
-            )
+            _log_agent_call(_agent_call_logger, role, model, conversation, response, t0, extra)
         try:
             return _parse_structured(last_raw, response_model)
         except (json.JSONDecodeError, ValidationError) as exc:

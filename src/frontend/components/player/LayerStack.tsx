@@ -18,13 +18,7 @@ export interface LayerStackProps {
  * LayerStack renders the visual layers for a single shot.
  * Layers: background -> content (chart/info) -> annotation -> subtitle overlay.
  */
-const LayerStack: FC<LayerStackProps> = ({
-  shot,
-  frame,
-  progress,
-  paused,
-  children,
-}) => {
+const LayerStack: FC<LayerStackProps> = ({ shot, frame, progress, paused, children }) => {
   const bgColor = shot.theme.chart_style?.background_color ?? "#1a1a2e";
 
   return (
@@ -46,9 +40,7 @@ const LayerStack: FC<LayerStackProps> = ({
           justifyContent: "center",
         }}
       >
-        {paused ? (
-          <div className="pause-indicator" data-paused="true" />
-        ) : null}
+        {paused ? <div className="pause-indicator" data-paused="true" /> : null}
         {children}
       </AbsoluteFill>
 

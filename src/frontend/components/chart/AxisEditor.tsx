@@ -87,7 +87,9 @@ export function AxisEditor({ axisConfig, onChange, disabled = false }: Props): R
             type="number"
             className="border rounded px-1 py-0.5 w-24"
             value={axisConfig.y_axis.min ?? ""}
-            onChange={(e) => updateY("min", e.target.value === "" ? undefined : Number(e.target.value))}
+            onChange={(e) =>
+              updateY("min", e.target.value === "" ? undefined : Number(e.target.value))
+            }
             disabled={disabled}
           />
         </label>
@@ -97,7 +99,9 @@ export function AxisEditor({ axisConfig, onChange, disabled = false }: Props): R
             type="number"
             className="border rounded px-1 py-0.5 w-24"
             value={axisConfig.y_axis.max ?? ""}
-            onChange={(e) => updateY("max", e.target.value === "" ? undefined : Number(e.target.value))}
+            onChange={(e) =>
+              updateY("max", e.target.value === "" ? undefined : Number(e.target.value))
+            }
             disabled={disabled}
           />
         </label>

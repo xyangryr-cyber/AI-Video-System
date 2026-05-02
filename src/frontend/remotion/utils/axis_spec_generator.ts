@@ -21,13 +21,7 @@ export interface AxisSpecOutput {
   };
 }
 
-const TIME_GRANULARITIES = new Set([
-  "day",
-  "week",
-  "month",
-  "quarter",
-  "year",
-]);
+const TIME_GRANULARITIES = new Set(["day", "week", "month", "quarter", "year"]);
 
 function yValues(dataPoints: Array<{ x: number | string; y: number }>): number[] {
   return dataPoints.map((p) => p.y);
@@ -41,9 +35,7 @@ export function generateAxisSpec(input: AxisSpecInput): AxisSpecOutput {
   const { data_points, unit, granularity } = input;
 
   // --- x_axis type inference (AC-1) ---
-  const xType: "time" | "category" = TIME_GRANULARITIES.has(granularity)
-    ? "time"
-    : "category";
+  const xType: "time" | "category" = TIME_GRANULARITIES.has(granularity) ? "time" : "category";
 
   // --- y_axis range with 5% buffer (AC-2) ---
   const yVals = yValues(data_points);

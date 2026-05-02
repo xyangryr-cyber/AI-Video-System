@@ -13,9 +13,7 @@ class FinancialDataCacheRepository(BaseRepository):
         )
         self.commit()
 
-    def upsert_cache(
-        self, symbol: str, provider: str, data_json: str, fetched_at: float
-    ) -> None:
+    def upsert_cache(self, symbol: str, provider: str, data_json: str, fetched_at: float) -> None:
         self.execute(
             "INSERT OR REPLACE INTO financial_data_cache "
             "(symbol, provider, data_json, fetched_at) VALUES (?, ?, ?, ?)",

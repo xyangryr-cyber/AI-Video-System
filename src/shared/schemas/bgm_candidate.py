@@ -23,7 +23,7 @@ as the preview).
 from __future__ import annotations
 
 import warnings
-from typing import Any, Dict, List, Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -39,10 +39,10 @@ class BgmCandidate(_Strict):
     preview_url: str = Field(min_length=1)
     preview_type: Literal["audio"] = "audio"
     raw_bgm_url: str = Field(min_length=1)
-    style_tags: List[str]
+    style_tags: list[str]
     description: str = Field(min_length=1)
     is_recommended: bool
-    adjustable_params: Dict[str, Any]
+    adjustable_params: dict[str, Any]
     rationale: str = Field(min_length=1)
 
     @model_validator(mode="before")

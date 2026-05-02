@@ -31,7 +31,7 @@ Keeps the Check trivially composable with
 from __future__ import annotations
 
 import logging
-from typing import Dict, List, Literal
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -45,7 +45,6 @@ from src.shared.schemas.shot_material_bindings import (
     ShotMaterialBindings,
 )
 
-
 _LOG = logging.getLogger(__name__)
 
 ErrorCode = Literal["material_missing", "material_unverified"]
@@ -56,14 +55,14 @@ class BlockedShot(BaseModel):
 
     shot_id: str
     error_code: ErrorCode
-    blocking_material_ids: List[str] = Field(min_length=1)
+    blocking_material_ids: list[str] = Field(min_length=1)
 
 
 class ReadinessResult(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     ok: bool
-    blocked_shots: List[BlockedShot]
+    blocked_shots: list[BlockedShot]
 
 
 def _classify(entry: MaterialEntry | None) -> ErrorCode | None:
@@ -95,9 +94,9 @@ class MaterialReadinessCheck:
         manifest: MaterialManifest,
         bindings: ShotMaterialBindings,
     ) -> ReadinessResult:
-        by_id: Dict[str, MaterialEntry] = {m.material_id: m for m in manifest.materials}
+        by_id: dict[str, MaterialEntry] = {m.material_id: m for m in manifest.materials}
 
-        blocked: List[BlockedShot] = []
+        blocked: list[BlockedShot] = []
         for binding in bindings.bindings:
             blocker = _evaluate_hard(binding, by_id)
             if blocker is not None:
@@ -109,10 +108,10 @@ class MaterialReadinessCheck:
 
 def _evaluate_hard(
     binding: ShotBinding,
-    by_id: Dict[str, MaterialEntry],
+    by_id: dict[str, MaterialEntry],
 ) -> BlockedShot | None:
-    missing_ids: List[str] = []
-    unverified_ids: List[str] = []
+    missing_ids: list[str] = []
+    unverified_ids: list[str] = []
     for mid in binding.required_materials:
         code = _classify(by_id.get(mid))
         if code == "material_missing":
@@ -142,7 +141,7 @@ def _evaluate_hard(
 
 def _warn_soft(
     binding: ShotBinding,
-    by_id: Dict[str, MaterialEntry],
+    by_id: dict[str, MaterialEntry],
 ) -> None:
     for mid in binding.optional_materials:
         code = _classify(by_id.get(mid))

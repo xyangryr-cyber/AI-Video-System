@@ -9,10 +9,11 @@ Provides:
 
 Envelope shape per SPEC-11A WsEventEnvelope.
 """
+
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
@@ -67,12 +68,14 @@ class ConnectionManager:
     @staticmethod
     def _envelope(event_type: str, project_id: str, payload: dict[str, Any]) -> str:
         """Shape per SPEC-11A WsEventEnvelope."""
-        return json.dumps({
-            "type": event_type,
-            "project_id": project_id,
-            "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-            "payload": payload,
-        })
+        return json.dumps(
+            {
+                "type": event_type,
+                "project_id": project_id,
+                "timestamp": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+                "payload": payload,
+            }
+        )
 
 
 manager = ConnectionManager()
@@ -90,9 +93,7 @@ async def project_ws(websocket: WebSocket, project_id: str) -> None:
             except json.JSONDecodeError:
                 continue
             if msg.get("type") == "ping":
-                await websocket.send_text(
-                    ConnectionManager._envelope("pong", project_id, {})
-                )
+                await websocket.send_text(ConnectionManager._envelope("pong", project_id, {}))
     except WebSocketDisconnect:
         pass
     finally:

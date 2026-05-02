@@ -20,10 +20,7 @@ const DEFAULT_PROPS: ShotRenderInput = {
   fps: 30,
 };
 
-const calculateMetadata: CalculateMetadataFunction<ShotRenderInput> = ({
-  defaultProps,
-  props,
-}) => {
+const calculateMetadata: CalculateMetadataFunction<ShotRenderInput> = ({ defaultProps, props }) => {
   const durationInFrames = props.durationInFrames ?? defaultProps.durationInFrames;
   return {
     durationInFrames: Math.max(1, Math.round(durationInFrames)),

@@ -7,7 +7,7 @@ Idempotency: (scope, stage, key) — upsert (no TTL).
 
 from __future__ import annotations
 
-from typing import Literal, Optional, Union
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -38,19 +38,18 @@ class SaveStagePreferenceParams(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     scope: Scope
-    stage: Optional[Stage] = None
+    stage: Stage | None = None
     key: str = Field(min_length=1)
-    value: Union[str, int, float, bool]
+    value: str | int | float | bool
     source: PreferenceSource
 
     @model_validator(mode="after")
-    def _stage_matches_scope(self) -> "SaveStagePreferenceParams":
+    def _stage_matches_scope(self) -> SaveStagePreferenceParams:
         if self.scope == "stage" and self.stage is None:
             raise ValueError("scope='stage' requires `stage` to be set")
         if self.scope != "stage" and self.stage is not None:
             raise ValueError(
-                f"scope='{self.scope}' must not carry a `stage` value "
-                f"(got {self.stage!r})"
+                f"scope='{self.scope}' must not carry a `stage` value (got {self.stage!r})"
             )
         return self
 

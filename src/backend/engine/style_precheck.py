@@ -7,7 +7,7 @@ All 8 rules are pure Python -- 0 LLM tokens, 0 network calls.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 # Banned words list per SPEC (17 words)
 _BANNED_WORDS: frozenset[str] = frozenset(
@@ -33,9 +33,7 @@ _BANNED_WORDS: frozenset[str] = frozenset(
 )
 
 # Chinese modal particles
-_MODAL_PARTICLES: frozenset[str] = frozenset(
-    "吧呢吗啊哦呀哈哇啦咧呗呐嘛呵哎唉嗨嘻呵".split()
-)
+_MODAL_PARTICLES: frozenset[str] = frozenset(["吧呢吗啊哦呀哈哇啦咧呗呐嘛呵哎唉嗨嘻呵"])
 
 # Person markers
 _FIRST_PERSON: frozenset[str] = frozenset({"我", "我们", "咱", "咱们"})
@@ -47,12 +45,12 @@ class StylePrecheck:
 
     @staticmethod
     def review(
-        segments: List[Dict[str, Any]],
+        segments: list[dict[str, Any]],
         *,
-        outline: Dict[str, Any],
-        original_script: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
-        checks: List[Dict[str, Any]] = []
+        outline: dict[str, Any],
+        original_script: list[dict[str, Any]],
+    ) -> dict[str, Any]:
+        checks: list[dict[str, Any]] = []
 
         # 1. Person consistency
         checks.append(StylePrecheck._check_person_consistency(segments))
@@ -70,17 +68,13 @@ class StylePrecheck:
         checks.append(StylePrecheck._check_banned_words(segments))
 
         # 6. Word count deviation <= 5% from original
-        checks.append(
-            StylePrecheck._check_word_count_deviation(segments, original_script)
-        )
+        checks.append(StylePrecheck._check_word_count_deviation(segments, original_script))
 
         # 7. Viewpoint coverage (all outline sections covered)
         checks.append(StylePrecheck._check_viewpoint_coverage(segments, outline))
 
         # 8. Data point ID set preservation
-        checks.append(
-            StylePrecheck._check_data_point_preservation(segments, original_script)
-        )
+        checks.append(StylePrecheck._check_data_point_preservation(segments, original_script))
 
         verdict = "FAIL" if any(c["verdict"] == "FAIL" for c in checks) else "PASS"
         return {"verdict": verdict, "checks": checks}
@@ -88,7 +82,7 @@ class StylePrecheck:
     # ---- per-rule helpers ----
 
     @staticmethod
-    def _check_person_consistency(segments: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _check_person_consistency(segments: list[dict[str, Any]]) -> dict[str, Any]:
         has_first = False
         has_third = False
         for seg in segments:
@@ -106,7 +100,7 @@ class StylePrecheck:
         return {"rule": "person_consistency", "verdict": "PASS"}
 
     @staticmethod
-    def _check_modal_particles(segments: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _check_modal_particles(segments: list[dict[str, Any]]) -> dict[str, Any]:
         total_chars = 0
         modal_count = 0
         for seg in segments:
@@ -125,7 +119,7 @@ class StylePrecheck:
         return {"rule": "modal_particle_frequency", "verdict": "PASS"}
 
     @staticmethod
-    def _check_sentence_length(segments: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _check_sentence_length(segments: list[dict[str, Any]]) -> dict[str, Any]:
         for seg in segments:
             text = seg.get("content", "")
             # Split on Chinese sentence terminators
@@ -140,7 +134,7 @@ class StylePrecheck:
         return {"rule": "sentence_length", "verdict": "PASS"}
 
     @staticmethod
-    def _check_paragraph_length(segments: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _check_paragraph_length(segments: list[dict[str, Any]]) -> dict[str, Any]:
         for seg in segments:
             text = seg.get("content", "")
             if len(text) > 300:
@@ -152,8 +146,8 @@ class StylePrecheck:
         return {"rule": "paragraph_length", "verdict": "PASS"}
 
     @staticmethod
-    def _check_banned_words(segments: List[Dict[str, Any]]) -> Dict[str, Any]:
-        found: List[str] = []
+    def _check_banned_words(segments: list[dict[str, Any]]) -> dict[str, Any]:
+        found: list[str] = []
         for seg in segments:
             text = seg.get("content", "")
             for word in _BANNED_WORDS:
@@ -169,9 +163,9 @@ class StylePrecheck:
 
     @staticmethod
     def _check_word_count_deviation(
-        segments: List[Dict[str, Any]],
-        original_script: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        segments: list[dict[str, Any]],
+        original_script: list[dict[str, Any]],
+    ) -> dict[str, Any]:
         orig_wc = sum(s.get("word_count", 0) for s in original_script)
         new_wc = sum(s.get("word_count", 0) for s in segments)
         if orig_wc == 0:
@@ -187,9 +181,9 @@ class StylePrecheck:
 
     @staticmethod
     def _check_viewpoint_coverage(
-        segments: List[Dict[str, Any]],
-        outline: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        segments: list[dict[str, Any]],
+        outline: dict[str, Any],
+    ) -> dict[str, Any]:
         outline_sections = {s.get("section_id") for s in outline.get("sections", [])}
         covered = {s.get("outline_section_ref") for s in segments}
         if outline_sections and not outline_sections.issubset(covered):
@@ -203,9 +197,9 @@ class StylePrecheck:
 
     @staticmethod
     def _check_data_point_preservation(
-        segments: List[Dict[str, Any]],
-        original_script: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        segments: list[dict[str, Any]],
+        original_script: list[dict[str, Any]],
+    ) -> dict[str, Any]:
         orig_ids: set[str] = set()
         for s in original_script:
             for dp in s.get("key_data_points", []):
@@ -230,10 +224,10 @@ class StylePrecheck:
         return {"rule": "data_point_preservation", "verdict": "PASS"}
 
 
-def _split_sentences(text: str) -> List[str]:
+def _split_sentences(text: str) -> list[str]:
     """Split Chinese text into sentences on common terminators."""
-    result: List[str] = []
-    current: List[str] = []
+    result: list[str] = []
+    current: list[str] = []
     terminators = {"。", "！", "？", "；", "，", "、"}
     for ch in text:
         current.append(ch)

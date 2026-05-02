@@ -46,11 +46,7 @@ function segmentColor(index: number): string {
   return SEGMENT_COLORS[index % SEGMENT_COLORS.length];
 }
 
-const SegmentTimeline: FC<PreviewCompositionProps> = ({
-  projectId,
-  timeline,
-  segments,
-}) => {
+const SegmentTimeline: FC<PreviewCompositionProps> = ({ projectId, timeline, segments }) => {
   const { total_duration_sec } = timeline;
 
   return (
@@ -112,9 +108,7 @@ const SegmentTimeline: FC<PreviewCompositionProps> = ({
               >
                 {seg.title}
               </span>
-              <span style={{ fontSize: 11, opacity: 0.8 }}>
-                {seg.duration_sec}s
-              </span>
+              <span style={{ fontSize: 11, opacity: 0.8 }}>{seg.duration_sec}s</span>
             </div>
           );
         })}

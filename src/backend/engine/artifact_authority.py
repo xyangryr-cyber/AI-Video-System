@@ -5,7 +5,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md "Phase Artifact Authority Map"
 
 from __future__ import annotations
 
-from typing import Any, Dict, Final
+from typing import Any, Final
 
 # Each entry: producer_phase, producer_agent, consumer_phases, consumer_agents,
 # schema_ref, acceptance_reviewer.
@@ -18,7 +18,7 @@ _FIELDS = (
     "acceptance_reviewer",
 )
 
-ARTIFACT_AUTHORITY: Final[Dict[str, Dict[str, Any]]] = {
+ARTIFACT_AUTHORITY: Final[dict[str, dict[str, Any]]] = {
     "requirements.json": {
         "producer_phase": "P0",
         "producer_agent": "RequirementsAgent",
@@ -118,7 +118,7 @@ ARTIFACT_AUTHORITY: Final[Dict[str, Dict[str, Any]]] = {
 }
 
 
-def lookup_artifact(name: str) -> Dict[str, Any]:
+def lookup_artifact(name: str) -> dict[str, Any]:
     """Return the authority record for *name*, or raise KeyError."""
     return dict(ARTIFACT_AUTHORITY[name])
 

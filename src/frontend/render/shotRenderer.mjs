@@ -27,7 +27,11 @@ async function _loadRemotion() {
       import("@remotion/renderer"),
     ]);
   }
-  return { bundle: _bundler.bundle, renderMedia: _renderer.renderMedia, selectComposition: _renderer.selectComposition };
+  return {
+    bundle: _bundler.bundle,
+    renderMedia: _renderer.renderMedia,
+    selectComposition: _renderer.selectComposition,
+  };
 }
 
 // Testing hook: inject mock Remotion modules
@@ -62,12 +66,7 @@ export async function renderShot(options) {
     const { bundle, renderMedia, selectComposition } = await _loadRemotion();
 
     const bundleLocation = await bundle({
-      entryPoint: path.resolve(
-        __dirname,
-        "..",
-        "remotion",
-        "RootShotRender.tsx"
-      ),
+      entryPoint: path.resolve(__dirname, "..", "remotion", "RootShotRender.tsx"),
       webpackOverride: (currentConfiguration) => ({
         ...currentConfiguration,
         resolve: {

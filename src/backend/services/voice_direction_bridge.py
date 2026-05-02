@@ -8,10 +8,10 @@ segment-level TTS parameter overrides deterministically.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 # Emotion -> SSML emotion mapping
-_EMOTION_MAP: Dict[str, str] = {
+_EMOTION_MAP: dict[str, str] = {
     "excited": "excited",
     "neutral": "neutral",
     "calm": "calm",
@@ -21,7 +21,7 @@ _EMOTION_MAP: Dict[str, str] = {
 }
 
 # Pace -> rate multiplier mapping (5 levels)
-_PACE_MAP: Dict[str, float] = {
+_PACE_MAP: dict[str, float] = {
     "very_slow": 0.55,
     "slow": 0.8,
     "medium": 1.0,
@@ -30,7 +30,7 @@ _PACE_MAP: Dict[str, float] = {
 }
 
 # Energy -> volume multiplier mapping
-_ENERGY_MAP: Dict[str, float] = {
+_ENERGY_MAP: dict[str, float] = {
     "low": 0.8,
     "medium": 1.0,
     "high": 1.2,
@@ -44,7 +44,7 @@ class VoiceDirectionBridge:
     """
 
     @staticmethod
-    def convert(vd: Dict[str, Any]) -> Dict[str, Any]:
+    def convert(vd: dict[str, Any]) -> dict[str, Any]:
         emotion = vd.get("emotion", "neutral")
         pace = vd.get("pace", "medium")
         energy = vd.get("energy", "medium")

@@ -1,10 +1,7 @@
-import React, { useMemo } from 'react';
-import ReactECharts from 'echarts-for-react';
-import type { TemplateProps } from '@shared/types/template_props';
-import {
-  resolveChartData,
-  validateChartMaterial,
-} from '@frontend/render/chart_material_priority';
+import React, { useMemo } from "react";
+import ReactECharts from "echarts-for-react";
+import type { TemplateProps } from "@shared/types/template_props";
+import { resolveChartData, validateChartMaterial } from "@frontend/render/chart_material_priority";
 
 const AnimatedBarChart: React.FC<TemplateProps> = (props) => {
   const { annotationKeyframes, theme, chart_material } = props;
@@ -14,7 +11,11 @@ const AnimatedBarChart: React.FC<TemplateProps> = (props) => {
     const resolved = resolveChartData(props);
 
     const colorPalette = theme?.color_palette ?? [
-      '#5470C6', '#91CC75', '#FAC858', '#EE6666', '#73C0DE',
+      "#5470C6",
+      "#91CC75",
+      "#FAC858",
+      "#EE6666",
+      "#73C0DE",
     ];
 
     const axisSpec = resolved.axisSpec;
@@ -24,9 +25,10 @@ const AnimatedBarChart: React.FC<TemplateProps> = (props) => {
     let seriesData: { name: string; data: number[]; type: string }[] = [];
 
     if (resolved.source === "chart_material" && Array.isArray(resolvedData)) {
-      seriesData = (resolvedData as { name: string; data: number[] }[]).map(
-        (s) => ({ ...s, type: "bar" as const }),
-      );
+      seriesData = (resolvedData as { name: string; data: number[] }[]).map((s) => ({
+        ...s,
+        type: "bar" as const,
+      }));
       if (axisSpec) {
         xData = (axisSpec.x_axis.labels ?? []) as string[];
       }
@@ -39,7 +41,7 @@ const AnimatedBarChart: React.FC<TemplateProps> = (props) => {
       xData = raw.xAxis?.data ?? [];
       seriesData = (raw.series ?? []).map((s) => ({
         name: s.name,
-        type: 'bar' as const,
+        type: "bar" as const,
         data: s.data,
       }));
     }
@@ -49,35 +51,35 @@ const AnimatedBarChart: React.FC<TemplateProps> = (props) => {
 
     return {
       color: colorPalette,
-      backgroundColor: theme?.background_color ?? 'transparent',
+      backgroundColor: theme?.background_color ?? "transparent",
       animation: true,
       animationDuration: 1000,
       animationDelay(dataIndex: number) {
         return dataIndex * 100;
       },
-      tooltip: { trigger: 'axis' },
+      tooltip: { trigger: "axis" },
       xAxis: {
-        type: 'category' as const,
+        type: "category" as const,
         data: xData,
-        axisLine: { lineStyle: { color: theme?.chart_style?.axis_color ?? '#ccc' } },
+        axisLine: { lineStyle: { color: theme?.chart_style?.axis_color ?? "#ccc" } },
       },
       yAxis: {
-        type: 'value' as const,
+        type: "value" as const,
         ...(yAxisMin !== undefined ? { min: yAxisMin } : {}),
         ...(yAxisMax !== undefined ? { max: yAxisMax } : {}),
-        splitLine: { lineStyle: { color: theme?.chart_style?.grid_color ?? '#eee' } },
+        splitLine: { lineStyle: { color: theme?.chart_style?.grid_color ?? "#eee" } },
       },
       series: seriesData.map((s, _i) => ({
         name: s.name,
-        type: 'bar' as const,
+        type: "bar" as const,
         data: s.data,
         barMaxWidth: 40,
         emphasis: {
           itemStyle: {
-            color: '#FF6B6B',
+            color: "#FF6B6B",
             shadowBlur: 10,
             shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.3)',
+            shadowColor: "rgba(0, 0, 0, 0.3)",
           },
         },
         itemStyle: {
@@ -86,12 +88,12 @@ const AnimatedBarChart: React.FC<TemplateProps> = (props) => {
       })),
       legend: {
         data: seriesData.map((s) => s.name),
-        textStyle: { color: theme?.chart_style?.axis_color ?? '#666' },
+        textStyle: { color: theme?.chart_style?.axis_color ?? "#666" },
       },
     };
   }, [annotationKeyframes, theme, chart_material, props.data]);
 
-  return <ReactECharts option={option} style={{ width: '100%', height: '100%' }} />;
+  return <ReactECharts option={option} style={{ width: "100%", height: "100%" }} />;
 };
 
 export default AnimatedBarChart;

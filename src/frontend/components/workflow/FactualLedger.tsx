@@ -1,9 +1,9 @@
-import type { ReactElement } from "react"
-import { ExternalLink, ShieldCheck } from "lucide-react"
-import type { FactualEntry } from "./mockData"
+import type { ReactElement } from "react";
+import { ExternalLink, ShieldCheck } from "lucide-react";
+import type { FactualEntry } from "./mockData";
 
 interface FactualLedgerProps {
-  facts: FactualEntry[]
+  facts: FactualEntry[];
 }
 
 export function FactualLedger({ facts }: FactualLedgerProps): ReactElement {
@@ -22,10 +22,7 @@ export function FactualLedger({ facts }: FactualLedgerProps): ReactElement {
       <div className="flex-1 overflow-y-auto p-3 pr-1 bg-white border border-slate-200 rounded-xl">
         <ul className="space-y-3" data-testid="fact-list">
           {facts.map((fact) => (
-            <li
-              key={fact.id}
-              className="flex gap-3 text-sm text-slate-700 leading-relaxed group"
-            >
+            <li key={fact.id} className="flex gap-3 text-sm text-slate-700 leading-relaxed group">
               <span className="shrink-0 mt-2 w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-blue-400 transition-colors"></span>
               <div className="flex flex-col gap-1.5 w-full">
                 <div className="text-[13px] font-medium text-slate-900">{fact.content}</div>
@@ -51,5 +48,5 @@ export function FactualLedger({ facts }: FactualLedgerProps): ReactElement {
         </ul>
       </div>
     </div>
-  )
+  );
 }

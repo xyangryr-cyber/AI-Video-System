@@ -21,9 +21,9 @@ from __future__ import annotations
 import logging
 import sqlite3
 import time
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping, Protocol
-
+from typing import Any, Protocol
 
 logger = logging.getLogger(__name__)
 
@@ -39,9 +39,7 @@ __all__ = [
 class Assembler(Protocol):
     """Minimal protocol satisfied by NarrationMasterAssembler (SPEC-C-016)."""
 
-    def assemble(
-        self, project_id: str, project_root: Path
-    ) -> Any: ...  # pragma: no cover
+    def assemble(self, project_id: str, project_root: Path) -> Any: ...  # pragma: no cover
 
 
 class MasterAudioRefRepo(Protocol):

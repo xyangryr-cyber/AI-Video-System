@@ -5,7 +5,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.3.3
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 
 class GateP3:
@@ -15,9 +15,9 @@ class GateP3:
     @staticmethod
     def check(
         *,
-        polished_script: Dict[str, Any],
-        style_precheck_result: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        polished_script: dict[str, Any],
+        style_precheck_result: dict[str, Any],
+    ) -> dict[str, Any]:
         failed: list[str] = []
         passed: list[str] = []
 
@@ -34,9 +34,7 @@ class GateP3:
             passed.append("StylePrecheck PASS")
         else:
             failed_checks = [
-                c
-                for c in style_precheck_result.get("checks", [])
-                if c.get("verdict") == "FAIL"
+                c for c in style_precheck_result.get("checks", []) if c.get("verdict") == "FAIL"
             ]
             failed.append(f"StylePrecheck FAIL: {[c['rule'] for c in failed_checks]}")
 

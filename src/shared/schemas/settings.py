@@ -11,7 +11,7 @@ Encodes:
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
@@ -23,7 +23,7 @@ class _Strict(BaseModel):
 
 
 class SettingsResponse(_Strict):
-    model_config_data: Dict[str, Any]
+    model_config_data: dict[str, Any]
     brand_kit: BrandKit
 
 
@@ -33,8 +33,8 @@ class PreferencesResponse(_Strict):
 
 
 class PreferencesUpdateRequest(_Strict):
-    global_rules_md: Optional[str] = None
-    user_preferences_md: Optional[str] = None
+    global_rules_md: str | None = None
+    user_preferences_md: str | None = None
 
 
 class SnapshotItem(_Strict):
@@ -44,12 +44,12 @@ class SnapshotItem(_Strict):
 
 
 class SnapshotListResponse(_Strict):
-    snapshots: List[SnapshotItem]
+    snapshots: list[SnapshotItem]
 
 
 # AC-7: Preference write flow invariants (documentation-as-code).
 # Callers: API layer for PUT /api/settings/preferences.
-PREFERENCE_WRITE_FLOW: Dict[str, Any] = {
+PREFERENCE_WRITE_FLOW: dict[str, Any] = {
     "snapshot_before_update": True,
     "steps": [
         "1. Create snapshot of current preferences into preference_snapshots table",
@@ -61,7 +61,7 @@ PREFERENCE_WRITE_FLOW: Dict[str, Any] = {
 
 # AC-8: Preference rollback flow invariants (documentation-as-code).
 # Callers: API layer for POST /api/settings/preferences/snapshots/{id}/rollback.
-PREFERENCE_ROLLBACK_FLOW: Dict[str, Any] = {
+PREFERENCE_ROLLBACK_FLOW: dict[str, Any] = {
     "snapshot_current": True,
     "overwrite_from_target": True,
     "audit_event": "preference.rollback",

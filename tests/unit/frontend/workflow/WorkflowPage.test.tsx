@@ -18,7 +18,18 @@ import { apiClient } from "@frontend/api/client"
 
 beforeEach(() => {
   vi.clearAllMocks()
-  vi.mocked(apiClient.get).mockResolvedValue({ artifact_data: null })
+  vi.mocked(apiClient.get).mockImplementation((url: string) => {
+    if (url.includes('/state')) {
+      return Promise.resolve({ project: { title: '黄金价格走势分析与投资展望' } })
+    }
+    if (url.includes('/artifact')) {
+      return Promise.resolve({ artifact_data: null })
+    }
+    if (url.includes('/tasks')) {
+      return Promise.resolve({ tasks: [], current_task: null })
+    }
+    return Promise.resolve(null)
+  })
 })
 
 const renderAt = (path: string) =>
@@ -33,12 +44,12 @@ const renderAt = (path: string) =>
   )
 
 describe("WorkflowPage (new UI)", () => {
-  it("渲染顶部 header：项目标题、ID、阶段进度", () => {
+  it("渲染顶部 header：项目标题、ID、阶段进度", async () => {
     renderAt("/projects/proj_001/phases/12")
-    expect(screen.getByText("黄金价格走势分析与投资展望")).toBeInTheDocument()
+    expect(await screen.findByText("黄金价格走势分析与投资展望")).toBeInTheDocument()
     expect(screen.getByText("proj_001")).toBeInTheDocument()
-    // P12 · 最终输出
-    expect(screen.getByText(/P12/)).toBeInTheDocument()
+    // P12 · 最终输出 (header badge, PhaseNavigation also shows P12)
+    expect(screen.getByText(/P12 · 最终输出/)).toBeInTheDocument()
   })
 
   it("渲染对话历史区域（初始为空，等待用户发送）", () => {
@@ -46,10 +57,10 @@ describe("WorkflowPage (new UI)", () => {
     expect(screen.getByPlaceholderText("发送消息给 Agent")).toBeInTheDocument()
   })
 
-  it("渲染右栏：阶段产物 + 关键事实核实", () => {
+  it("渲染右栏：阶段产物 + 需求预览", () => {
     renderAt("/projects/proj_001/phases/12")
     expect(screen.getByText(/阶段产物/)).toBeInTheDocument()
-    expect(screen.getByText("关键事实核实")).toBeInTheDocument()
+    expect(screen.getByText("暂无需求数据")).toBeInTheDocument()
   })
 
   it("点击阶段产物卡片打开弹窗，点击关闭按钮关闭", async () => {

@@ -8,3 +8,4 @@ mypy>=1.8
 pyyaml>=6.0
 types-PyYAML>=6.0
 types-jsonschema>=4.20
+pre-commit>=3.8

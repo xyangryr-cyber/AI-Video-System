@@ -44,7 +44,6 @@ from dataclasses import dataclass
 from src.backend.engine.task_types import TaskType
 from src.backend.engine.workflow_engine import WorkflowEngine
 
-
 # -- SQL constants (line-split to dodge SPEC-B-002 AC-4 regex) ------------
 
 _UPDATE_PHASE_BUMP_VERSION_SQL = (
@@ -153,8 +152,7 @@ class VersionManager:
 
     def _read_phase_version(self, project_id: str, phase_num: int) -> int:
         row = self._conn.execute(
-            "SELECT artifact_version FROM phases "
-            "WHERE project_id = ? AND phase_num = ?",
+            "SELECT artifact_version FROM phases WHERE project_id = ? AND phase_num = ?",
             (project_id, phase_num),
         ).fetchone()
         if row is None:

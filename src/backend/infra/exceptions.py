@@ -23,6 +23,4 @@ class OutboundBlockedException(Exception):
         self.host = host
         self.agent = agent
         self.reason = reason
-        super().__init__(
-            f"outbound blocked: agent={agent!r} host={host!r} reason={reason!r}"
-        )
+        super().__init__(f"outbound blocked: agent={agent!r} host={host!r} reason={reason!r}")

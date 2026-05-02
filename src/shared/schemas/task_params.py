@@ -7,7 +7,8 @@ before any INSERT into `task_ledger`.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Mapping, Optional, Type
+from collections.abc import Mapping
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -20,7 +21,7 @@ class _StrictParams(BaseModel):
 
 class GenerateArtifactParams(_StrictParams):
     phase_name: str
-    input_refs: List[str]
+    input_refs: list[str]
 
 
 class RegenerateSectionParams(_StrictParams):
@@ -32,7 +33,7 @@ class RegenerateSectionParams(_StrictParams):
 class UserRevisionParams(_StrictParams):
     phase_name: str
     revision_text: str
-    target_section: Optional[str] = None
+    target_section: str | None = None
 
 
 class ReviewParams(_StrictParams):
@@ -55,7 +56,7 @@ class VerifyParams(_StrictParams):
 class CrossCheckParams(_StrictParams):
     left_ref: str
     right_ref: str
-    check_fields: List[str]
+    check_fields: list[str]
 
 
 class UserAnnotationParams(_StrictParams):
@@ -64,7 +65,7 @@ class UserAnnotationParams(_StrictParams):
     text: str
 
 
-TASK_PARAMS_REGISTRY: Dict[str, Type[_StrictParams]] = {
+TASK_PARAMS_REGISTRY: dict[str, type[_StrictParams]] = {
     "generate_artifact": GenerateArtifactParams,
     "regenerate_section": RegenerateSectionParams,
     "user_revision": UserRevisionParams,

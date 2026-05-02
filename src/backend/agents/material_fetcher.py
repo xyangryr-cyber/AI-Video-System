@@ -32,7 +32,7 @@ for a dead material.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -84,9 +84,7 @@ class MaterialFetcher:
     def fetch(self, entry: MaterialEntry) -> MaterialEntry:
         provider = self._providers.get(entry.source.kind)
         if provider is None:
-            raise ValueError(
-                f"no provider configured for source.kind={entry.source.kind.value}"
-            )
+            raise ValueError(f"no provider configured for source.kind={entry.source.kind.value}")
         try:
             result = self._fetch_with_retry(provider, entry.source.ref)
         except TransientProviderError:
@@ -123,7 +121,7 @@ class MaterialFetcher:
 
     @staticmethod
     def _now_iso() -> str:
-        return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
 
 __all__ = ["MaterialFetcher"]

@@ -5,10 +5,19 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.0.1
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 from src.backend.agents.schemas import RequirementsLLMOutput
 from src.backend.services.llm_service import chat_completion
+from src.shared.schemas.artifacts import (
+    Category,
+    PlatformEntry,
+    Requirements,
+    SubtitlePreferences,
+    TargetDuration,
+    TargetWordCount,
+    VoicePreferences,
+)
 
 
 class RequirementsAgent:
@@ -35,10 +44,10 @@ class RequirementsAgent:
         target_duration_seconds: int = 600,
         target_word_count_min: int = 800,
         target_word_count_max: int = 1200,
-        voice_preferences: Dict[str, Any] | None = None,
+        voice_preferences: dict[str, Any] | None = None,
         target_platform: str = "web",
-        subtitle_preferences: Dict[str, Any] | None = None,
-    ) -> Dict[str, Any]:
+        subtitle_preferences: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         # AC-2: validate word count / duration consistency (+-10%)
         expected_center = target_duration_seconds * self._SPEECH_RATE_BASELINE
         wc_center = (target_word_count_min + target_word_count_max) / 2
@@ -102,3 +111,60 @@ class RequirementsAgent:
             "target_platform": target_platform,
             "subtitle_preferences": llm_result.subtitle_preferences.model_dump(),
         }
+
+    @staticmethod
+    def _to_canonical(raw: dict[str, Any]) -> Requirements:
+        """Transform the agent's flat dict output into a canonical Requirements model.
+
+        Maps flat agent fields to the structured Pydantic types expected
+        by the shared artifact schema.
+        """
+        # 1. TargetDuration: same value for min/max from flat seconds
+        dur_sec = raw.get("target_duration_seconds", 600)
+        target_duration = TargetDuration(min_sec=dur_sec, max_sec=dur_sec)
+
+        # 2. TargetWordCount: map min/max from nested dict
+        wc = raw.get("target_word_count", {})
+        target_word_count = TargetWordCount(
+            min=wc.get("min", 800),
+            max=wc.get("max", 1200),
+        )
+
+        # 3. Platform: flat string -> list[PlatformEntry]
+        platform_str = raw.get("platform", "web")
+        platform_list = [PlatformEntry(platform=platform_str, role="primary")]
+
+        # 4. Category: nested dict -> Category
+        cat = raw.get("category", {})
+        category = Category(
+            level1=cat.get("level1", "finance"),
+            level2=cat.get("level2", "general"),
+        )
+
+        # 5. VoicePreferences: agent dict -> canonical (voice_id from gender, style from tone)
+        vp = raw.get("voice_preferences", {})
+        voice_preferences = VoicePreferences(
+            voice_id=vp.get("gender", "neutral"),
+            style=vp.get("tone", "professional"),
+        )
+
+        # 6. SubtitlePreferences: sensible defaults (agent output doesn't map 1:1)
+        subtitle_preferences = SubtitlePreferences(
+            style="sentence",
+            highlight_enabled=True,
+        )
+
+        # 7. Assemble the canonical Requirements model
+        return Requirements(
+            project_id=raw.get("project_id", ""),
+            title=raw.get("title", ""),
+            topic=raw.get("topic", ""),
+            duration_class=raw.get("duration_class", "medium"),
+            target_duration=target_duration,
+            target_word_count=target_word_count,
+            platform=platform_list,
+            category=category,
+            narrative_template=raw.get("narrative_template", "chronological"),
+            voice_preferences=voice_preferences,
+            subtitle_preferences=subtitle_preferences,
+        )

@@ -7,8 +7,9 @@ HARNESS §8 / SPEC-A-contracts.md SPEC-13B. Mirrored 1:1 in
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from enum import Enum
-from typing import Any, Dict, Mapping, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -38,10 +39,9 @@ class LogLevel(str, Enum):
     ERROR = "ERROR"
 
 
-LOG_LEVEL_USAGE: Dict[str, str] = {
+LOG_LEVEL_USAGE: dict[str, str] = {
     "DEBUG": "Dev-only diagnostics (suppressed in production by default).",
-    "INFO": "Normal business events: task start/finish, phase advance, "
-    "downgrade switch.",
+    "INFO": "Normal business events: task start/finish, phase advance, downgrade switch.",
     "WARN": "Non-fatal anomalies: degradation events "
     "(capability_gap / source_fallback), cost warnings, retries.",
     "ERROR": "Fatal exceptions: agent crash, DB error, uncaught exception.",
@@ -66,19 +66,17 @@ class LogLine(BaseModel):
     service: Service
     event: str
 
-    project_id: Optional[str] = None
-    phase: Optional[int] = None
-    agent: Optional[str] = None
-    duration_ms: Optional[int] = None
-    error_code: Optional[str] = None
-    extra: Dict[str, Any] = Field(default_factory=dict)
+    project_id: str | None = None
+    phase: int | None = None
+    agent: str | None = None
+    duration_ms: int | None = None
+    error_code: str | None = None
+    extra: dict[str, Any] = Field(default_factory=dict)
 
     @model_validator(mode="after")
-    def _validate_source_fallback_extras(self) -> "LogLine":
+    def _validate_source_fallback_extras(self) -> LogLine:
         if self.event == SOURCE_FALLBACK:
-            missing = [
-                key for key in SOURCE_FALLBACK_REQUIRED_EXTRAS if key not in self.extra
-            ]
+            missing = [key for key in SOURCE_FALLBACK_REQUIRED_EXTRAS if key not in self.extra]
             if missing:
                 raise ValueError(
                     "source_fallback log line is missing required extra "

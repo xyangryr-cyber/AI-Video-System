@@ -50,7 +50,6 @@ from src.backend.reviewers.audio_analysis.lufs_snr import (
     speech_snr_db,
 )
 
-
 Verdict = Literal["PASS", "FAIL"]
 
 
@@ -148,9 +147,7 @@ class MusicFitReviewer:
         for t in transition_points_s:
             rms_jump = rms_jump_db(mix, sr, t, window_s=window_s)
             c_jump = spectral_centroid_jump_pct(mix, sr, t, window_s=window_s)
-            is_fail = (
-                rms_jump > TRANSITION_RMS_DB_MAX or c_jump > TRANSITION_CENTROID_PCT_MAX
-            )
+            is_fail = rms_jump > TRANSITION_RMS_DB_MAX or c_jump > TRANSITION_CENTROID_PCT_MAX
             any_fail = any_fail or is_fail
             transitions.append(
                 {
@@ -245,9 +242,7 @@ class MusicFitReviewer:
             self.check_abrupt_transition(mix, sr, transition_points_s),
             self.check_speech_intelligibility(narration, bgm, sr, voice_windows),
         ]
-        overall: Verdict = (
-            "FAIL" if any(c.verdict == "FAIL" for c in checks) else "PASS"
-        )
+        overall: Verdict = "FAIL" if any(c.verdict == "FAIL" for c in checks) else "PASS"
         return ReviewReport(verdict=overall, checks=checks)
 
 

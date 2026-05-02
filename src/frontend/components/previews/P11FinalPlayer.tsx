@@ -1,6 +1,6 @@
-import type { Cover } from '@frontend/types/preview';
-import { useState, useRef, useCallback } from 'react';
-import { Play, Pause, Download, CheckCircle2, FileText } from 'lucide-react';
+import type { Cover } from "@frontend/types/preview";
+import { useState, useRef, useCallback } from "react";
+import { Play, Pause, Download, CheckCircle2, FileText } from "lucide-react";
 
 interface P11FinalPlayerProps {
   video_url?: string;
@@ -51,9 +51,13 @@ export function P11FinalPlayer({ video_url, covers, download_urls }: P11FinalPla
           <button
             onClick={handleToggle}
             className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors"
-            aria-label={playing ? 'Pause video' : 'Play video'}
+            aria-label={playing ? "Pause video" : "Play video"}
           >
-            {playing ? <Pause className="w-12 h-12 text-white" /> : <Play className="w-12 h-12 text-white" />}
+            {playing ? (
+              <Pause className="w-12 h-12 text-white" />
+            ) : (
+              <Play className="w-12 h-12 text-white" />
+            )}
           </button>
         </div>
       ) : (
@@ -74,9 +78,7 @@ export function P11FinalPlayer({ video_url, covers, download_urls }: P11FinalPla
                   className="w-full h-18 object-cover"
                   loading="lazy"
                 />
-                <div className="p-1 text-xs text-center text-gray-500">
-                  {cover.aspect_ratio}
-                </div>
+                <div className="p-1 text-xs text-center text-gray-500">{cover.aspect_ratio}</div>
               </div>
             ))}
           </div>
@@ -86,8 +88,8 @@ export function P11FinalPlayer({ video_url, covers, download_urls }: P11FinalPla
       {/* Platform download buttons */}
       <div className="grid grid-cols-2 gap-4">
         <a
-          href={download_urls?.['bilibili'] || '#'}
-          download={download_urls?.['bilibili'] ? 'video_bilibili.mp4' : undefined}
+          href={download_urls?.["bilibili"] || "#"}
+          download={download_urls?.["bilibili"] ? "video_bilibili.mp4" : undefined}
           className="bg-white border-2 border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all rounded-xl p-4 flex flex-col items-center justify-center gap-3 text-center group no-underline"
         >
           <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -99,8 +101,8 @@ export function P11FinalPlayer({ video_url, covers, download_urls }: P11FinalPla
           </div>
         </a>
         <a
-          href={download_urls?.['douyin'] || '#'}
-          download={download_urls?.['douyin'] ? 'video_douyin.mp4' : undefined}
+          href={download_urls?.["douyin"] || "#"}
+          download={download_urls?.["douyin"] ? "video_douyin.mp4" : undefined}
           className="bg-white border-2 border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all rounded-xl p-4 flex flex-col items-center justify-center gap-3 text-center group no-underline"
         >
           <div className="w-10 h-10 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -108,7 +110,9 @@ export function P11FinalPlayer({ video_url, covers, download_urls }: P11FinalPla
           </div>
           <div>
             <div className="text-sm font-bold text-slate-800">下载抖音版本</div>
-            <div className="text-[10px] font-mono text-slate-500 mt-1">竖屏 | 1080x1920 | 165MB</div>
+            <div className="text-[10px] font-mono text-slate-500 mt-1">
+              竖屏 | 1080x1920 | 165MB
+            </div>
           </div>
         </a>
       </div>
@@ -120,8 +124,8 @@ export function P11FinalPlayer({ video_url, covers, download_urls }: P11FinalPla
           <span className="text-sm font-bold text-slate-700">配套字幕文件 (SRT)</span>
         </div>
         <a
-          href={download_urls?.['srt'] || '#'}
-          download={download_urls?.['srt'] ? 'subtitles.srt' : undefined}
+          href={download_urls?.["srt"] || "#"}
+          download={download_urls?.["srt"] ? "subtitles.srt" : undefined}
           className="text-blue-600 font-bold text-xs uppercase tracking-wider hover:underline underline-offset-4 no-underline"
         >
           Download

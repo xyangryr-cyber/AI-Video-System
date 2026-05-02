@@ -1,5 +1,5 @@
-declare module 'react-chrono' {
-  import type { FC } from 'react';
+declare module "react-chrono" {
+  import type { FC } from "react";
 
   interface TimelineItem {
     title: string;
@@ -24,7 +24,7 @@ declare module 'react-chrono' {
 
   interface ChronoProps {
     items: TimelineItem[];
-    mode?: 'VERTICAL' | 'VERTICAL_ALTERNATING' | 'HORIZONTAL';
+    mode?: "VERTICAL" | "VERTICAL_ALTERNATING" | "HORIZONTAL";
     theme?: ChronoTheme;
     cardHeight?: number;
     slideShow?: boolean;

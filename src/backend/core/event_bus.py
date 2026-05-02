@@ -10,6 +10,7 @@ ConnectionManager.  The ConnectionManager is wired in at app startup
 (main.py) so that emit_and_broadcast() can push events to WebSocket
 clients.
 """
+
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -52,15 +53,11 @@ class EventBus:
             except Exception:
                 pass
 
-    async def emit_and_broadcast(
-        self, event_type: str, project_id: str, payload: dict
-    ) -> None:
+    async def emit_and_broadcast(self, event_type: str, project_id: str, payload: dict) -> None:
         """Emit to callbacks AND broadcast via ConnectionManager."""
         await self.emit(event_type, project_id, payload)
         if self._connection_manager is not None:
-            await self._connection_manager.broadcast(
-                project_id, event_type, payload
-            )
+            await self._connection_manager.broadcast(project_id, event_type, payload)
 
     def wire(self, connection_manager: object) -> None:
         """Inject the ConnectionManager dependency (called at startup)."""

@@ -38,7 +38,7 @@ def _startup_stale_cutoff() -> str:
     the longest legitimate task would have updated its heartbeat by now.
     """
     horizon_sec = max(TASK_TIMEOUTS.values()) + STALE_THRESHOLD_GRACE_SEC
-    cutoff = _dt.datetime.now(_dt.timezone.utc) - _dt.timedelta(seconds=horizon_sec)
+    cutoff = _dt.datetime.now(_dt.UTC) - _dt.timedelta(seconds=horizon_sec)
     return cutoff.strftime("%Y-%m-%dT%H:%M:%S.") + f"{cutoff.microsecond // 1000:03d}Z"
 
 

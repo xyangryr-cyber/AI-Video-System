@@ -7,11 +7,7 @@ import type { TemplateProps } from "@shared/types/template_props";
 import { getRenderConfig } from "../utils/render_mode_controller";
 import ChartTemplate from "../components/ChartTemplate";
 
-export interface PreviewCompositionProps extends TemplateProps {
-  // Mode is fixed to 'preview' for this composition.
-  // Shared data (data_points, axis_spec, chart_style_overrides)
-  // are passed via TemplateProps and NOT duplicated/forked.
-}
+export type PreviewCompositionProps = TemplateProps;
 
 /**
  * PreviewComposition renders a single frame at 480p.
@@ -35,10 +31,7 @@ const PreviewComposition: FC<PreviewCompositionProps> = (props) => {
         position: "relative",
       }}
     >
-      <ChartTemplate
-        {...props}
-        source_verified={false}
-      />
+      <ChartTemplate {...props} source_verified={false} />
     </div>
   );
 };

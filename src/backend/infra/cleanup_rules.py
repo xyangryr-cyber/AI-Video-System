@@ -31,11 +31,9 @@ from __future__ import annotations
 import fnmatch
 import shutil
 from pathlib import Path
-from typing import Dict, List, Tuple
-
 
 # AC-3 whitelist (explicit keep). Directories end with "/"; files are literals.
-ARCHIVE_WHITELIST_PATTERNS: Tuple[str, ...] = (
+ARCHIVE_WHITELIST_PATTERNS: tuple[str, ...] = (
     "phase_4/narration_master.mp3",
     "phase_4/narration_master.json",
     "phase_5/bgm_mix_master.mp3",
@@ -46,15 +44,15 @@ ARCHIVE_WHITELIST_PATTERNS: Tuple[str, ...] = (
 )
 
 # AC-4 blacklist (explicit delete).
-ARCHIVE_BLACKLIST_PATTERNS: Tuple[str, ...] = (
+ARCHIVE_BLACKLIST_PATTERNS: tuple[str, ...] = (
     "phase_5/bgm_candidates/",
     "phase_5/bgm_mix_preview_*.mp3",
     "phase_6/sfx_applied_segments/",
 )
 
 # AC-2 backup classification.
-OSS_ASYNC_ARCHIVE_PATHS: Tuple[str, ...] = ("phase_7a/verified_materials/",)
-LOCAL_ONLY_PATHS: Tuple[str, ...] = (
+OSS_ASYNC_ARCHIVE_PATHS: tuple[str, ...] = ("phase_7a/verified_materials/",)
+LOCAL_ONLY_PATHS: tuple[str, ...] = (
     "phase_5/bgm_mix_preview_*.mp3",
     "phase_6/sfx_applied_segments/",
 )
@@ -91,7 +89,7 @@ def classify_path(rel_path: str) -> str:
     return "unknown"
 
 
-def archive_project(project_root: Path) -> Dict[str, List[str]]:
+def archive_project(project_root: Path) -> dict[str, list[str]]:
     """Apply archive rules to ``project_root`` in place.
 
     Deletes every file whose relative path classifies as ``"delete"``;
@@ -102,8 +100,8 @@ def archive_project(project_root: Path) -> Dict[str, List[str]]:
     POSIX paths sorted lexicographically.
     """
     root = Path(project_root)
-    kept: List[str] = []
-    deleted: List[str] = []
+    kept: list[str] = []
+    deleted: list[str] = []
 
     for path in sorted(root.rglob("*")):
         if not path.is_file():

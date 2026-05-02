@@ -17,9 +17,7 @@ import sqlite3
 from src.backend.db.repositories.async_task_repo import AsyncTaskRepository
 
 
-def pick_next(
-    repo: AsyncTaskRepository, worker_id: str | None = None
-) -> sqlite3.Row | None:
+def pick_next(repo: AsyncTaskRepository, worker_id: str | None = None) -> sqlite3.Row | None:
     row = repo.next_ready()
     if row is None:
         return None

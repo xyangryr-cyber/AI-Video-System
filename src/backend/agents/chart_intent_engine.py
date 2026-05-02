@@ -16,9 +16,10 @@ engine owns on top of the bare matrix.
 
 from __future__ import annotations
 
-from typing import Any, FrozenSet, List, Mapping, Sequence, Tuple
+from collections.abc import Mapping, Sequence
+from typing import Any
 
-CHART_STATES: Tuple[str, ...] = (
+CHART_STATES: tuple[str, ...] = (
     "awaiting_clarification",
     "fetching",
     "awaiting_verification",
@@ -29,10 +30,10 @@ CHART_STATES: Tuple[str, ...] = (
     "cancelled",
 )
 
-TERMINAL_STATES: FrozenSet[str] = frozenset({"completed", "failed", "cancelled"})
+TERMINAL_STATES: frozenset[str] = frozenset({"completed", "failed", "cancelled"})
 
 # SPEC §C-BDD-6 transition graph -- exactly 10 edges.
-LEGAL_EDGES: FrozenSet[Tuple[str, str]] = frozenset(
+LEGAL_EDGES: frozenset[tuple[str, str]] = frozenset(
     {
         ("awaiting_clarification", "fetching"),
         ("awaiting_clarification", "cancelled"),
@@ -49,7 +50,7 @@ LEGAL_EDGES: FrozenSet[Tuple[str, str]] = frozenset(
 
 # SPEC §C-BDD-6 "澄清字段优先级":
 # time_range/granularity > entity > unit/comparison_targets.
-CLARIFICATION_PRIORITY: Tuple[str, ...] = (
+CLARIFICATION_PRIORITY: tuple[str, ...] = (
     "time_range",
     "granularity",
     "entity",
@@ -66,9 +67,7 @@ class IllegalChartStateTransition(Exception):
     def __init__(self, from_state: str, to_state: str) -> None:
         self.from_state = from_state
         self.to_state = to_state
-        super().__init__(
-            f"Illegal chart state transition: {from_state!r} -> {to_state!r}"
-        )
+        super().__init__(f"Illegal chart state transition: {from_state!r} -> {to_state!r}")
 
 
 def _is_missing(value: Any) -> bool:
@@ -93,13 +92,13 @@ class ChartIntentEngine:
         if (from_state, to_state) not in LEGAL_EDGES:
             raise IllegalChartStateTransition(from_state, to_state)
 
-    def next_clarification_fields(self, request: Mapping[str, Any]) -> List[str]:
+    def next_clarification_fields(self, request: Mapping[str, Any]) -> list[str]:
         """Return up to ``MAX_CLARIFICATIONS_PER_ROUND`` missing fields.
 
         Fields are returned in SPEC priority order; ``None`` / empty
         string / empty list count as missing.
         """
-        missing: List[str] = []
+        missing: list[str] = []
         for field in CLARIFICATION_PRIORITY:
             if _is_missing(request.get(field)):
                 missing.append(field)

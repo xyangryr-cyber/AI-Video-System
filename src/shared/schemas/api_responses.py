@@ -9,7 +9,7 @@ use the unified :class:`src.shared.schemas.error_response.ErrorResponse`
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -30,7 +30,7 @@ class CreateProjectResponse(_Strict):
 
 class AdvanceResponse(_Strict):
     phase: int = Field(ge=0, le=11)
-    gate_result: Dict[str, Any]
+    gate_result: dict[str, Any]
 
 
 class SkipResponse(_Strict):
@@ -39,13 +39,13 @@ class SkipResponse(_Strict):
 
 class RollbackResponse(_Strict):
     phase: int = Field(ge=0, le=11)
-    invalidated_phases: List[int]
+    invalidated_phases: list[int]
 
 
 class ChatResponse(_Strict):
     action: str = Field(min_length=1)
     response: str
-    details: Optional[Dict[str, Any]] = None
+    details: dict[str, Any] | None = None
 
 
 class PreferencesConfirmResponse(_Strict):
@@ -64,11 +64,11 @@ class SnapshotRollbackResponse(_Strict):
 
 class CostsResponse(_Strict):
     total_cost_usd: float = Field(ge=0)
-    by_phase: Dict[str, float]
+    by_phase: dict[str, float]
 
 
 class EventsResponse(_Strict):
-    events: List[Dict[str, Any]]
+    events: list[dict[str, Any]]
 
 
 __all__ = [

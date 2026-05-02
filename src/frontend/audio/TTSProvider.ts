@@ -23,9 +23,5 @@ export interface TTSProvider {
    * @param voiceParams — voice configuration (style, rate, volume, pitch)
    * @returns AudioResult with audio data and metadata
    */
-  synthesize(
-    text: string,
-    ssmlTags?: string,
-    voiceParams?: VoiceParams
-  ): Promise<AudioResult>;
+  synthesize(text: string, ssmlTags?: string, voiceParams?: VoiceParams): Promise<AudioResult>;
 }

@@ -60,9 +60,7 @@ const PolicyComparison: React.FC<TemplateProps> = ({ data, theme }) => {
                 exit="exit"
                 layout
                 style={{
-                  backgroundColor: row.highlighted
-                    ? color_palette[0] + "22"
-                    : "transparent",
+                  backgroundColor: row.highlighted ? color_palette[0] + "22" : "transparent",
                 }}
                 whileHover={{ scale: 1.02 }}
               >
@@ -72,9 +70,7 @@ const PolicyComparison: React.FC<TemplateProps> = ({ data, theme }) => {
                 <td
                   style={{
                     ...tdStyle,
-                    color: row.change.startsWith("+")
-                      ? color_palette[0]
-                      : color_palette[1],
+                    color: row.change.startsWith("+") ? color_palette[0] : color_palette[1],
                     fontWeight: 700,
                   }}
                 >

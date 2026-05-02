@@ -19,7 +19,7 @@ Mirrored in TypeScript by ``src/shared/types/chart_request.ts``.
 
 from __future__ import annotations
 
-from typing import List, Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -61,16 +61,16 @@ class ChartRequest(BaseModel):
 
     request_id: str = Field(min_length=1)
     user_intent: str = Field(min_length=1)
-    chart_type: Optional[ChartType] = None
-    entity: Optional[str] = None
-    time_range: Optional[TimeRange] = None
-    unit: Optional[str] = None
-    comparison_targets: Optional[List[str]] = None
+    chart_type: ChartType | None = None
+    entity: str | None = None
+    time_range: TimeRange | None = None
+    unit: str | None = None
+    comparison_targets: list[str] | None = None
     status: ChartRequestStatus
-    pending_clarifications: Optional[List[str]] = None
-    fetched_data_ref: Optional[str] = None
-    axis_spec: Optional[AxisSpec] = None
-    style_overrides: Optional[ChartStyleOverrides] = None
+    pending_clarifications: list[str] | None = None
+    fetched_data_ref: str | None = None
+    axis_spec: AxisSpec | None = None
+    style_overrides: ChartStyleOverrides | None = None
 
 
 __all__ = [

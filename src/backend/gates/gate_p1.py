@@ -5,7 +5,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.1.x
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 
 class GateP1:
@@ -13,10 +13,10 @@ class GateP1:
 
     @staticmethod
     def check(
-        outlines: List[Dict[str, Any]],
+        outlines: list[dict[str, Any]],
         *,
         selected_version_id: str | None = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         failed: list[str] = []
         passed: list[str] = []
 
@@ -45,9 +45,7 @@ class GateP1:
         }
 
 
-def _find_outline(
-    outlines: List[Dict[str, Any]], version_id: str
-) -> Dict[str, Any] | None:
+def _find_outline(outlines: list[dict[str, Any]], version_id: str) -> dict[str, Any] | None:
     for o in outlines:
         if o.get("version_id") == version_id:
             return o

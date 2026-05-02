@@ -1,16 +1,16 @@
-import type { ReactElement } from "react"
-import { useState } from "react"
-import { CheckCircle2, ChevronDown, ChevronUp, Circle, MessageSquare } from "lucide-react"
-import type { WorkflowTask } from "./mockData"
+import type { ReactElement } from "react";
+import { useState } from "react";
+import { CheckCircle2, ChevronDown, ChevronUp, Circle, MessageSquare } from "lucide-react";
+import type { WorkflowTask } from "./mockData";
 
 interface TaskCardProps {
-  currentTaskTitle: string
-  tasks: WorkflowTask[]
+  currentTaskTitle: string;
+  tasks: WorkflowTask[];
 }
 
 export function TaskCard({ currentTaskTitle, tasks }: TaskCardProps): ReactElement {
-  const [expanded, setExpanded] = useState(false)
-  const completedCount = tasks.filter((t) => t.completed).length
+  const [expanded, setExpanded] = useState(false);
+  const completedCount = tasks.filter((t) => t.completed).length;
 
   return (
     <div
@@ -73,5 +73,5 @@ export function TaskCard({ currentTaskTitle, tasks }: TaskCardProps): ReactEleme
         </div>
       )}
     </div>
-  )
+  );
 }

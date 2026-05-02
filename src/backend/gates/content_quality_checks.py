@@ -12,7 +12,6 @@ import re
 
 import numpy as np
 
-
 # Regex patterns for placeholder text in P0-P3 artifacts.
 _PLACEHOLDER_PATTERNS: list[str] = [
     r"Key point \d+ for \w+",
@@ -59,9 +58,7 @@ def detect_uniform_color_frame(image_path: str) -> bool:
     img = Image.open(image_path)
     arr = np.array(img)
 
-    if len(arr.shape) == 3:
-        std_val = float(np.std(arr))
-    elif len(arr.shape) == 2:
+    if len(arr.shape) == 3 or len(arr.shape) == 2:
         std_val = float(np.std(arr))
     else:
         # Unexpected shape — not a solid color by default.
@@ -70,9 +67,7 @@ def detect_uniform_color_frame(image_path: str) -> bool:
     return std_val < 10.0
 
 
-def detect_duration_deviation(
-    artifact: dict, measured_sec: float
-) -> tuple[bool, float]:
+def detect_duration_deviation(artifact: dict, measured_sec: float) -> tuple[bool, float]:
     """Compare the artifact's declared duration against the measured value.
 
     Deviation > 10 percent of the declared value is flagged.

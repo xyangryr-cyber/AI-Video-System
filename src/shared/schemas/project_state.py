@@ -7,7 +7,7 @@ by the API layer; those are documented in the model docstrings.
 
 from __future__ import annotations
 
-from typing import List, Literal, Optional, Tuple
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -16,7 +16,7 @@ ArtifactStatus = Literal["ok", "damaged", "missing"]
 ReviewStatus = Literal["pending", "passed", "failed"]
 ProjectStatus = Literal["active", "completed", "archived"]
 
-PHASE_STATUS_VALUES: Tuple[PhaseStatus, ...] = (
+PHASE_STATUS_VALUES: tuple[PhaseStatus, ...] = (
     "pending",
     "active",
     "completed",
@@ -24,7 +24,7 @@ PHASE_STATUS_VALUES: Tuple[PhaseStatus, ...] = (
     "invalidated",
 )
 
-ARTIFACT_STATUS_VALUES: Tuple[Optional[str], ...] = (
+ARTIFACT_STATUS_VALUES: tuple[str | None, ...] = (
     "ok",
     "damaged",
     "missing",
@@ -64,11 +64,11 @@ class PhaseState(_Strict):
     phase_name: str = Field(min_length=1)
     status: PhaseStatus
     artifact_version: int = Field(ge=0)
-    artifact_status: Optional[ArtifactStatus]
-    artifact_url: Optional[str]
-    review_status: Optional[ReviewStatus]
+    artifact_status: ArtifactStatus | None
+    artifact_url: str | None
+    review_status: ReviewStatus | None
     preferences_confirmed: bool
-    style_lock_path: Optional[str]
+    style_lock_path: str | None
 
 
 class ActiveTask(_Strict):
@@ -76,12 +76,12 @@ class ActiveTask(_Strict):
     type: str = Field(min_length=1)
     status: str = Field(min_length=1)
     progress: int = Field(ge=0, le=100)
-    agent_name: Optional[str]
+    agent_name: str | None
 
 
 class Preferences(_Strict):
     pending_candidates: int = Field(ge=0)
-    last_confirmed_at: Optional[str]
+    last_confirmed_at: str | None
 
 
 class SystemStatus(_Strict):
@@ -95,7 +95,7 @@ class SystemStatus(_Strict):
     """
 
     all_critical_ok: bool
-    degraded_services: List[str]
+    degraded_services: list[str]
 
 
 class MasterAudioRef(_Strict):
@@ -132,8 +132,8 @@ class ProjectSummary(_Strict):
     progress: int = Field(ge=0, le=100)
     updated_at: str = Field(min_length=1)
     category: str = Field(min_length=1)
-    description: Optional[str] = None
-    project_id: Optional[str] = None
+    description: str | None = None
+    project_id: str | None = None
 
 
 class PhaseHistoryEntry(_Strict):
@@ -147,8 +147,8 @@ class PhaseHistoryEntry(_Strict):
 
     phase: int = Field(ge=0, le=11)
     reached_at: str = Field(min_length=1)
-    completed_at: Optional[str] = None
-    last_revision_at: Optional[str] = None
+    completed_at: str | None = None
+    last_revision_at: str | None = None
 
 
 class ProjectState(_Strict):
@@ -170,13 +170,13 @@ class ProjectState(_Strict):
     """
 
     project: ProjectInfo
-    phases: List[PhaseState]
-    active_tasks: List[ActiveTask]
+    phases: list[PhaseState]
+    active_tasks: list[ActiveTask]
     preferences: Preferences
     system_status: SystemStatus
-    master_audio_ref: Optional[MasterAudioRef] = None
+    master_audio_ref: MasterAudioRef | None = None
     latest_reached_phase: int = Field(default=0, ge=0, le=11)
-    phase_history: List[PhaseHistoryEntry] = Field(default_factory=list)
+    phase_history: list[PhaseHistoryEntry] = Field(default_factory=list)
 
 
 __all__ = [

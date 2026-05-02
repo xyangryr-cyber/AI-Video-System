@@ -85,9 +85,7 @@ def render_producer_prompt(
         if not isinstance(values[field], str) or not values[field].strip()
     ]
     if missing:
-        raise MissingTemplateFieldError(
-            f"missing mandatory Producer prompt field(s): {missing}"
-        )
+        raise MissingTemplateFieldError(f"missing mandatory Producer prompt field(s): {missing}")
     return PRODUCER_TEMPLATE.format(**values)
 
 

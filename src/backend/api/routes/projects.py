@@ -16,9 +16,11 @@ from typing import Any
 
 log = logging.getLogger(__name__)
 
+from datetime import UTC
+
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
-from starlette.responses import FileResponse
 from pydantic import BaseModel, Field
+from starlette.responses import FileResponse
 
 from src.backend.core.preflight import require_critical_ok
 
@@ -56,8 +58,9 @@ class PreferencesStageBody(BaseModel):
 
 def _utcnow_iso() -> str:
     """Return UTC now as ISO-8601 with Z suffix."""
-    from datetime import datetime, timezone
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    from datetime import datetime
+
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
 
 def get_db() -> sqlite3.Connection:  # pragma: no cover -- app wiring
@@ -99,9 +102,9 @@ def create_project(
         background_tasks = BackgroundTasks()
     require_critical_ok(db)
 
-    from datetime import datetime, timezone
+    from datetime import datetime
 
-    now_dt = datetime.now(timezone.utc)
+    now_dt = datetime.now(UTC)
     now = _utcnow_iso()
     date_str = now_dt.strftime("%Y%m%d")
 
@@ -121,9 +124,18 @@ def create_project(
 
     # 12 canonical phases (P0..P11)
     _phase_names = [
-        "P0-需求定义", "P1-内容主线", "P2-口播脚本", "P3-脚本润色",
-        "P4-人声旁白", "P5-背景音乐", "P6-音效设计", "P7-分镜脚本",
-        "P8-关键画面渲染", "P9-B-Roll 素材准备", "P10-粗剪合成", "P11-精剪交付",
+        "P0-需求定义",
+        "P1-内容主线",
+        "P2-口播脚本",
+        "P3-脚本润色",
+        "P4-人声旁白",
+        "P5-背景音乐",
+        "P6-音效设计",
+        "P7-分镜脚本",
+        "P8-关键画面渲染",
+        "P9-B-Roll 素材准备",
+        "P10-粗剪合成",
+        "P11-精剪交付",
     ]
     for pnum, pname in enumerate(_phase_names):
         db.execute(
@@ -162,8 +174,15 @@ def create_project(
 
     return {
         "id": project_id,
+        "project_id": project_id,
         "title": body.title,
         "description": body.description,
+        "current_phase": 0,
+        "status": "active",
+        "latest_reached_phase": 0,
+        "phase_history": [],
+        "created_at": now,
+        "updated_at": now,
         "initial_prompt": initial_prompt,
     }
 
@@ -211,9 +230,7 @@ def delete_project(
 
 
 @router.get("/projects/{project_id}/state")
-def get_project_state(
-    project_id: str, db: sqlite3.Connection = Depends(get_db)
-) -> dict[str, Any]:
+def get_project_state(project_id: str, db: sqlite3.Connection = Depends(get_db)) -> dict[str, Any]:
     """Full ProjectState for frontend state restoration. SPEC-1A."""
     row = db.execute(
         "SELECT project_id, title, description, current_phase, status, updated_at "
@@ -262,7 +279,12 @@ def get_project_state(
         "phases": phases,
         "active_tasks": [],
         "preferences": {"pending_candidates": 0, "last_confirmed_at": None},
-        "system_status": {"all_critical_ok": True, "degraded_services": []},
+        "system_status": {
+            "all_critical_ok": True,
+            "llm_available": True,
+            "tts_available": True,
+            "degraded_services": [],
+        },
     }
 
 
@@ -272,8 +294,8 @@ def advance_phase(
     db: sqlite3.Connection = Depends(get_db),
 ) -> dict[str, Any]:
     """Advance to next phase (idempotent; see SPEC-3.7). SPEC-1A."""
-    from src.backend.engine.workflow_engine import WorkflowEngine
     from src.backend.engine.phase_ops import PhaseOps
+    from src.backend.engine.workflow_engine import WorkflowEngine
 
     engine = WorkflowEngine(db)
     ops = PhaseOps(engine)
@@ -335,8 +357,8 @@ def skip_phase(
     db: sqlite3.Connection = Depends(get_db),
 ) -> dict[str, Any]:
     """Skip current phase (P5/P6 only per SPEC-1A). SPEC-1A."""
+    from src.backend.engine.phase_ops import ActiveTasksExist, PhaseOps, SkipNotAllowed
     from src.backend.engine.workflow_engine import WorkflowEngine
-    from src.backend.engine.phase_ops import PhaseOps, SkipNotAllowed, ActiveTasksExist
 
     project_row = db.execute(
         "SELECT current_phase FROM projects WHERE project_id = ?",
@@ -366,8 +388,8 @@ def rollback_phase(
     db: sqlite3.Connection = Depends(get_db),
 ) -> dict[str, Any]:
     """Roll back to a target phase; invalidates downstream. SPEC-1A."""
+    from src.backend.engine.phase_ops import InvalidRollbackTarget, PhaseOps
     from src.backend.engine.workflow_engine import WorkflowEngine
-    from src.backend.engine.phase_ops import PhaseOps, InvalidRollbackTarget
 
     project_row = db.execute(
         "SELECT current_phase FROM projects WHERE project_id = ?",
@@ -428,29 +450,20 @@ def chat(
             "project_id": project_id,
             "action": "clarify",
             "params": {},
-            "response": classified.get(
-                "reply_to_user", "请点击「确认进入下一阶段」按钮推进"
-            ),
+            "response": classified.get("reply_to_user", "请点击「确认进入下一阶段」按钮推进"),
             "phase": current_phase,
             "task_ledger": classified.get("task_ledger", []),
             "clarify_count": 0,
             "candidate_actions": None,
             "highlight_confirm_button": True,
             "gate_satisfied": gate_result.passed,
-            "button_disabled_reason": (
-                None if gate_result.passed
-                else "等待门禁条件满足"
-            ),
+            "button_disabled_reason": (None if gate_result.passed else "等待门禁条件满足"),
             "gate_checks": {
                 "passed": gate_result.passed_checks,
                 "failed": [
-                    {"check": c.check, "reason": c.reason}
-                    for c in gate_result.failed_checks
+                    {"check": c.check, "reason": c.reason} for c in gate_result.failed_checks
                 ],
-                "warnings": [
-                    {"check": c.check, "reason": c.reason}
-                    for c in gate_result.warnings
-                ],
+                "warnings": [{"check": c.check, "reason": c.reason} for c in gate_result.warnings],
             },
         }
 
@@ -463,11 +476,9 @@ def chat(
             reply = "已收到修改请求，正在更新指定段落..."
         elif classified_action == "refine_requirements":
             # Update requirements.json with user-provided context.
-            req_path = os.path.join(
-                "data", "projects", project_id, "requirements.json"
-            )
+            req_path = os.path.join("data", "projects", project_id, "requirements.json")
             try:
-                with open(req_path, "r", encoding="utf-8") as f:
+                with open(req_path, encoding="utf-8") as f:
                     req = json.load(f)
             except (FileNotFoundError, json.JSONDecodeError):
                 req = {}
@@ -517,10 +528,13 @@ def chat(
             role="intent_router",
             messages=[
                 {"role": "system", "content": context["system"]},
-                {"role": "user", "content": json.dumps(
-                    {k: v for k, v in context.items() if k != "system"},
-                    ensure_ascii=False,
-                )},
+                {
+                    "role": "user",
+                    "content": json.dumps(
+                        {k: v for k, v in context.items() if k != "system"},
+                        ensure_ascii=False,
+                    ),
+                },
             ],
             agent_name="IntentRouter",
             phase=current_phase,
@@ -535,7 +549,9 @@ def chat(
             choices = result.get("choices", [])
             if choices:
                 msg = choices[0].get("message", choices[0])
-                content = msg.get("content", "") if isinstance(msg, dict) else getattr(msg, "content", "")
+                content = (
+                    msg.get("content", "") if isinstance(msg, dict) else getattr(msg, "content", "")
+                )
                 return str(content) if content else None
         return None
 
@@ -627,9 +643,18 @@ def material_supplement(
         "INSERT "
         "INTO async_tasks(task_id, project_id, phase, type, params, status) "
         "VALUES(?, ?, ?, 'material_supplement', ?, 'pending')",
-        (task_id, project_id, int(row["current_phase"]),
-         json.dumps({"shot_id": body.shot_id, "material_type": body.material_type,
-                      "description": body.description})),
+        (
+            task_id,
+            project_id,
+            int(row["current_phase"]),
+            json.dumps(
+                {
+                    "shot_id": body.shot_id,
+                    "material_type": body.material_type,
+                    "description": body.description,
+                }
+            ),
+        ),
     )
     db.commit()
 
@@ -699,7 +724,7 @@ def get_artifact(
     artifact_path = phase_row["artifact_path"]
     if artifact_path and os.path.isfile(artifact_path):
         try:
-            with open(artifact_path, "r", encoding="utf-8") as f:
+            with open(artifact_path, encoding="utf-8") as f:
                 artifact_data = json.load(f)
         except (json.JSONDecodeError, OSError):
             artifact_data = None
@@ -859,12 +884,10 @@ def _generate_phase_artifact(
         engine.complete_task(task_id)
 
         # Verify file existence (SPEC-C-011)
-        verify_status, missing_files = _verify_artifact_files(
-            artifact_path, artifact_dir
-        )
+        verify_status, missing_files = _verify_artifact_files(artifact_path, artifact_dir)
         if verify_status == "missing":
             # Append incomplete_files to the artifact JSON on disk
-            with open(artifact_path, "r", encoding="utf-8") as f:
+            with open(artifact_path, encoding="utf-8") as f:
                 data = json.load(f)
             data["incomplete_files"] = missing_files
             with open(artifact_path, "w", encoding="utf-8") as f:
@@ -877,11 +900,22 @@ def _generate_phase_artifact(
         # P3+ not yet wired with real agents; create stub artifact so
         # the gate can pass and the project can advance.
         phase_names = [
-            "requirements", "outline", "script_v1", "polished_script",
-            "narration", "bgm", "sfx", "storyboard",
-            "keyframes", "broll", "rough_cut", "final",
+            "requirements",
+            "outline",
+            "script_v1",
+            "polished_script",
+            "narration",
+            "bgm",
+            "sfx",
+            "storyboard",
+            "keyframes",
+            "broll",
+            "rough_cut",
+            "final",
         ]
-        artifact_filename = f"phase_{phase}_{phase_names[phase] if phase < len(phase_names) else 'stub'}.json"
+        artifact_filename = (
+            f"phase_{phase}_{phase_names[phase] if phase < len(phase_names) else 'stub'}.json"
+        )
         artifact_path = os.path.join(artifact_dir, artifact_filename)
         stub_data = {
             "phase": phase,
@@ -929,8 +963,7 @@ def _generate_phase_artifact(
     # Auto-confirm preferences so GateKeeper preferences_confirmed passes.
     now_ts = _utcnow_iso()
     db.execute(
-        "UPDATE phases SET preferences_confirmed_at = ? "
-        "WHERE project_id = ? AND phase_num = ?",
+        "UPDATE phases SET preferences_confirmed_at = ? WHERE project_id = ? AND phase_num = ?",
         (now_ts, project_id, phase),
     )
 
@@ -954,7 +987,7 @@ def _verify_artifact_files(artifact_path: str, project_dir: str):
         return "missing", [artifact_path]
 
     try:
-        with open(artifact_path, "r", encoding="utf-8") as fh:
+        with open(artifact_path, encoding="utf-8") as fh:
             data = _json.load(fh)
     except (_json.JSONDecodeError, OSError):
         return "missing", [artifact_path]
@@ -1049,7 +1082,7 @@ def _execute_outline_agent(
     requirements: dict[str, Any] = {}
     req_path = os.path.join("data", "projects", project_id, "requirements.json")
     try:
-        with open(req_path, "r", encoding="utf-8") as f:
+        with open(req_path, encoding="utf-8") as f:
             requirements = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         requirements = {"project_id": project_id, "title": title}
@@ -1075,7 +1108,7 @@ def _execute_script_agent(
     requirements: dict[str, Any] = {}
     req_path = os.path.join("data", "projects", project_id, "requirements.json")
     try:
-        with open(req_path, "r", encoding="utf-8") as f:
+        with open(req_path, encoding="utf-8") as f:
             requirements = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         pass
@@ -1084,7 +1117,7 @@ def _execute_script_agent(
     outline: dict[str, Any] = {"sections": []}
     out_path = os.path.join("data", "projects", project_id, "outline.json")
     try:
-        with open(out_path, "r", encoding="utf-8") as f:
+        with open(out_path, encoding="utf-8") as f:
             outline_data = json.load(f)
         versions = outline_data.get("versions", [])
         if versions:
@@ -1113,7 +1146,7 @@ def _execute_polish_agent(
     from src.backend.agents.polish_agent import PolishAgent
 
     script_path = os.path.join("data", "projects", project_id, "script_v1.json")
-    with open(script_path, "r", encoding="utf-8") as f:
+    with open(script_path, encoding="utf-8") as f:
         segments = json.load(f)
 
     return PolishAgent.polish(segments)
@@ -1130,13 +1163,11 @@ def _execute_tts_agent(
     from src.backend.services.bytedance_tts_provider import ByteDanceTTSProvider
 
     polished_path = os.path.join("data", "projects", project_id, "polished_script.json")
-    with open(polished_path, "r", encoding="utf-8") as f:
+    with open(polished_path, encoding="utf-8") as f:
         polished_script = json.load(f)
 
     agent = TTSAgent()
-    timeline = agent.build_timeline(
-        polished_script=polished_script, voice_id="voice_zh_female_01"
-    )
+    timeline = agent.build_timeline(polished_script=polished_script, voice_id="voice_zh_female_01")
 
     # Synthesize real audio for each segment via ByteDance OpenSpeech
     provider = ByteDanceTTSProvider()
@@ -1160,6 +1191,7 @@ def _execute_tts_agent(
                 src_path = result["audio_path"]
                 if os.path.exists(src_path):
                     import shutil
+
                     shutil.move(src_path, seg_path)
                     audio_files.append(seg_path)
                     # Update timeline segment audio_path
@@ -1167,11 +1199,13 @@ def _execute_tts_agent(
                         timeline["segments"][i]["audio_path"] = seg_path
                         timeline["segments"][i]["duration_seconds"] = result.get(
                             "duration_seconds",
-                            timeline["segments"][i].get("end_sec", 0.0) - timeline["segments"][i].get("start_sec", 0.0),
+                            timeline["segments"][i].get("end_sec", 0.0)
+                            - timeline["segments"][i].get("start_sec", 0.0),
                         )
                     continue
         except Exception as e:
             import logging
+
             logging.getLogger(__name__).warning(
                 "TTS synthesis failed for segment %d in project %s: %s", i, project_id, e
             )
@@ -1203,7 +1237,7 @@ def _execute_bgm_agent(
     from src.backend.agents.bgm_agent import BGMAgent
 
     narr_path = os.path.join("data", "projects", project_id, "narration.json")
-    with open(narr_path, "r", encoding="utf-8") as f:
+    with open(narr_path, encoding="utf-8") as f:
         timeline = json.load(f)
 
     emotion_curve = BGMAgent.produce_emotion_curve(timeline=timeline)
@@ -1228,7 +1262,7 @@ def _execute_sfx_agent(
     from src.backend.agents.sfx_agent import SFXAgent
 
     narr_path = os.path.join("data", "projects", project_id, "narration.json")
-    with open(narr_path, "r", encoding="utf-8") as f:
+    with open(narr_path, encoding="utf-8") as f:
         timeline = json.load(f)
 
     sfx_list = SFXAgent.produce_sfx(timeline=timeline)
@@ -1246,18 +1280,16 @@ def _execute_storyboard_agent(
 
     narr_path = os.path.join("data", "projects", project_id, "narration.json")
     script_path = os.path.join("data", "projects", project_id, "script_v1.json")
-    with open(narr_path, "r", encoding="utf-8") as f:
+    with open(narr_path, encoding="utf-8") as f:
         timeline = json.load(f)
-    with open(script_path, "r", encoding="utf-8") as f:
+    with open(script_path, encoding="utf-8") as f:
         script = json.load(f)
 
     shots = StoryboardAgent.produce_storyboard(
         timeline=timeline, script=script, measured_duration_sec=_read_measured_duration(project_id)
     )
     style_candidates = StoryboardAgent.generate_style_candidates(count=3)
-    style_lock = StoryboardAgent.confirm_style_lock(
-        scheme_id=style_candidates[0]["scheme_id"]
-    )
+    style_lock = StoryboardAgent.confirm_style_lock(scheme_id=style_candidates[0]["scheme_id"])
 
     return {"shots": shots, "style_candidates": style_candidates, "style_lock": style_lock}
 
@@ -1269,11 +1301,11 @@ def _execute_keyframe_agent(
     description: str,
 ) -> dict[str, Any]:
     """P8: Render template shots via Remotion (Node.js) or Pillow fallback."""
-    import subprocess
     import shutil
+    import subprocess
 
     sb_path = os.path.join("data", "projects", project_id, "storyboard.json")
-    with open(sb_path, "r", encoding="utf-8") as f:
+    with open(sb_path, encoding="utf-8") as f:
         storyboard = json.load(f)
 
     node_bin = shutil.which("node")
@@ -1284,12 +1316,14 @@ def _execute_keyframe_agent(
     renders: list[dict[str, Any]] = []
     for shot in storyboard.get("shots", []):
         if shot["type"] != "template":
-            renders.append({
-                "shot_id": shot["shot_id"],
-                "type": "broll",
-                "render_path": None,
-                "error_code": None,
-            })
+            renders.append(
+                {
+                    "shot_id": shot["shot_id"],
+                    "type": "broll",
+                    "render_path": None,
+                    "error_code": None,
+                }
+            )
             continue
 
         tr = shot.get("time_range", {})
@@ -1302,28 +1336,39 @@ def _execute_keyframe_agent(
             try:
                 result = subprocess.run(
                     [
-                        node_bin, render_script,
-                        "--shot-id", shot["shot_id"],
-                        "--template", shot.get("template_type", "text_card"),
-                        "--input", json.dumps(shot),
-                        "--output", output_path,
-                        "--duration", str(dur),
+                        node_bin,
+                        render_script,
+                        "--shot-id",
+                        shot["shot_id"],
+                        "--template",
+                        shot.get("template_type", "text_card"),
+                        "--input",
+                        json.dumps(shot),
+                        "--output",
+                        output_path,
+                        "--duration",
+                        str(dur),
                     ],
-                    capture_output=True, text=True, timeout=120,
+                    capture_output=True,
+                    text=True,
+                    timeout=120,
                 )
                 if result.returncode == 0 and os.path.exists(output_path):
-                    renders.append({
-                        "shot_id": shot["shot_id"],
-                        "render_path": output_path,
-                        "engine": "remotion",
-                        "degraded": False,
-                    })
+                    renders.append(
+                        {
+                            "shot_id": shot["shot_id"],
+                            "render_path": output_path,
+                            "engine": "remotion",
+                            "degraded": False,
+                        }
+                    )
                     continue
             except Exception:
                 pass  # Fall through to Pillow fallback
 
         # Fallback: Pillow static image
         from src.backend.agents.keyframe_render_agent import KeyframeRenderAgent
+
         agent = KeyframeRenderAgent()
         fallback_result = agent.render_with_degradation(
             shot_id=shot["shot_id"],
@@ -1344,13 +1389,28 @@ def _execute_broll_agent(
     from src.backend.agents.broll_agent import BRollAgent
 
     sb_path = os.path.join("data", "projects", project_id, "storyboard.json")
-    with open(sb_path, "r", encoding="utf-8") as f:
+    with open(sb_path, encoding="utf-8") as f:
         storyboard = json.load(f)
 
     _BUILTIN_BROLL = [
-        {"id": "br_1", "tags": ["finance", "chart"], "resolution": "1080p", "dominant_color": "#1a1a2e"},
-        {"id": "br_2", "tags": ["technology", "data"], "resolution": "1080p", "dominant_color": "#0d1117"},
-        {"id": "br_3", "tags": ["business", "meeting"], "resolution": "720p", "dominant_color": "#ffffff"},
+        {
+            "id": "br_1",
+            "tags": ["finance", "chart"],
+            "resolution": "1080p",
+            "dominant_color": "#1a1a2e",
+        },
+        {
+            "id": "br_2",
+            "tags": ["technology", "data"],
+            "resolution": "1080p",
+            "dominant_color": "#0d1117",
+        },
+        {
+            "id": "br_3",
+            "tags": ["business", "meeting"],
+            "resolution": "720p",
+            "dominant_color": "#ffffff",
+        },
     ]
 
     broll_shots = [s for s in storyboard.get("shots", []) if s["type"] == "broll"]
@@ -1374,9 +1434,9 @@ def _execute_rough_cut_agent(
     description: str,
 ) -> dict[str, Any]:
     """P10: Real rough cut compositing with FFmpeg."""
-    import subprocess
-    import shutil
     import logging
+    import shutil
+    import subprocess
 
     _logger = logging.getLogger(__name__)
 
@@ -1388,12 +1448,11 @@ def _execute_rough_cut_agent(
     shots: list[dict[str, Any]] = []
     total_dur = 60
     if os.path.exists(sb_path):
-        with open(sb_path, "r", encoding="utf-8") as f:
+        with open(sb_path, encoding="utf-8") as f:
             storyboard = json.load(f)
         shots = storyboard.get("shots", [])
         total_dur = sum(
-            s["time_range"]["end_seconds"] - s["time_range"]["start_seconds"]
-            for s in shots
+            s["time_range"]["end_seconds"] - s["time_range"]["start_seconds"] for s in shots
         )
 
     # Override with measured TTS duration if available (canonical timeline.json)
@@ -1412,31 +1471,27 @@ def _execute_rough_cut_agent(
 
     # Scan phase_8 for .mp4 video segments (Remotion output)
     kf_search_dirs = [
-        os.path.join("data", "projects", "phase_8"),            # global
-        os.path.join("data", "projects", project_id, "phase_8"), # project-specific
+        os.path.join("data", "projects", "phase_8"),  # global
+        os.path.join("data", "projects", project_id, "phase_8"),  # project-specific
     ]
     for kf_dir in kf_search_dirs:
         if os.path.isdir(kf_dir):
-            found = sorted([
-                os.path.join(kf_dir, f)
-                for f in os.listdir(kf_dir)
-                if f.endswith(".mp4")
-            ])
+            found = sorted(
+                [os.path.join(kf_dir, f) for f in os.listdir(kf_dir) if f.endswith(".mp4")]
+            )
             mp4_files.extend(found)
 
     # Collect PNGs as fallback
     for kf_dir in kf_search_dirs:
         if os.path.isdir(kf_dir):
-            found = sorted([
-                os.path.join(kf_dir, f)
-                for f in os.listdir(kf_dir)
-                if f.endswith(".png")
-            ])
+            found = sorted(
+                [os.path.join(kf_dir, f) for f in os.listdir(kf_dir) if f.endswith(".png")]
+            )
             png_files.extend(found)
 
     # Also resolve render_path entries from keyframes.json (may be relative)
     if os.path.exists(keyframes_path):
-        with open(keyframes_path, "r", encoding="utf-8") as f:
+        with open(keyframes_path, encoding="utf-8") as f:
             kf_data = json.load(f)
         for r in kf_data.get("renders", []):
             rp = r.get("render_path", "")
@@ -1480,25 +1535,43 @@ def _execute_rough_cut_agent(
                 f.write(f"file '{os.path.abspath(mp4)}'\n")
 
         cmd: list[str] = [
-            ffmpeg_bin, "-y",
-            "-f", "concat", "-safe", "0", "-i", concat_file,
+            ffmpeg_bin,
+            "-y",
+            "-f",
+            "concat",
+            "-safe",
+            "0",
+            "-i",
+            concat_file,
         ]
         if has_audio:
             cmd.extend(["-i", audio_path])
         else:
             cmd.extend(["-f", "lavfi", "-i", "anoisesrc=d=60:c=pink:a=0.01"])
-        cmd.extend([
-            "-c:v", "copy",
-            "-map", "0:v", "-map", "1:a",
-            "-c:a", "aac", "-b:a", "128k", "-shortest",
-        ])
+        cmd.extend(
+            [
+                "-c:v",
+                "copy",
+                "-map",
+                "0:v",
+                "-map",
+                "1:a",
+                "-c:a",
+                "aac",
+                "-b:a",
+                "128k",
+                "-shortest",
+            ]
+        )
         cmd.append(output_path)
 
         result = subprocess.run(cmd, capture_output=True, timeout=300)
         if os.path.exists(concat_file):
             os.remove(concat_file)
         if result.returncode != 0:
-            _logger.error("RoughCut mp4 concat failed: %s", result.stderr.decode(errors="replace")[-500:])
+            _logger.error(
+                "RoughCut mp4 concat failed: %s", result.stderr.decode(errors="replace")[-500:]
+            )
         else:
             concat_done = True
 
@@ -1514,27 +1587,51 @@ def _execute_rough_cut_agent(
             f.write(f"file '{os.path.abspath(png_files[-1])}'\n")
 
         cmd: list[str] = [
-            ffmpeg_bin, "-y",
-            "-f", "concat", "-safe", "0", "-i", concat_file,
+            ffmpeg_bin,
+            "-y",
+            "-f",
+            "concat",
+            "-safe",
+            "0",
+            "-i",
+            concat_file,
         ]
         if has_audio:
             cmd.extend(["-i", audio_path])
         else:
             cmd.extend(["-f", "lavfi", "-i", "anoisesrc=d=60:c=pink:a=0.01"])
-        cmd.extend([
-            "-vf", "fps=30,scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=#0a1628",
-            "-c:v", "libx264", "-preset", "fast", "-crf", "23",
-            "-pix_fmt", "yuv420p",
-            "-map", "0:v", "-map", "1:a",
-            "-c:a", "aac", "-b:a", "128k", "-shortest",
-        ])
+        cmd.extend(
+            [
+                "-vf",
+                "fps=30,scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=#0a1628",
+                "-c:v",
+                "libx264",
+                "-preset",
+                "fast",
+                "-crf",
+                "23",
+                "-pix_fmt",
+                "yuv420p",
+                "-map",
+                "0:v",
+                "-map",
+                "1:a",
+                "-c:a",
+                "aac",
+                "-b:a",
+                "128k",
+                "-shortest",
+            ]
+        )
         cmd.append(output_path)
 
         result = subprocess.run(cmd, capture_output=True, timeout=300)
         if os.path.exists(concat_file):
             os.remove(concat_file)
         if result.returncode != 0:
-            _logger.error("RoughCut concat failed: %s", result.stderr.decode(errors="replace")[-500:])
+            _logger.error(
+                "RoughCut concat failed: %s", result.stderr.decode(errors="replace")[-500:]
+            )
         else:
             concat_done = True
 
@@ -1558,9 +1655,9 @@ def _execute_final_cut_agent(
     description: str,
 ) -> dict[str, Any]:
     """P11: Real final cut with watermark overlay and audio passthrough."""
-    import subprocess
-    import shutil
     import logging
+    import shutil
+    import subprocess
 
     _logger = logging.getLogger(__name__)
 
@@ -1576,7 +1673,9 @@ def _execute_final_cut_agent(
         try:
             probe = subprocess.run(
                 [ffmpeg_bin, "-filters"],
-                capture_output=True, text=True, timeout=10,
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             has_drawtext = "drawtext" in probe.stdout
         except Exception:
@@ -1585,19 +1684,37 @@ def _execute_final_cut_agent(
         if has_drawtext:
             safe_title = title.replace("'", "'\\''").replace(":", "\\:").replace("%", "\\%")
             cmd: list[str] = [
-                ffmpeg_bin, "-y", "-i", rc_path,
+                ffmpeg_bin,
+                "-y",
+                "-i",
+                rc_path,
                 "-vf",
                 f"drawtext=text='{safe_title}':fontsize=32:fontcolor=white@0.5:"
                 f"x=w-text_w-20:y=h-text_h-20:box=1:boxcolor=black@0.3:boxborderw=6",
-                "-c:v", "libx264", "-preset", "fast", "-crf", "23",
-                "-c:a", "copy",
+                "-c:v",
+                "libx264",
+                "-preset",
+                "fast",
+                "-crf",
+                "23",
+                "-c:a",
+                "copy",
                 output_path,
             ]
         else:
             cmd = [
-                ffmpeg_bin, "-y", "-i", rc_path,
-                "-c:v", "libx264", "-preset", "fast", "-crf", "23",
-                "-c:a", "copy",
+                ffmpeg_bin,
+                "-y",
+                "-i",
+                rc_path,
+                "-c:v",
+                "libx264",
+                "-preset",
+                "fast",
+                "-crf",
+                "23",
+                "-c:a",
+                "copy",
                 output_path,
             ]
 
@@ -1644,9 +1761,9 @@ def _generate_mp4_via_ffmpeg(
     Falls back to a simple color background if drawtext filter is unavailable.
     Always includes a silent audio track for playback compatibility.
     """
-    import subprocess
-    import shutil
     import logging
+    import shutil
+    import subprocess
 
     _logger = logging.getLogger(__name__)
 
@@ -1665,7 +1782,9 @@ def _generate_mp4_via_ffmpeg(
     try:
         probe = subprocess.run(
             [ffmpeg_bin, "-filters"],
-            capture_output=True, text=True, timeout=10,
+            capture_output=True,
+            text=True,
+            timeout=10,
         )
         has_drawtext = "drawtext" in probe.stdout
     except Exception:
@@ -1689,27 +1808,30 @@ def _generate_mp4_via_ffmpeg(
             f"x=80:y=80:enable='between(t,3,{segment_dur})':"
             f"box=1:boxcolor=black@0.4:boxborderw=8",
             f"drawtext=text='Phase 4-6: Audio Production':fontsize=36:fontcolor=white:"
-            f"x=80:y=80:enable='between(t,{segment_dur},{segment_dur*2})':"
+            f"x=80:y=80:enable='between(t,{segment_dur},{segment_dur * 2})':"
             f"box=1:boxcolor=black@0.4:boxborderw=8",
             f"drawtext=text='Phase 7-9: Visual Production':fontsize=36:fontcolor=white:"
-            f"x=80:y=80:enable='between(t,{segment_dur*2},{segment_dur*3})':"
+            f"x=80:y=80:enable='between(t,{segment_dur * 2},{segment_dur * 3})':"
             f"box=1:boxcolor=black@0.4:boxborderw=8",
             f"drawtext=text='Phase 10-11: Final Output':fontsize=36:fontcolor=white:"
-            f"x=80:y=80:enable='between(t,{segment_dur*3},{segment_dur*4})':"
+            f"x=80:y=80:enable='between(t,{segment_dur * 3},{segment_dur * 4})':"
             f"box=1:boxcolor=black@0.4:boxborderw=8",
             f"drawtext=text='{safe_title}':fontsize=36:fontcolor=white:"
-            f"x=80:y=80:enable='between(t,{segment_dur*4},{segment_dur*5})':"
+            f"x=80:y=80:enable='between(t,{segment_dur * 4},{segment_dur * 5})':"
             f"box=1:boxcolor=black@0.4:boxborderw=8",
             f"drawtext=text='Generated by AI Video System':fontsize=28:fontcolor=white@0.6:"
-            f"x=(w-text_w)/2:y=h-80:enable='between(t,{duration-3},{duration})':"
+            f"x=(w-text_w)/2:y=h-80:enable='between(t,{duration - 3},{duration})':"
             f"box=1:boxcolor=black@0.3:boxborderw=8",
         ]
 
     # Build ffmpeg command
     cmd = [
-        ffmpeg_bin, "-y",
-        "-f", "lavfi",
-        "-i", f"color=c=#0a1628:s=1920x1080:d={duration}:r=30",
+        ffmpeg_bin,
+        "-y",
+        "-f",
+        "lavfi",
+        "-i",
+        f"color=c=#0a1628:s=1920x1080:d={duration}:r=30",
     ]
 
     # Audio input
@@ -1723,17 +1845,26 @@ def _generate_mp4_via_ffmpeg(
         cmd.extend(["-vf", ",".join(video_filters)])
 
     # Codec settings: proper H.264 1080p with audio
-    cmd.extend([
-        "-c:v", "libx264",
-        "-preset", "fast",
-        "-crf", "23",
-        "-pix_fmt", "yuv420p",
-        "-c:a", "aac",
-        "-b:a", "128k",
-        "-shortest",
-        "-movflags", "+faststart",
-        output_path,
-    ])
+    cmd.extend(
+        [
+            "-c:v",
+            "libx264",
+            "-preset",
+            "fast",
+            "-crf",
+            "23",
+            "-pix_fmt",
+            "yuv420p",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "128k",
+            "-shortest",
+            "-movflags",
+            "+faststart",
+            output_path,
+        ]
+    )
 
     result = subprocess.run(cmd, capture_output=True, timeout=120)
 
@@ -1746,29 +1877,49 @@ def _generate_mp4_via_ffmpeg(
         # Fallback: generate minimal video without text overlays
         _fallback_mp4(ffmpeg_bin, output_path, duration)
     else:
-        _logger.info("Generated MP4: %s (%.1fs, %d bytes)",
-                      output_path, duration, os.path.getsize(output_path))
+        _logger.info(
+            "Generated MP4: %s (%.1fs, %d bytes)",
+            output_path,
+            duration,
+            os.path.getsize(output_path),
+        )
 
 
 def _fallback_mp4(ffmpeg_bin: str, output_path: str, duration: int) -> None:
     """Generate a minimal MP4 with just color background and silent audio."""
-    import subprocess
     import logging
+    import subprocess
+
     _logger = logging.getLogger(__name__)
     cmd = [
-        ffmpeg_bin, "-y",
-        "-f", "lavfi", "-i", f"color=c=#0a1628:s=1920x1080:d={duration}:r=30",
-        "-f", "lavfi", "-i", f"anoisesrc=d={duration}:c=pink:a=0.01",
-        "-c:v", "libx264", "-preset", "fast", "-crf", "23",
-        "-pix_fmt", "yuv420p",
-        "-c:a", "aac", "-b:a", "128k",
+        ffmpeg_bin,
+        "-y",
+        "-f",
+        "lavfi",
+        "-i",
+        f"color=c=#0a1628:s=1920x1080:d={duration}:r=30",
+        "-f",
+        "lavfi",
+        "-i",
+        f"anoisesrc=d={duration}:c=pink:a=0.01",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "fast",
+        "-crf",
+        "23",
+        "-pix_fmt",
+        "yuv420p",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "128k",
         "-shortest",
         output_path,
     ]
     result = subprocess.run(cmd, capture_output=True, timeout=120)
     if result.returncode != 0:
-        _logger.error("Fallback MP4 also failed: %s",
-                       result.stderr.decode(errors="replace")[-500:])
+        _logger.error("Fallback MP4 also failed: %s", result.stderr.decode(errors="replace")[-500:])
     else:
         _logger.info("Generated fallback MP4: %s", output_path)
 
@@ -1782,7 +1933,7 @@ def _read_measured_duration(project_id: str) -> float | None:
     if not os.path.exists(timeline_path):
         return None
     try:
-        with open(timeline_path, "r", encoding="utf-8") as f:
+        with open(timeline_path, encoding="utf-8") as f:
             data = json.load(f)
         return data.get("measured_duration_sec")
     except Exception:
@@ -1795,16 +1946,14 @@ def _write_measured_timeline(project_id: str, audio_dir: str) -> None:
     TECH_PLAN v3.3: timeline.json from P4 is the single time source for the
     entire pipeline.
     """
-    import subprocess
     import logging
+    import subprocess
 
     _logger = logging.getLogger(__name__)
     master_audio = os.path.join(audio_dir, "narration_master.mp3")
 
     if not os.path.exists(master_audio):
-        _logger.warning(
-            "No master audio at %s, skipping timeline.json write", master_audio
-        )
+        _logger.warning("No master audio at %s, skipping timeline.json write", master_audio)
         return
 
     try:
@@ -1843,8 +1992,8 @@ def _write_measured_timeline(project_id: str, audio_dir: str) -> None:
 
 def _combine_audio_files(file_list: list, output_path: str) -> bool:
     """Concatenate audio files using ffmpeg concat demuxer."""
-    import subprocess
     import shutil
+    import subprocess
 
     ffmpeg = shutil.which("ffmpeg")
     if not ffmpeg:
@@ -1871,8 +2020,8 @@ def _generate_narration_audio(project_id: str, narration_json_path: str) -> str 
     Reads polished_script.json for the actual spoken text (narration.json has timeline
     metadata, not text content).
     """
-    import subprocess
     import shutil
+    import subprocess
 
     output_dir = os.path.join("data", "projects", project_id, "phase_4")
     mp3_path = os.path.join(output_dir, "narration_master.mp3")
@@ -1884,10 +2033,17 @@ def _generate_narration_audio(project_id: str, narration_json_path: str) -> str 
     os.makedirs(output_dir, exist_ok=True)
 
     # Check if ByteDance TTS produced segment files
-    existing_segs = sorted([
-        f for f in os.listdir(output_dir)
-        if f.startswith("narration_seg_") and f.endswith(".mp3")
-    ]) if os.path.isdir(output_dir) else []
+    existing_segs = (
+        sorted(
+            [
+                f
+                for f in os.listdir(output_dir)
+                if f.startswith("narration_seg_") and f.endswith(".mp3")
+            ]
+        )
+        if os.path.isdir(output_dir)
+        else []
+    )
     if existing_segs:
         seg_paths = [os.path.join(output_dir, f) for f in existing_segs]
         _combine_audio_files(seg_paths, mp3_path)
@@ -1903,14 +2059,14 @@ def _generate_narration_audio(project_id: str, narration_json_path: str) -> str 
     polished_path = os.path.join("data", "projects", project_id, "polished_script.json")
     segments = []
     if os.path.exists(polished_path):
-        with open(polished_path, "r", encoding="utf-8") as f:
+        with open(polished_path, encoding="utf-8") as f:
             script = json.load(f)
         segments = script.get("segments", [])
 
     if not segments:
         # Try narration.json as fallback
         if os.path.exists(narration_json_path):
-            with open(narration_json_path, "r", encoding="utf-8") as f:
+            with open(narration_json_path, encoding="utf-8") as f:
                 narr = json.load(f)
             segments = narr.get("segments", [])
 
@@ -1918,8 +2074,7 @@ def _generate_narration_audio(project_id: str, narration_json_path: str) -> str 
         return None
 
     full_text = " ".join(
-        seg.get("polished_text", seg.get("text", seg.get("content", "")))
-        for seg in segments
+        seg.get("polished_text", seg.get("text", seg.get("content", ""))) for seg in segments
     )
 
     if not full_text.strip():
@@ -1937,7 +2092,17 @@ def _generate_narration_audio(project_id: str, narration_json_path: str) -> str 
         ffmpeg_bin = shutil.which("ffmpeg")
         if ffmpeg_bin:
             subprocess.run(
-                [ffmpeg_bin, "-y", "-i", aiff_path, "-codec:a", "libmp3lame", "-qscale:a", "2", mp3_path],
+                [
+                    ffmpeg_bin,
+                    "-y",
+                    "-i",
+                    aiff_path,
+                    "-codec:a",
+                    "libmp3lame",
+                    "-qscale:a",
+                    "2",
+                    mp3_path,
+                ],
                 capture_output=True,
                 timeout=120,
             )
@@ -1961,7 +2126,7 @@ def _read_measured_duration(project_id: str) -> float | None:
     if not os.path.exists(timeline_path):
         return None
     try:
-        with open(timeline_path, "r", encoding="utf-8") as f:
+        with open(timeline_path, encoding="utf-8") as f:
             data = json.load(f)
         return data.get("measured_duration_sec")
     except Exception:
@@ -1974,16 +2139,14 @@ def _write_measured_timeline(project_id: str, audio_dir: str) -> None:
     TECH_PLAN v3.3: timeline.json from P4 is the single time source for the
     entire pipeline.
     """
-    import subprocess
     import logging
+    import subprocess
 
     _logger = logging.getLogger(__name__)
     master_audio = os.path.join(audio_dir, "narration_master.mp3")
 
     if not os.path.exists(master_audio):
-        _logger.warning(
-            "No master audio at %s, skipping timeline.json write", master_audio
-        )
+        _logger.warning("No master audio at %s, skipping timeline.json write", master_audio)
         return
 
     try:

@@ -21,7 +21,8 @@ Mirrors ``src/shared/types/stage_preference.ts`` and the SQL DDL in
 
 from __future__ import annotations
 
-from typing import Iterable, List, Literal, Optional, Union
+from collections.abc import Iterable
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -53,17 +54,17 @@ class StagePreference(BaseModel):
 
     preference_id: str = Field(min_length=1)
     scope: Scope
-    stage: Optional[Stage] = None
+    stage: Stage | None = None
     key: str = Field(min_length=1)
-    value: Union[str, int, float, bool]
+    value: str | int | float | bool
     source: PreferenceSource
-    applies_to_artifacts: List[str] = Field(default_factory=list)
-    evidence_segment_id: Optional[str] = None
+    applies_to_artifacts: list[str] = Field(default_factory=list)
+    evidence_segment_id: str | None = None
     created_at: str = Field(min_length=1)
-    expires_at: Optional[str] = None
+    expires_at: str | None = None
 
     @model_validator(mode="after")
-    def _stage_matches_scope(self) -> "StagePreference":
+    def _stage_matches_scope(self) -> StagePreference:
         if self.scope == "stage" and self.stage is None:
             raise ValueError("scope='stage' requires `stage` to be set")
         if self.scope != "stage" and self.stage is not None:
@@ -78,9 +79,9 @@ def resolve_preference(
     prefs: Iterable[StagePreference],
     *,
     key: str,
-    stage: Optional[Stage] = None,
-    project_id: Optional[str] = None,
-) -> Optional[StagePreference]:
+    stage: Stage | None = None,
+    project_id: str | None = None,
+) -> StagePreference | None:
     """Return the winning preference for ``key`` under priority chain.
 
     Order (highest → lowest): ``stage`` (matching ``stage``) >
@@ -88,7 +89,7 @@ def resolve_preference(
     ``stage`` does not match the runtime stage are dropped (a P3 stage
     pref must NOT win for a P4 resolution — AC-4 edge case).
     """
-    best: Optional[StagePreference] = None
+    best: StagePreference | None = None
     best_rank = 1 << 30
     for p in prefs:
         if p.key != key:

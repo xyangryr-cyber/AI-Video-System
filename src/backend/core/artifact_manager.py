@@ -20,9 +20,7 @@ from src.backend.core.storage import MediaStorage
 
 
 class _PhaseRepoProtocol(Protocol):
-    def set_artifact_path(
-        self, project_id: str, phase_num: int, artifact_path: str
-    ) -> None: ...
+    def set_artifact_path(self, project_id: str, phase_num: int, artifact_path: str) -> None: ...
 
 
 class ArtifactManager:

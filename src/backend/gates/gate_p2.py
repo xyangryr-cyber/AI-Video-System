@@ -5,7 +5,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.2.4
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 
 class GateP2:
@@ -28,14 +28,14 @@ class GateP2:
     @staticmethod
     def check(
         *,
-        script: List[Dict[str, Any]],
-        fact_checker_result: Dict[str, Any],
-        structure_reviewer_result: Dict[str, Any],
-        pending_tasks: List[Any],
+        script: list[dict[str, Any]],
+        fact_checker_result: dict[str, Any],
+        structure_reviewer_result: dict[str, Any],
+        pending_tasks: list[Any],
         preferences_confirmed: bool,
-    ) -> Dict[str, Any]:
-        failed: List[str] = []
-        passed: List[str] = []
+    ) -> dict[str, Any]:
+        failed: list[str] = []
+        passed: list[str] = []
 
         # 1. Script fields complete
         if not script:
@@ -44,9 +44,7 @@ class GateP2:
             for i, seg in enumerate(script):
                 missing = GateP2._REQUIRED_SEGMENT_FIELDS - set(seg.keys())
                 if missing:
-                    failed.append(
-                        f"segment[{i}] {seg.get('segment_id', '?')} missing: {missing}"
-                    )
+                    failed.append(f"segment[{i}] {seg.get('segment_id', '?')} missing: {missing}")
             if not any("segment[" in f for f in failed):
                 passed.append("script fields complete")
 
@@ -54,9 +52,7 @@ class GateP2:
         if fact_checker_result.get("verdict") == "PASS":
             passed.append("FactChecker PASS")
         else:
-            failed.append(
-                f"FactChecker FAIL: {fact_checker_result.get('blocking_issues', [])}"
-            )
+            failed.append(f"FactChecker FAIL: {fact_checker_result.get('blocking_issues', [])}")
 
         # 3. StructureReviewer PASS
         if structure_reviewer_result.get("verdict") == "PASS":

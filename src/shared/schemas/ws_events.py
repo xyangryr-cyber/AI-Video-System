@@ -23,15 +23,12 @@ invariants continue to hold. Consumers that need it import
 from __future__ import annotations
 
 import re
-from typing import List, Literal
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-
 _ISO8601_RE = re.compile(
-    r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}"
-    r"(?:\.\d+)?"
-    r"(?:Z|[+-]\d{2}:\d{2})$"
+    r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}" r"(?:\.\d+)?" r"(?:Z|[+-]\d{2}:\d{2})$"
 )
 
 
@@ -72,7 +69,7 @@ class PhaseShotBlockedEvent(BaseModel):
     phase: Literal["P8"]
     shot_id: str
     error_code: Literal["material_missing", "material_unverified"]
-    blocking_material_ids: List[str] = Field(min_length=1)
+    blocking_material_ids: list[str] = Field(min_length=1)
     ts: str
 
     @field_validator("ts")

@@ -41,13 +41,10 @@ export function usePreferenceWriteback({
       setLoading(true);
       setError(null);
       try {
-        await apiClient.post(
-          `/api/projects/${projectId}/preferences/stage`,
-          { suggestion_ids: selectedIds },
-        );
-        setSuggestions((prev) =>
-          prev.filter((s) => !selectedIds.includes(s.id)),
-        );
+        await apiClient.post(`/api/projects/${projectId}/preferences/stage`, {
+          suggestion_ids: selectedIds,
+        });
+        setSuggestions((prev) => prev.filter((s) => !selectedIds.includes(s.id)));
       } catch (e) {
         setError(e instanceof Error ? e.message : "Failed to save preferences");
       } finally {

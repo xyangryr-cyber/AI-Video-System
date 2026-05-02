@@ -26,8 +26,8 @@ import json
 import shutil
 import sqlite3
 import subprocess
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, List, Tuple
 
 from src.backend.exceptions.sfx_exceptions import InvalidBaseMasterError
 from src.shared.schemas.audio_master import (
@@ -40,7 +40,6 @@ from src.shared.schemas.sfx_mix_segments import (
     SfxMixSegment,
     SfxMixSegments,
 )
-
 
 PHASE_6_DIR = "phase_6"
 APPLIED_DIR = "sfx_applied_segments"
@@ -65,14 +64,12 @@ class SfxSegmentMixService:
         project_root: Path,
         segment_id: str,
         base_master: MasterAudioArtifact,
-        triggers: List[SfxLayoutTrigger],
+        triggers: list[SfxLayoutTrigger],
         sfx_resolver: SfxResolver,
     ) -> SfxMixSegment:
         _check_base_master_kind(base_master)
 
-        seg_start, seg_duration = _resolve_segment_window(
-            project_root, base_master, segment_id
-        )
+        seg_start, seg_duration = _resolve_segment_window(project_root, base_master, segment_id)
         base_path = _resolve_base_path(project_root, base_master)
         applied_triggers = _clip_triggers_to_window(triggers, seg_start, seg_duration)
 
@@ -106,8 +103,7 @@ class SfxSegmentMixService:
 def _check_base_master_kind(base_master: MasterAudioArtifact) -> None:
     if not isinstance(base_master, (NarrationMasterArtifact, BgmMixMasterArtifact)):
         raise InvalidBaseMasterError(
-            f"base_master.kind must be narration_master or "
-            f"bgm_mix_master; got {base_master.kind!r}"
+            f"base_master.kind must be narration_master or bgm_mix_master; got {base_master.kind!r}"
         )
 
 
@@ -122,10 +118,8 @@ def _resolve_segment_window(
     project_root: Path,
     base_master: MasterAudioArtifact,
     segment_id: str,
-) -> Tuple[float, float]:
-    windows = _compute_segment_windows(
-        project_root, list(base_master.derived_from_segments)
-    )
+) -> tuple[float, float]:
+    windows = _compute_segment_windows(project_root, list(base_master.derived_from_segments))
     return _find_window(windows, segment_id)
 
 
@@ -140,7 +134,7 @@ def _render_segment_mp3(
     base_path: Path,
     seg_start: float,
     seg_duration: float,
-    applied_triggers: List[SfxLayoutTrigger],
+    applied_triggers: list[SfxLayoutTrigger],
     sfx_resolver: SfxResolver,
 ) -> str:
     out_path = project_root / out_rel
@@ -165,13 +159,13 @@ def _render_segment_mp3(
 
 
 def _clip_triggers_to_window(
-    triggers: List[SfxLayoutTrigger],
+    triggers: list[SfxLayoutTrigger],
     seg_start: float,
     seg_duration: float,
-) -> List[SfxLayoutTrigger]:
+) -> list[SfxLayoutTrigger]:
     """Keep only triggers that land inside [seg_start, seg_start+seg_duration)
     and truncate each trigger's duration to fit the remaining window."""
-    clipped: List[SfxLayoutTrigger] = []
+    clipped: list[SfxLayoutTrigger] = []
     for t in triggers:
         offset = t.planned_time_sec - seg_start
         if offset < 0 or offset >= seg_duration:
@@ -185,8 +179,8 @@ def _clip_triggers_to_window(
 
 def _compute_segment_windows(
     project_root: Path,
-    narration_segments: List[str],
-) -> List[Tuple[str, float, float]]:
+    narration_segments: list[str],
+) -> list[tuple[str, float, float]]:
     """For each narration segment in order, return (segment_id, start_s, duration_s).
 
     Uses raw ``phase_4/seg_*.mp3`` durations because the master audio file
@@ -194,29 +188,23 @@ def _compute_segment_windows(
     narration_master and bgm_mix_master preserve the narration timeline).
     """
     phase_4 = project_root / "phase_4"
-    out: List[Tuple[str, float, float]] = []
+    out: list[tuple[str, float, float]] = []
     cumulative = 0.0
     for seg_id in narration_segments:
         seg_path = phase_4 / f"{seg_id}.mp3"
         if not seg_path.is_file():
-            raise FileNotFoundError(
-                f"narration segment file missing on disk: {seg_path}"
-            )
+            raise FileNotFoundError(f"narration segment file missing on disk: {seg_path}")
         dur = _probe_duration_seconds(seg_path)
         out.append((seg_id, cumulative, dur))
         cumulative += dur
     return out
 
 
-def _find_window(
-    windows: List[Tuple[str, float, float]], segment_id: str
-) -> Tuple[float, float]:
+def _find_window(windows: list[tuple[str, float, float]], segment_id: str) -> tuple[float, float]:
     for seg_id, start, dur in windows:
         if seg_id == segment_id:
             return start, dur
-    raise KeyError(
-        f"segment_id {segment_id!r} not in base_master.derived_from_segments"
-    )
+    raise KeyError(f"segment_id {segment_id!r} not in base_master.derived_from_segments")
 
 
 def _ffmpeg_bin() -> str:
@@ -261,16 +249,12 @@ def _sha256_of_file(path: Path) -> str:
     return f"sha256:{h.hexdigest()}"
 
 
-def _resolve_sfx_inputs(
-    triggers: List[SfxLayoutTrigger], sfx_resolver: SfxResolver
-) -> List[Path]:
-    resolved: List[Path] = []
+def _resolve_sfx_inputs(triggers: list[SfxLayoutTrigger], sfx_resolver: SfxResolver) -> list[Path]:
+    resolved: list[Path] = []
     for t in triggers:
         p = Path(sfx_resolver(t)).resolve()
         if not p.is_file():
-            raise FileNotFoundError(
-                f"sfx source missing for trigger {t.trigger_id}: {p}"
-            )
+            raise FileNotFoundError(f"sfx source missing for trigger {t.trigger_id}: {p}")
         resolved.append(p)
     return resolved
 
@@ -278,14 +262,14 @@ def _resolve_sfx_inputs(
 def _build_filter_complex(
     segment_start_s: float,
     segment_duration_s: float,
-    triggers: List[SfxLayoutTrigger],
+    triggers: list[SfxLayoutTrigger],
 ) -> str:
     base_trim = f"[0:a]atrim=duration={segment_duration_s:.6f},asetpts=PTS-STARTPTS"
     if not triggers:
         return f"{base_trim}[out]"
 
-    parts: List[str] = [f"{base_trim}[base]"]
-    mix_labels: List[str] = ["[base]"]
+    parts: list[str] = [f"{base_trim}[base]"]
+    mix_labels: list[str] = ["[base]"]
     for idx, t in enumerate(triggers, start=1):
         offset_ms = int(round((t.planned_time_sec - segment_start_s) * 1000))
         label = f"[sfx{idx}]"
@@ -310,17 +294,15 @@ def _run_segment_mix(
     base_path: Path,
     segment_start_s: float,
     segment_duration_s: float,
-    triggers: List[SfxLayoutTrigger],
+    triggers: list[SfxLayoutTrigger],
     sfx_resolver: SfxResolver,
     out_path: Path,
 ) -> None:
     ffmpeg = _ffmpeg_bin()
     sfx_paths = _resolve_sfx_inputs(triggers, sfx_resolver)
-    filter_complex = _build_filter_complex(
-        segment_start_s, segment_duration_s, triggers
-    )
+    filter_complex = _build_filter_complex(segment_start_s, segment_duration_s, triggers)
 
-    cmd: List[str] = [
+    cmd: list[str] = [
         ffmpeg,
         "-y",
         "-v",

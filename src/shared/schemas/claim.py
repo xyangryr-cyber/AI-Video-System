@@ -16,7 +16,7 @@ Mirrors `src/shared/types/claim.ts` and the SQL DDL in
 
 from __future__ import annotations
 
-from typing import List, Literal, Optional, Union
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -57,26 +57,26 @@ class TimeRange(_Strict):
 class SourceSpan(_Strict):
     start_char: int = Field(ge=0)
     end_char: int = Field(ge=0)
-    segment_id: Optional[str] = None
+    segment_id: str | None = None
 
 
 class EvidenceRef(_Strict):
-    url: Optional[str] = None
-    doc_path: Optional[str] = None
-    snippet: Optional[str] = None
+    url: str | None = None
+    doc_path: str | None = None
+    snippet: str | None = None
 
 
 class Claim(_Strict):
     claim_id: str = Field(pattern=CLAIM_ID_PATTERN)
     claim_type: ClaimType
     text: str = Field(min_length=1)
-    value: Optional[Union[float, int, str]] = None
-    unit: Optional[str] = None
-    entity: Optional[str] = None
-    time_range: Optional[TimeRange] = None
+    value: float | int | str | None = None
+    unit: str | None = None
+    entity: str | None = None
+    time_range: TimeRange | None = None
     source_phase: SourcePhase
     source_artifact: str = Field(min_length=1)
-    source_span: Optional[SourceSpan] = None
+    source_span: SourceSpan | None = None
     blocking_level: BlockingLevel
     verification_status: VerificationStatus
     created_at: str = Field(min_length=1)
@@ -87,12 +87,12 @@ class VerificationRecord(_Strict):
     verification_id: str = Field(min_length=1)
     claim_id: str = Field(pattern=CLAIM_ID_PATTERN)
     verifier_type: VerifierType
-    evidence_refs: List[EvidenceRef] = Field(default_factory=list)
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
     checked_at: str = Field(min_length=1)
-    expires_at: Optional[str] = None
+    expires_at: str | None = None
     verdict: Verdict
-    reason: Optional[str] = None
-    confidence: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    reason: str | None = None
+    confidence: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 __all__ = [

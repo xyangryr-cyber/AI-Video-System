@@ -7,8 +7,6 @@ Idempotency: (claim_id, SHA-256(evidence_url)) — 24 h.
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -19,7 +17,7 @@ class ChallengeClaimParams(BaseModel):
 
     claim_id: str = Field(min_length=1)
     reason: str = Field(min_length=1)
-    evidence_url: Optional[str] = None
+    evidence_url: str | None = None
 
 
 __all__ = ["ChallengeClaimParams"]

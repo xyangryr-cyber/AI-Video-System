@@ -7,8 +7,6 @@ has exactly one row per project (PRIMARY KEY = project_id).
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 
@@ -17,7 +15,7 @@ class Preferences(BaseModel):
     global_rules_md: str = ""
     user_preferences_md: str = ""
     project_preferences_md: str = ""
-    brand_kit_json: Optional[str] = None
-    last_candidates_json: Optional[str] = None
-    last_confirmed_at: Optional[str] = None
+    brand_kit_json: str | None = None
+    last_candidates_json: str | None = None
+    last_confirmed_at: str | None = None
     updated_at: str

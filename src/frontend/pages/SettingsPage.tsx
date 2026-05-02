@@ -58,9 +58,7 @@ export function SettingsPage(): ReactElement {
               key={t.id}
               onClick={() => setActiveTab(t.id)}
               className={`w-full flex items-center gap-3 px-4 py-3 font-medium rounded-lg transition-colors ${
-                activeTab === t.id
-                  ? "bg-blue-50 text-blue-600"
-                  : "text-slate-600 hover:bg-slate-50"
+                activeTab === t.id ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-50"
               }`}
             >
               {t.icon}
@@ -70,9 +68,7 @@ export function SettingsPage(): ReactElement {
         </nav>
 
         {/* Content */}
-        <div className="flex-1 min-w-0">
-          {renderActive(activeTab)}
-        </div>
+        <div className="flex-1 min-w-0">{renderActive(activeTab)}</div>
       </div>
     </div>
   );

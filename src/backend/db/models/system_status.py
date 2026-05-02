@@ -8,18 +8,17 @@ than a raw :class:`sqlite3.Row`.
 
 from __future__ import annotations
 
-from typing import Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, Field
-
 
 SystemCheckStatus = Literal["ok", "degraded", "failed"]
 
 
 class SystemStatusRow(BaseModel):
-    id: Optional[int] = None
+    id: int | None = None
     check_name: str = Field(min_length=1)
     status: SystemCheckStatus
-    message: Optional[str] = None
+    message: str | None = None
     checked_at: str
     valid_until: str

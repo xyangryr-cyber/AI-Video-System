@@ -1,17 +1,9 @@
 // SPEC-F-008 Voice Parameter Converter
 // Pure functions — zero LLM calls, deterministic only.
 
-import type {
-  VoiceParams,
-  SegmentVoiceOverrides,
-} from "@shared/types/shared_types";
+import type { VoiceParams, SegmentVoiceOverrides } from "@shared/types/shared_types";
 
-export type PaceLevel =
-  | "much_slower"
-  | "slower"
-  | "normal"
-  | "faster"
-  | "much_faster";
+export type PaceLevel = "much_slower" | "slower" | "normal" | "faster" | "much_faster";
 
 export type EnergyLevel = "low" | "normal" | "high";
 
@@ -43,14 +35,10 @@ const ENERGY_TABLE: Record<EnergyLevel, number> = {
  */
 export function validateStyleDegree(raw: number): number {
   if (raw < 0.01) {
-    throw new RangeError(
-      `style_degree ${raw} is below minimum 0.01`
-    );
+    throw new RangeError(`style_degree ${raw} is below minimum 0.01`);
   }
   if (raw > 2.0) {
-    throw new RangeError(
-      `style_degree ${raw} exceeds maximum 2.0`
-    );
+    throw new RangeError(`style_degree ${raw} exceeds maximum 2.0`);
   }
   return raw;
 }
@@ -61,7 +49,7 @@ export function validateStyleDegree(raw: number): number {
  */
 export function voiceDirectionToOverrides(
   direction: VoiceDirection,
-  baseParams: VoiceParams
+  baseParams: VoiceParams,
 ): SegmentVoiceOverrides {
   const styleDegree =
     direction.style_degree !== undefined

@@ -8,7 +8,7 @@ as CompletenessReviewer / FactChecker).
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 
 class AudioQualityReviewer:
@@ -36,8 +36,8 @@ class AudioQualityReviewer:
         duration_seconds: float,
         sample_rate: int,
         segment_id: str,
-    ) -> Dict[str, Any]:
-        checks: List[Dict[str, Any]] = []
+    ) -> dict[str, Any]:
+        checks: list[dict[str, Any]] = []
 
         # CPS check
         if duration_seconds > 0:
@@ -54,22 +54,16 @@ class AudioQualityReviewer:
                 checks.append({"rule": "cps", "verdict": "PASS"})
 
         # Sample rate check
-        checks.append(
-            cls.check_sample_rate(sample_rate=sample_rate, segment_id=segment_id)
-        )
+        checks.append(cls.check_sample_rate(sample_rate=sample_rate, segment_id=segment_id))
 
         return {
             "segment_id": segment_id,
-            "verdict": "FAIL"
-            if any(c["verdict"] == "FAIL" for c in checks)
-            else "PASS",
+            "verdict": "FAIL" if any(c["verdict"] == "FAIL" for c in checks) else "PASS",
             "checks": checks,
         }
 
     @classmethod
-    def check_silence(
-        cls, *, silence_duration_seconds: float, segment_id: str
-    ) -> Dict[str, Any]:
+    def check_silence(cls, *, silence_duration_seconds: float, segment_id: str) -> dict[str, Any]:
         if silence_duration_seconds > cls.SILENCE_MAX_SECONDS:
             return {
                 "rule": "silence",
@@ -85,7 +79,7 @@ class AudioQualityReviewer:
         timeline_duration: float,
         audio_duration: float,
         segment_id: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         diff_ms = abs(timeline_duration - audio_duration) * 1000
         if diff_ms > cls.TIMELINE_TOLERANCE_MS:
             return {
@@ -96,9 +90,7 @@ class AudioQualityReviewer:
         return {"rule": "timeline_accuracy", "verdict": "PASS"}
 
     @classmethod
-    def check_inter_segment_gap(
-        cls, *, gap_seconds: float, segment_id: str
-    ) -> Dict[str, Any]:
+    def check_inter_segment_gap(cls, *, gap_seconds: float, segment_id: str) -> dict[str, Any]:
         if gap_seconds < cls.GAP_MIN or gap_seconds > cls.GAP_MAX:
             return {
                 "rule": "inter_segment_gap",
@@ -108,7 +100,7 @@ class AudioQualityReviewer:
         return {"rule": "inter_segment_gap", "verdict": "PASS"}
 
     @classmethod
-    def check_sample_rate(cls, *, sample_rate: int, segment_id: str) -> Dict[str, Any]:
+    def check_sample_rate(cls, *, sample_rate: int, segment_id: str) -> dict[str, Any]:
         if sample_rate != cls.EXPECTED_SAMPLE_RATE:
             return {
                 "rule": "sample_rate",

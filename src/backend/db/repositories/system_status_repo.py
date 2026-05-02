@@ -8,7 +8,7 @@ aggregate from there into ``all_critical_ok`` / ``degraded_services``.
 from __future__ import annotations
 
 import sqlite3
-from typing import Iterable
+from collections.abc import Iterable
 
 from src.backend.db.repositories.base import BaseRepository
 

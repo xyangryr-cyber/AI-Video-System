@@ -33,8 +33,9 @@ import hashlib
 import json
 import re
 import threading
+from collections.abc import Callable, Iterable, Mapping
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Mapping
+from typing import TYPE_CHECKING, Any
 
 from src.backend.agents.actions.challenge_claim import ChallengeClaimParams
 from src.backend.agents.actions.insert_section import InsertSectionParams
@@ -143,9 +144,7 @@ def _make_clarify_result(clarify_count: int, *, reason: str) -> dict[str, Any]:
         "params": {},
         "events": [{"type": "router_fallback", "reason": reason}],
         "clarify_count": new_count,
-        "candidate_actions": (
-            list(_CANDIDATE_ACTIONS) if new_count >= _CLARIFY_TRIGGER else None
-        ),
+        "candidate_actions": (list(_CANDIDATE_ACTIONS) if new_count >= _CLARIFY_TRIGGER else None),
     }
 
 
@@ -275,9 +274,7 @@ class IntentRouter:
             "artifact_snapshot": _truncate_to_token_budget(
                 artifact_snapshot, _ARTIFACT_SNAPSHOT_MAX_TOKENS
             ),
-            "ledger_summary": _truncate_to_token_budget(
-                ledger_summary, _LEDGER_SUMMARY_MAX_TOKENS
-            ),
+            "ledger_summary": _truncate_to_token_budget(ledger_summary, _LEDGER_SUMMARY_MAX_TOKENS),
             "conversation": [dict(m) for m in recent_conv],
             "preferences": [dict(p) for p in prefs],
             "available_actions": list(self.AVAILABLE_ACTIONS),
@@ -319,14 +316,12 @@ class IntentRouter:
             return {
                 "action": "clarify",
                 "params": {},
-                "events": [
-                    {"type": "router.intent_fallback", "reason": "parse_failed"}
-                ],
+                "events": [{"type": "router.intent_fallback", "reason": "parse_failed"}],
             }
 
     def route(
         self,
-        llm_callable: "Callable[[], str | None]",
+        llm_callable: Callable[[], str | None],
         *,
         clarify_count: int = 0,
         timeout_seconds: float = 3.0,
@@ -368,9 +363,7 @@ class IntentRouter:
                     "events": [],
                     "clarify_count": new_count,
                     "candidate_actions": (
-                        list(_CANDIDATE_ACTIONS)
-                        if new_count >= _CLARIFY_TRIGGER
-                        else None
+                        list(_CANDIDATE_ACTIONS) if new_count >= _CLARIFY_TRIGGER else None
                     ),
                 }
             return {
@@ -433,10 +426,7 @@ class IntentRouter:
 
         # Substantive input that is not a question: the user is providing
         # requirements context rather than needing clarification.
-        if (
-            len(utterance) >= _MIN_SUBSTANTIVE_CHARS
-            and not _QUESTION_PATTERN.search(utterance)
-        ):
+        if len(utterance) >= _MIN_SUBSTANTIVE_CHARS and not _QUESTION_PATTERN.search(utterance):
             return {
                 "action": "refine_requirements",
                 "params": {"user_input": utterance},
@@ -534,8 +524,8 @@ _SAFETY_ALLOWED = frozenset({"allow", "clarify"})
 def dispatch_with_safety(
     *,
     user_input: str,
-    safety_engine: "SafetyPolicyEngine",
-    router: "IntentRouter",
+    safety_engine: SafetyPolicyEngine,
+    router: IntentRouter,
 ) -> dict[str, Any]:
     """Gate Router invocation behind ``SafetyPolicyEngine`` (C-BDD-1 + C-BDD-2).
 

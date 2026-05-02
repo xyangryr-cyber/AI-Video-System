@@ -32,14 +32,14 @@ must live in repositories" rule without any split-string gymnastics.
 from __future__ import annotations
 
 import sqlite3
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Literal, Mapping, Sequence
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, model_validator
 
 from src.backend.services import llm_service
-
 
 # -- Check names ---------------------------------------------------------
 
@@ -83,12 +83,10 @@ class ReviewerResult(BaseModel):
     blocking_issues: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
-    def _verdict_matches_blocking(self) -> "ReviewerResult":
+    def _verdict_matches_blocking(self) -> ReviewerResult:
         has_blockers = len(self.blocking_issues) > 0
         if has_blockers and self.verdict != "FAIL":
-            raise ValueError(
-                "blocking_issues non-empty but verdict != 'FAIL' (SPEC-8.3)"
-            )
+            raise ValueError("blocking_issues non-empty but verdict != 'FAIL' (SPEC-8.3)")
         if not has_blockers and self.verdict != "PASS":
             raise ValueError("blocking_issues empty but verdict != 'PASS' (SPEC-8.3)")
         return self
@@ -264,9 +262,7 @@ class GateKeeper:
         try:
             parsed = ReviewerResult.model_validate_json(blob)
         except Exception as exc:  # noqa: BLE001 -- surface parse failure
-            return CheckResult(
-                "review_passed", False, f"review result parse error: {exc}"
-            )
+            return CheckResult("review_passed", False, f"review result parse error: {exc}")
         if parsed.verdict != "PASS":
             return CheckResult(
                 "review_passed",
@@ -291,9 +287,7 @@ class GateKeeper:
             f"task {row[0]} is still in-flight",
         )
 
-    def _check_no_running_async_tasks(
-        self, project_id: str, phase_num: int
-    ) -> CheckResult:
+    def _check_no_running_async_tasks(self, project_id: str, phase_num: int) -> CheckResult:
         row = self._conn.execute(
             "SELECT task_id FROM async_tasks "
             "WHERE project_id = ? AND phase = ? "
@@ -309,9 +303,7 @@ class GateKeeper:
             f"async task {row[0]} is still in-flight",
         )
 
-    def _check_preferences_confirmed(
-        self, phase: Mapping[str, Any] | None
-    ) -> CheckResult:
+    def _check_preferences_confirmed(self, phase: Mapping[str, Any] | None) -> CheckResult:
         if phase is None:
             return CheckResult("preferences_confirmed", False, "phase row missing")
         ts = phase["preferences_confirmed_at"]
@@ -338,9 +330,9 @@ class GateKeeper:
         """
         # Lazy imports avoid circular dependency with gates/__init__.py.
         from src.backend.gates.content_quality_checks import (
+            detect_duration_deviation,
             detect_placeholder_text,
             detect_uniform_color_frame,
-            detect_duration_deviation,
         )
 
         if phase_num in (0, 1, 2, 3):
@@ -419,9 +411,7 @@ class GateKeeper:
             data = json.loads(Path(path).read_text(encoding="utf-8"))
         except (OSError, ValueError):
             return 0.0
-        return float(
-            data.get("duration", 0) or data.get("total_duration", 0) or 0
-        )
+        return float(data.get("duration", 0) or data.get("total_duration", 0) or 0)
 
     @staticmethod
     def _read_measured_duration_sec(phase: dict[str, Any] | None) -> float | None:
@@ -447,9 +437,12 @@ class GateKeeper:
             result = subprocess.run(
                 [
                     ffprobe,
-                    "-v", "error",
-                    "-show_entries", "format=duration",
-                    "-of", "default=noprint_wrappers=1:nokey=1",
+                    "-v",
+                    "error",
+                    "-show_entries",
+                    "format=duration",
+                    "-of",
+                    "default=noprint_wrappers=1:nokey=1",
                     str(path),
                 ],
                 capture_output=True,

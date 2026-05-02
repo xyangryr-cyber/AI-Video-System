@@ -1,6 +1,6 @@
-import type { AudioSegment } from '@frontend/types/preview';
-import { useState, useRef, useCallback } from 'react';
-import { Play, Pause, Music, CheckCircle2, Download } from 'lucide-react';
+import type { AudioSegment } from "@frontend/types/preview";
+import { useState, useRef, useCallback } from "react";
+import { Play, Pause, Music, CheckCircle2, Download } from "lucide-react";
 
 interface P4SegmentAudioPlayerProps {
   segments?: AudioSegment[];
@@ -10,12 +10,12 @@ interface P4SegmentAudioPlayerProps {
 function formatTime(sec: number): string {
   const m = Math.floor(sec / 60);
   const s = sec % 60;
-  return `${m}:${String(s).padStart(2, '0')}`;
+  return `${m}:${String(s).padStart(2, "0")}`;
 }
 
 /** Seed-based random for stable waveform heights */
 function seededRandom(seed: number): number {
-  let x = Math.sin(seed * 9301 + 49297) * 233280;
+  const x = Math.sin(seed * 9301 + 49297) * 233280;
   return x - Math.floor(x);
 }
 
@@ -71,22 +71,16 @@ export function P4SegmentAudioPlayer({ segments }: P4SegmentAudioPlayerProps) {
           <div
             key={seg.id}
             className={`flex items-center bg-white border-2 rounded-xl p-4 ${
-              seg.warn
-                ? 'border-amber-200 bg-amber-50/20'
-                : 'border-slate-200'
+              seg.warn ? "border-amber-200 bg-amber-50/20" : "border-slate-200"
             }`}
           >
             {/* Dark play button */}
             <button
-              aria-label={`${isPlaying ? 'pause' : 'play'} segment ${seg.id}`}
+              aria-label={`${isPlaying ? "pause" : "play"} segment ${seg.id}`}
               onClick={() => handleToggle(seg)}
               className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center hover:bg-slate-800 transition-colors shrink-0 shadow-md"
             >
-              {isPlaying ? (
-                <Pause className="w-4 h-4" />
-              ) : (
-                <Play className="w-4 h-4 ml-0.5" />
-              )}
+              {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
             </button>
 
             {/* Waveform + label */}
@@ -119,9 +113,7 @@ export function P4SegmentAudioPlayer({ segments }: P4SegmentAudioPlayerProps) {
                 </span>
               )}
               {seg.warn && (
-                <span className="text-[10px] text-amber-600 font-bold mt-1">
-                  语速略缓
-                </span>
+                <span className="text-[10px] text-amber-600 font-bold mt-1">语速略缓</span>
               )}
             </div>
           </div>

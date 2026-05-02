@@ -45,7 +45,6 @@ from src.shared.schemas.audio_master import (
 )
 from src.shared.schemas.sfx_mix_segments import SfxMixSegments
 
-
 _FINAL_STEM = "final_audio_with_bgm_sfx"
 
 
@@ -82,14 +81,12 @@ class FinalAudioAssembler:
             )
 
         segment_paths = [
-            (project_root / seg.file_path).resolve()
-            for seg in sfx_mix_segments.segments
+            (project_root / seg.file_path).resolve() for seg in sfx_mix_segments.segments
         ]
         missing = [p for p in segment_paths if not p.is_file()]
         if missing:
             raise FileNotFoundError(
-                "missing sfx_applied_segment file(s): "
-                + ", ".join(str(p) for p in missing)
+                "missing sfx_applied_segment file(s): " + ", ".join(str(p) for p in missing)
             )
 
         phase_dir = project_root / PHASE_6_DIR

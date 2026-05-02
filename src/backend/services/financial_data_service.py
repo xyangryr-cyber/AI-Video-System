@@ -103,9 +103,7 @@ class FinancialDataService:
     ) -> dict[str, Any]:
         """Fetch financial data with cache check and 3-tier fallback."""
         include_metadata = (
-            granularity is not None
-            or date_range_start is not None
-            or date_range_end is not None
+            granularity is not None or date_range_start is not None or date_range_end is not None
         )
         if symbol in ("NONEXISTENT", "UNKNOWN_XYZ_999"):
             return {

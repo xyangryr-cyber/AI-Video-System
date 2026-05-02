@@ -9,7 +9,8 @@ from __future__ import annotations
 
 import logging
 import sqlite3
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 log = logging.getLogger(__name__)
 
@@ -61,9 +62,7 @@ ALERT_DEFINITIONS: list[dict[str, Any]] = [
 
 
 def _check_queue_buildup(conn: sqlite3.Connection) -> dict[str, Any]:
-    row = conn.execute(
-        "SELECT COUNT(*) AS n FROM async_tasks WHERE status = 'queued'"
-    ).fetchone()
+    row = conn.execute("SELECT COUNT(*) AS n FROM async_tasks WHERE status = 'queued'").fetchone()
     queued = row["n"]
     oldest = conn.execute(
         "SELECT MIN(created_at) AS oldest FROM async_tasks WHERE status = 'queued'"
@@ -106,9 +105,7 @@ def _check_cost_warn(conn: sqlite3.Connection) -> dict[str, Any]:
 
 
 def _check_preflight_failed(conn: sqlite3.Connection) -> dict[str, Any]:
-    row = conn.execute(
-        "SELECT COUNT(*) AS n FROM system_status WHERE status = 'failed'"
-    ).fetchone()
+    row = conn.execute("SELECT COUNT(*) AS n FROM system_status WHERE status = 'failed'").fetchone()
     failed = row["n"]
     return {
         "alert_name": "preflight_failed",

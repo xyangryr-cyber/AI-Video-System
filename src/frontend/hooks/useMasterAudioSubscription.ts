@@ -33,9 +33,7 @@ export function useMasterAudioSubscription(opts: SubscriptionOptions): Subscript
   useEffect(() => {
     if (!enabled) return;
 
-    const url = getWsUrl
-      ? getWsUrl()
-      : `/ws/projects/${projectId}`;
+    const url = getWsUrl ? getWsUrl() : `/ws/projects/${projectId}`;
     const ws = new WebSocket(url);
     wsRef.current = ws;
 

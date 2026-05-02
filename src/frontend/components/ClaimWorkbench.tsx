@@ -13,25 +13,38 @@ export function ClaimWorkbench({ claims }: ClaimWorkbenchProps) {
   const [filters, setFilters] = useState<ClaimFilters>({});
   const [viewMode, setViewMode] = useState<ViewMode>("card");
 
-  const handleFilterChange = useCallback((dimension: FilterDimension, value: string | undefined) => {
-    setFilters((prev) => {
-      const next = { ...prev };
-      if (dimension === "verification_status" && (value === undefined || value === "verified" || value === "unverified" || value === "user_disputed" || value === "superseded")) {
-        next.verification_status = value as ClaimFilters["verification_status"];
-      }
-      return next;
-    });
-  }, []);
+  const handleFilterChange = useCallback(
+    (dimension: FilterDimension, value: string | undefined) => {
+      setFilters((prev) => {
+        const next = { ...prev };
+        if (
+          dimension === "verification_status" &&
+          (value === undefined ||
+            value === "verified" ||
+            value === "unverified" ||
+            value === "user_disputed" ||
+            value === "superseded")
+        ) {
+          next.verification_status = value as ClaimFilters["verification_status"];
+        }
+        return next;
+      });
+    },
+    [],
+  );
 
   const filteredClaims = useMemo(() => {
     return claims.filter((c) => {
-      if (filters.verification_status && c.verification_status !== filters.verification_status) return false;
+      if (filters.verification_status && c.verification_status !== filters.verification_status)
+        return false;
       if (filters.claim_type && c.claim_type !== filters.claim_type) return false;
       return true;
     });
   }, [claims, filters]);
 
-  const blockingCount = claims.filter((c) => c.hard_blocking && c.verification_status !== "verified").length;
+  const blockingCount = claims.filter(
+    (c) => c.hard_blocking && c.verification_status !== "verified",
+  ).length;
 
   const handleVerify = useCallback((_id: string) => {}, []);
   const handleChallenge = useCallback((_id: string) => {}, []);
@@ -46,10 +59,16 @@ export function ClaimWorkbench({ claims }: ClaimWorkbenchProps) {
       </div>
       <ClaimFilterBar filters={filters} onFilterChange={handleFilterChange} />
       <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
-        <button onClick={() => setViewMode("table")} style={{ fontWeight: viewMode === "table" ? "bold" : "normal" }}>
+        <button
+          onClick={() => setViewMode("table")}
+          style={{ fontWeight: viewMode === "table" ? "bold" : "normal" }}
+        >
           Table
         </button>
-        <button onClick={() => setViewMode("card")} style={{ fontWeight: viewMode === "card" ? "bold" : "normal" }}>
+        <button
+          onClick={() => setViewMode("card")}
+          style={{ fontWeight: viewMode === "card" ? "bold" : "normal" }}
+        >
           Card
         </button>
       </div>

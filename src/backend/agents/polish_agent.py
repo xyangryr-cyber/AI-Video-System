@@ -5,7 +5,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.3
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 from src.backend.agents.schemas import PolishLLMOutput
 from src.backend.services.llm_service import chat_completion
@@ -20,7 +20,7 @@ class PolishAgent:
     """
 
     @staticmethod
-    def polish(segments: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def polish(segments: list[dict[str, Any]]) -> dict[str, Any]:
         if not segments:
             return {
                 "segments": [],
@@ -73,24 +73,26 @@ class PolishAgent:
             # Fallback: pass through with basic voice direction
             fallback_segments = []
             for i, seg in enumerate(segments):
-                fallback_segments.append({
-                    "segment_id": seg.get("segment_id", f"seg_{i:03d}"),
-                    "section_title": seg.get("section_title", f"第{i+1}节"),
-                    "outline_section_ref": seg.get("outline_section_ref", f"sec_{i}"),
-                    "content": seg.get("content", ""),
-                    "word_count": seg.get("word_count", len(seg.get("content", ""))),
-                    "key_data_points": seg.get("key_data_points", []),
-                    "emotion_tone": seg.get("emotion_tone", "neutral"),
-                    "transition_note": seg.get("transition_note", ""),
-                    "voice_direction": {
-                        "emotion": "calm",
-                        "pace": "medium",
-                        "energy": "moderate",
-                        "key_emphasis": [seg.get("section_title", "")[:20]],
-                        "pause_after": 0.3,
-                        "notes": "Fallback voice direction",
-                    },
-                })
+                fallback_segments.append(
+                    {
+                        "segment_id": seg.get("segment_id", f"seg_{i:03d}"),
+                        "section_title": seg.get("section_title", f"第{i + 1}节"),
+                        "outline_section_ref": seg.get("outline_section_ref", f"sec_{i}"),
+                        "content": seg.get("content", ""),
+                        "word_count": seg.get("word_count", len(seg.get("content", ""))),
+                        "key_data_points": seg.get("key_data_points", []),
+                        "emotion_tone": seg.get("emotion_tone", "neutral"),
+                        "transition_note": seg.get("transition_note", ""),
+                        "voice_direction": {
+                            "emotion": "calm",
+                            "pace": "medium",
+                            "energy": "moderate",
+                            "key_emphasis": [seg.get("section_title", "")[:20]],
+                            "pause_after": 0.3,
+                            "notes": "Fallback voice direction",
+                        },
+                    }
+                )
             return {
                 "segments": fallback_segments,
                 "is_authoritative_text_source": True,

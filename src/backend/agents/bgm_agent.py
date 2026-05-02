@@ -5,10 +5,10 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.5
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 # Emotion -> energy mapping
-_EMOTION_ENERGY: Dict[str, int] = {
+_EMOTION_ENERGY: dict[str, int] = {
     "excited": 8,
     "neutral": 5,
     "calm": 3,
@@ -16,14 +16,14 @@ _EMOTION_ENERGY: Dict[str, int] = {
 }
 
 # Local BGM library (stub)
-_LOCAL_LIBRARY: List[Dict[str, Any]] = [
+_LOCAL_LIBRARY: list[dict[str, Any]] = [
     {"track_id": "local_upbeat_01", "energy_score": 8, "source": "local_library"},
     {"track_id": "local_neutral_01", "energy_score": 5, "source": "local_library"},
     {"track_id": "local_calm_01", "energy_score": 3, "source": "local_library"},
     {"track_id": "local_dramatic_01", "energy_score": 7, "source": "local_library"},
 ]
 
-_COPYRIGHT_MAP: Dict[str, str] = {
+_COPYRIGHT_MAP: dict[str, str] = {
     "mubert": "proprietary",
     "local_library": "CC0",
     "freesound": "CC-BY",
@@ -36,8 +36,8 @@ class BGMAgent:
     # -- Emotion curve (AC-1) --
 
     @staticmethod
-    def produce_emotion_curve(*, timeline: Dict[str, Any]) -> Dict[str, Any]:
-        segments_out: List[Dict[str, Any]] = []
+    def produce_emotion_curve(*, timeline: dict[str, Any]) -> dict[str, Any]:
+        segments_out: list[dict[str, Any]] = []
         for seg in timeline.get("segments", []):
             emotion_raw = seg.get("emotion_tone", "neutral")
             emotion = emotion_raw if emotion_raw in _EMOTION_ENERGY else "neutral"
@@ -50,7 +50,7 @@ class BGMAgent:
                 }
             )
         # Mark transition points
-        transitions: List[float] = []
+        transitions: list[float] = []
         for seg in timeline.get("segments", []):
             transitions.append(seg.get("start_sec", 0.0))
 
@@ -60,8 +60,8 @@ class BGMAgent:
 
     @staticmethod
     def select_bgm_candidates(
-        *, emotion_curve: Dict[str, Any], count: int = 3
-    ) -> List[Dict[str, Any]]:
+        *, emotion_curve: dict[str, Any], count: int = 3
+    ) -> list[dict[str, Any]]:
         segments = emotion_curve.get("segments", [])
         if not segments:
             return _LOCAL_LIBRARY[:count]
@@ -73,7 +73,7 @@ class BGMAgent:
             _LOCAL_LIBRARY,
             key=lambda t: abs(t["energy_score"] - avg_energy),
         )
-        candidates: List[Dict[str, Any]] = []
+        candidates: list[dict[str, Any]] = []
         for t in scored[:count]:
             candidates.append(
                 {
@@ -87,16 +87,14 @@ class BGMAgent:
     # -- Volume envelope (AC-3) --
 
     @staticmethod
-    def design_volume_envelope(
-        *, segments: List[Dict[str, Any]]
-    ) -> List[Dict[str, Any]]:
+    def design_volume_envelope(*, segments: list[dict[str, Any]]) -> list[dict[str, Any]]:
         # Hook <= -12dB, body <= -20dB, transition <= -14dB
-        _TYPE_DEFAULTS: Dict[str, float] = {
+        _TYPE_DEFAULTS: dict[str, float] = {
             "hook": -12.0,
             "body": -20.0,
             "transition": -14.0,
         }
-        envelope: List[Dict[str, Any]] = []
+        envelope: list[dict[str, Any]] = []
         for seg in segments:
             seg_type = seg.get("type", "body")
             volume_db = _TYPE_DEFAULTS.get(seg_type, -20.0)
@@ -112,7 +110,7 @@ class BGMAgent:
     # -- Fallback (AC-4) --
 
     @staticmethod
-    def fetch_bgm_track(*, source: str, emotion: str, energy: int) -> Dict[str, Any]:
+    def fetch_bgm_track(*, source: str, emotion: str, energy: int) -> dict[str, Any]:
         # 2-level fallback: Mubert API -> local library
         if source == "mubert_api":
             # Stub: Mubert unavailable, fallback to local
@@ -133,8 +131,8 @@ class BGMAgent:
     # -- Copyright marking (AC-5) --
 
     @staticmethod
-    def mark_copyright(candidates: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        result: List[Dict[str, Any]] = []
+    def mark_copyright(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        result: list[dict[str, Any]] = []
         for c in candidates:
             source = c.get("source", "")
             copyright_tag = _COPYRIGHT_MAP.get(source, "proprietary")

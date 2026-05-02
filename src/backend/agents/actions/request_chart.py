@@ -7,7 +7,7 @@ Idempotency: (SHA-256(user_intent)) — 5 min.
 
 from __future__ import annotations
 
-from typing import Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -21,9 +21,9 @@ class RequestChartParams(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     user_intent: str = Field(min_length=1)
-    chart_type: Optional[ChartType] = None
-    entity: Optional[str] = None
-    time_range: Optional[str] = None
+    chart_type: ChartType | None = None
+    entity: str | None = None
+    time_range: str | None = None
 
 
 __all__ = ["ChartType", "RequestChartParams"]

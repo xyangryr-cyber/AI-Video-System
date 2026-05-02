@@ -17,8 +17,8 @@ from __future__ import annotations
 
 import sqlite3
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
 from huey import SqliteHuey  # type: ignore[import-untyped]
 

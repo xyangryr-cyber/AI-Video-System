@@ -30,7 +30,16 @@ export function ScriptPane({
 
   if (!selectedAnchor) {
     return (
-      <div data-testid="script-pane" style={{ padding: "12px", whiteSpace: "pre-wrap", fontFamily: "monospace", fontSize: "14px", lineHeight: "1.6" }}>
+      <div
+        data-testid="script-pane"
+        style={{
+          padding: "12px",
+          whiteSpace: "pre-wrap",
+          fontFamily: "monospace",
+          fontSize: "14px",
+          lineHeight: "1.6",
+        }}
+      >
         {script}
       </div>
     );
@@ -46,7 +55,16 @@ export function ScriptPane({
   const showSplitter = onSplit && splitOffset !== undefined;
 
   return (
-    <div data-testid="script-pane" style={{ padding: "12px", whiteSpace: "pre-wrap", fontFamily: "monospace", fontSize: "14px", lineHeight: "1.6" }}>
+    <div
+      data-testid="script-pane"
+      style={{
+        padding: "12px",
+        whiteSpace: "pre-wrap",
+        fontFamily: "monospace",
+        fontSize: "14px",
+        lineHeight: "1.6",
+      }}
+    >
       {before}
       <span
         ref={highlightRef}

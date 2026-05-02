@@ -25,11 +25,7 @@ type PlaybackSpeed = 0.5 | 1 | 1.5 | 2;
  * PreviewPlayer wraps @remotion/player with keyboard controls,
  * layer decomposition, and timeline annotation.
  */
-const PreviewPlayer: FC<PreviewPlayerProps> = ({
-  shots,
-  durationInFrames,
-  fps = 30,
-}) => {
+const PreviewPlayer: FC<PreviewPlayerProps> = ({ shots, durationInFrames, fps = 30 }) => {
   const [currentFrame, setCurrentFrame] = useState(0);
   const [playbackSpeed, setPlaybackSpeed] = useState<PlaybackSpeed>(1);
   const [visibleLayers, setVisibleLayers] = useState<VisibleLayers>({
@@ -98,7 +94,7 @@ const PreviewPlayer: FC<PreviewPlayerProps> = ({
           break;
       }
     },
-    [durationInFrames]
+    [durationInFrames],
   );
 
   return (
@@ -118,10 +114,7 @@ const PreviewPlayer: FC<PreviewPlayerProps> = ({
           zIndex: 10,
         }}
       >
-        <LayerToggle
-          visibleLayers={visibleLayers}
-          onToggle={handleToggleLayer}
-        />
+        <LayerToggle visibleLayers={visibleLayers} onToggle={handleToggleLayer} />
       </div>
 
       {/* Speed indicator */}
@@ -153,11 +146,7 @@ const PreviewPlayer: FC<PreviewPlayerProps> = ({
       />
 
       {/* Timeline annotation overlay */}
-      <TimelineAnnotation
-        currentFrame={currentFrame}
-        fps={fps}
-        onAnnotation={handleAnnotation}
-      />
+      <TimelineAnnotation currentFrame={currentFrame} fps={fps} onAnnotation={handleAnnotation} />
 
       {/* Annotation count */}
       {annotations.length > 0 && (

@@ -7,7 +7,7 @@ Placed outside reviewers/ to avoid circular import.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 _VALID_COPYRIGHT_TAGS = frozenset({"CC0", "CC-BY", "proprietary"})
 
@@ -24,13 +24,11 @@ class MusicFitReviewer:
         video_duration: float,
         volume_db: float,
         copyright_tag: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         blocking: list[str] = []
 
         if bgm_duration < video_duration:
-            blocking.append(
-                f"BGM duration ({bgm_duration}s) < video duration ({video_duration}s)"
-            )
+            blocking.append(f"BGM duration ({bgm_duration}s) < video duration ({video_duration}s)")
         if volume_db > MusicFitReviewer.BODY_VOLUME_MAX_DB:
             blocking.append(
                 f"BGM volume ({volume_db}dB) exceeds body max ({MusicFitReviewer.BODY_VOLUME_MAX_DB}dB)"
@@ -49,8 +47,8 @@ class MusicFitReviewer:
         video_duration: float,
         volume_db: float,
         copyright_tag: str,
-        emotion_curve: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        emotion_curve: dict[str, Any],
+    ) -> dict[str, Any]:
         l1 = cls.review_l1(
             bgm_duration=bgm_duration,
             video_duration=video_duration,

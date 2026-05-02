@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any
 
 
 class BaseProvider(ABC):
     @abstractmethod
-    def fetch(self, *, symbol: str, start: str, end: str) -> Dict[str, Any]: ...
+    def fetch(self, *, symbol: str, start: str, end: str) -> dict[str, Any]: ...

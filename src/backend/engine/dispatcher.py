@@ -52,7 +52,7 @@ class Dispatcher:
 
     def __init__(
         self,
-        engine: "WorkflowEngine",
+        engine: WorkflowEngine,
         polling_interval: float = _DEFAULT_POLLING_INTERVAL_SEC,
         task_runner: Callable[[str, str, dict], None] | None = _noop_runner,
     ) -> None:

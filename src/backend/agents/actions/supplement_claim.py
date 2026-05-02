@@ -7,7 +7,7 @@ Idempotency: (SHA-256(text), source_phase) — 1 h.
 
 from __future__ import annotations
 
-from typing import Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -24,7 +24,7 @@ class SupplementClaimParams(BaseModel):
     claim_type: ClaimType
     source_phase: SourcePhase
     source_artifact: str = Field(min_length=1)
-    source_span: Optional[str] = None
+    source_span: str | None = None
 
 
 __all__ = ["ClaimType", "SourcePhase", "SupplementClaimParams"]

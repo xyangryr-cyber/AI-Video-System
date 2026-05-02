@@ -1,5 +1,5 @@
-import { useRef, useState, useCallback } from 'react';
-import { Play, Pause, Film, Video } from 'lucide-react';
+import { useRef, useState, useCallback } from "react";
+import { Play, Pause, Film, Video } from "lucide-react";
 
 interface P10VideoPlayerProps {
   video_url?: string;
@@ -8,11 +8,41 @@ interface P10VideoPlayerProps {
 }
 
 const MOCK_BROLL_ITEMS = [
-  { id: 1, filename: 'broll_gold_bars.mp4', duration: '15s', match: '匹配: "华尔街金库/金砖实拍"', license: 'Pexels (CC0)' },
-  { id: 2, filename: 'broll_market_fluctuation.mp4', duration: '22s', match: '匹配: "大盘曲线一路上扬"', license: 'Pexels (CC0)' },
-  { id: 3, filename: 'broll_jewelry_store.mp4', duration: '18s', match: '匹配: "散户在金店看金饰"', license: 'Pexels (CC0)' },
-  { id: 4, filename: 'broll_cbank_vault.mp4', duration: '20s', match: '匹配: "各国央行购金"', license: 'Pexels (CC0)' },
-  { id: 5, filename: 'broll_data_chart.mp4', duration: '14s', match: '匹配: "购金对比体量柱状图"', license: 'Pexels (CC0)' },
+  {
+    id: 1,
+    filename: "broll_gold_bars.mp4",
+    duration: "15s",
+    match: '匹配: "华尔街金库/金砖实拍"',
+    license: "Pexels (CC0)",
+  },
+  {
+    id: 2,
+    filename: "broll_market_fluctuation.mp4",
+    duration: "22s",
+    match: '匹配: "大盘曲线一路上扬"',
+    license: "Pexels (CC0)",
+  },
+  {
+    id: 3,
+    filename: "broll_jewelry_store.mp4",
+    duration: "18s",
+    match: '匹配: "散户在金店看金饰"',
+    license: "Pexels (CC0)",
+  },
+  {
+    id: 4,
+    filename: "broll_cbank_vault.mp4",
+    duration: "20s",
+    match: '匹配: "各国央行购金"',
+    license: "Pexels (CC0)",
+  },
+  {
+    id: 5,
+    filename: "broll_data_chart.mp4",
+    duration: "14s",
+    match: '匹配: "购金对比体量柱状图"',
+    license: "Pexels (CC0)",
+  },
 ];
 
 export function P10VideoPlayer({ video_url, duration_sec, subtitles_url }: P10VideoPlayerProps) {
@@ -40,23 +70,32 @@ export function P10VideoPlayer({ video_url, duration_sec, subtitles_url }: P10Vi
         </div>
 
         {MOCK_BROLL_ITEMS.map((item) => (
-          <div key={item.id} className="bg-white border-2 border-slate-200 p-4 rounded-xl flex items-start gap-4">
+          <div
+            key={item.id}
+            className="bg-white border-2 border-slate-200 p-4 rounded-xl flex items-start gap-4"
+          >
             <div className="w-32 aspect-video bg-slate-200 rounded-lg shrink-0 flex items-center justify-center text-slate-400 border border-slate-300">
               <Video className="w-6 h-6" />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-start mb-1">
                 <div className="font-bold text-sm text-slate-800 truncate">{item.filename}</div>
-                <span className="text-[10px] font-bold bg-slate-100 px-2 py-0.5 rounded border border-slate-200 shrink-0">{item.duration}</span>
+                <span className="text-[10px] font-bold bg-slate-100 px-2 py-0.5 rounded border border-slate-200 shrink-0">
+                  {item.duration}
+                </span>
               </div>
               <div className="text-xs text-slate-500 mb-2">{item.match}</div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-green-600 bg-green-50 inline-block px-2 py-0.5 rounded-sm">{item.license}</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-green-600 bg-green-50 inline-block px-2 py-0.5 rounded-sm">
+                {item.license}
+              </div>
             </div>
           </div>
         ))}
 
         <div className="bg-white border-2 border-slate-200 p-4 rounded-xl text-center">
-          <div className="text-sm text-slate-500">共匹配 {MOCK_BROLL_ITEMS.length} 段 B-Roll 素材，覆盖率 45%</div>
+          <div className="text-sm text-slate-500">
+            共匹配 {MOCK_BROLL_ITEMS.length} 段 B-Roll 素材，覆盖率 45%
+          </div>
         </div>
       </div>
     );
@@ -79,14 +118,16 @@ export function P10VideoPlayer({ video_url, duration_sec, subtitles_url }: P10Vi
         <button
           onClick={handleToggle}
           className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors"
-          aria-label={playing ? 'Pause video' : 'Play video'}
+          aria-label={playing ? "Pause video" : "Play video"}
         >
-          {playing ? <Pause className="w-12 h-12 text-white" /> : <Play className="w-12 h-12 text-white" />}
+          {playing ? (
+            <Pause className="w-12 h-12 text-white" />
+          ) : (
+            <Play className="w-12 h-12 text-white" />
+          )}
         </button>
       </div>
-      {duration_sec !== undefined && (
-        <p className="text-sm text-gray-500 mt-2">{duration_sec}s</p>
-      )}
+      {duration_sec !== undefined && <p className="text-sm text-gray-500 mt-2">{duration_sec}s</p>}
     </div>
   );
 }

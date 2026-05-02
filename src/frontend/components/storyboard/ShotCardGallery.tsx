@@ -31,7 +31,10 @@ export function ShotCardGallery({
   onShotSelect,
 }: ShotCardGalleryProps): ReactElement {
   return (
-    <div data-testid="shot-card-gallery" style={{ display: "flex", flexDirection: "column", gap: "8px", padding: "12px" }}>
+    <div
+      data-testid="shot-card-gallery"
+      style={{ display: "flex", flexDirection: "column", gap: "8px", padding: "12px" }}
+    >
       {shots.map((shot) => {
         const isSelected = shot.id === selectedShotId;
         return (
@@ -56,7 +59,14 @@ export function ShotCardGallery({
             }}
           >
             {/* Top row: scene_type badge + mode chip */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "6px",
+              }}
+            >
               <span
                 data-testid={`shot-card-${shot.id}-scene_type`}
                 style={{

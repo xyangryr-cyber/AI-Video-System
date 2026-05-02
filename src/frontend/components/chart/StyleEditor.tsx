@@ -8,7 +8,12 @@ interface Props {
   disabled?: boolean;
 }
 
-export function StyleEditor({ styleConfig, styleLock, onChange, disabled = false }: Props): ReactElement {
+export function StyleEditor({
+  styleConfig,
+  styleLock,
+  onChange,
+  disabled = false,
+}: Props): ReactElement {
   const paletteColors = Object.values(styleLock.color_palette);
 
   const update = (field: string, value: string | boolean | number) => {

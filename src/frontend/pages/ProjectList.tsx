@@ -1,29 +1,45 @@
-import type { ReactElement } from "react"
-import { useNavigate } from "react-router-dom"
-import dayjs from "dayjs"
-import relativeTime from "dayjs/plugin/relativeTime"
-import "dayjs/locale/zh-cn"
-import { Plus, Settings, Play, CheckCircle, Clock, AlertCircle } from "lucide-react"
-import { useProjects } from "../hooks/useProjects"
+import type { ReactElement } from "react";
+import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/zh-cn";
+import { Plus, Settings, Play, CheckCircle, Clock, AlertCircle } from "lucide-react";
+import { useProjects } from "../hooks/useProjects";
 
-dayjs.extend(relativeTime)
-dayjs.locale("zh-cn")
+dayjs.extend(relativeTime);
+dayjs.locale("zh-cn");
 
 const STATUS_MAP: Record<string, { icon: ReactElement; label: string; color: string }> = {
-  in_progress: { icon: <Play className="w-4 h-4 text-blue-500" />, label: "进行中", color: "text-blue-500" },
-  awaiting_user: { icon: <Clock className="w-4 h-4 text-amber-500" />, label: "等用户", color: "text-amber-500" },
-  completed: { icon: <CheckCircle className="w-4 h-4 text-green-500" />, label: "完成", color: "text-green-500" },
-  failed: { icon: <AlertCircle className="w-4 h-4 text-red-500" />, label: "失败", color: "text-red-500" },
-}
+  in_progress: {
+    icon: <Play className="w-4 h-4 text-blue-500" />,
+    label: "进行中",
+    color: "text-blue-500",
+  },
+  awaiting_user: {
+    icon: <Clock className="w-4 h-4 text-amber-500" />,
+    label: "等用户",
+    color: "text-amber-500",
+  },
+  completed: {
+    icon: <CheckCircle className="w-4 h-4 text-green-500" />,
+    label: "完成",
+    color: "text-green-500",
+  },
+  failed: {
+    icon: <AlertCircle className="w-4 h-4 text-red-500" />,
+    label: "失败",
+    color: "text-red-500",
+  },
+};
 
 function StatusCell({ status }: { status: string }): ReactElement {
-  const s = STATUS_MAP[status] ?? STATUS_MAP.failed
+  const s = STATUS_MAP[status] ?? STATUS_MAP.failed;
   return (
     <div className="flex items-center space-x-2">
       {s.icon}
       <span className="text-sm text-slate-600">{s.label}</span>
     </div>
-  )
+  );
 }
 
 function ProgressBar({ progress }: { progress: number }): ReactElement {
@@ -36,7 +52,7 @@ function ProgressBar({ progress }: { progress: number }): ReactElement {
         />
       </div>
     </div>
-  )
+  );
 }
 
 function CategoryBadge({ category }: { category: string }): ReactElement {
@@ -44,16 +60,16 @@ function CategoryBadge({ category }: { category: string }): ReactElement {
     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
       {category}
     </span>
-  )
+  );
 }
 
 export function ProjectList(): ReactElement {
-  const nav = useNavigate()
-  const wsUrl = `${location.protocol === "https:" ? "wss:" : "ws:"}//${location.host}/ws/projects`
-  const { data, isLoading, isError } = useProjects(wsUrl)
+  const nav = useNavigate();
+  const wsUrl = `${location.protocol === "https:" ? "wss:" : "ws:"}//${location.host}/ws/projects`;
+  const { data, isLoading, isError } = useProjects(wsUrl);
 
-  if (isLoading) return <div>加载中...</div>
-  if (isError || !data) return <div>加载失败</div>
+  if (isLoading) return <div>加载中...</div>;
+  if (isError || !data) return <div>加载失败</div>;
 
   return (
     <div className="max-w-6xl mx-auto py-8 px-6">
@@ -81,17 +97,31 @@ export function ProjectList(): ReactElement {
       </header>
 
       <div className="bg-white rounded-2xl border-2 border-slate-200 p-6 flex flex-col gap-4">
-        <h2 className="text-[0.85rem] font-bold text-slate-800 uppercase tracking-[0.05em]">M3: 项目管理列表</h2>
+        <h2 className="text-[0.85rem] font-bold text-slate-800 uppercase tracking-[0.05em]">
+          M3: 项目管理列表
+        </h2>
         <div className="overflow-x-auto border border-slate-200 rounded-xl">
           <table className="w-full text-left">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
-                <th className="py-4 px-6 text-[0.75rem] font-bold text-slate-800 uppercase tracking-[0.05em]">标题</th>
-                <th className="py-4 px-6 text-[0.75rem] font-bold text-slate-800 uppercase tracking-[0.05em]">分类</th>
-                <th className="py-4 px-6 text-[0.75rem] font-bold text-slate-800 uppercase tracking-[0.05em]">阶段</th>
-                <th className="py-4 px-6 text-[0.75rem] font-bold text-slate-800 uppercase tracking-[0.05em]">进度</th>
-                <th className="py-4 px-6 text-[0.75rem] font-bold text-slate-800 uppercase tracking-[0.05em]">状态</th>
-                <th className="py-4 px-6 text-[0.75rem] font-bold text-slate-800 uppercase tracking-[0.05em]">更新时间</th>
+                <th className="py-4 px-6 text-[0.75rem] font-bold text-slate-800 uppercase tracking-[0.05em]">
+                  标题
+                </th>
+                <th className="py-4 px-6 text-[0.75rem] font-bold text-slate-800 uppercase tracking-[0.05em]">
+                  分类
+                </th>
+                <th className="py-4 px-6 text-[0.75rem] font-bold text-slate-800 uppercase tracking-[0.05em]">
+                  阶段
+                </th>
+                <th className="py-4 px-6 text-[0.75rem] font-bold text-slate-800 uppercase tracking-[0.05em]">
+                  进度
+                </th>
+                <th className="py-4 px-6 text-[0.75rem] font-bold text-slate-800 uppercase tracking-[0.05em]">
+                  状态
+                </th>
+                <th className="py-4 px-6 text-[0.75rem] font-bold text-slate-800 uppercase tracking-[0.05em]">
+                  更新时间
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -125,11 +155,9 @@ export function ProjectList(): ReactElement {
           </table>
         </div>
         {data.length === 0 && (
-          <div className="py-12 text-center text-slate-500">
-            暂无项目，点击右上角新建。
-          </div>
+          <div className="py-12 text-center text-slate-500">暂无项目，点击右上角新建。</div>
         )}
       </div>
     </div>
-  )
+  );
 }

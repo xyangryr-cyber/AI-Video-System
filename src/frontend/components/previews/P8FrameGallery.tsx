@@ -1,20 +1,24 @@
-import type { VideoFrame } from '@frontend/types/preview';
-import { CheckCircle2, Image, Sparkles } from 'lucide-react';
+import type { VideoFrame } from "@frontend/types/preview";
+import { CheckCircle2, Image, Sparkles } from "lucide-react";
 
 interface P8FrameGalleryProps {
   frames?: VideoFrame[];
 }
 
-function deriveVisualType(imageUrl: string): 'Template' | 'B-Roll' {
+function deriveVisualType(imageUrl: string): "Template" | "B-Roll" {
   const lower = imageUrl.toLowerCase();
-  if (lower.includes('chart') || lower.includes('template') || lower.includes('tpl')) return 'Template';
-  return 'B-Roll';
+  if (lower.includes("chart") || lower.includes("template") || lower.includes("tpl"))
+    return "Template";
+  return "B-Roll";
 }
 
 export function P8FrameGallery({ frames }: P8FrameGalleryProps) {
   if (!frames || frames.length === 0) {
     return (
-      <div data-testid="preview-p8" className="flex flex-col items-center justify-center h-64 text-slate-400">
+      <div
+        data-testid="preview-p8"
+        className="flex flex-col items-center justify-center h-64 text-slate-400"
+      >
         <Image className="w-12 h-12 mb-2" />
         <p className="text-sm font-medium">暂无素材帧</p>
         <p className="text-xs text-slate-400 mt-1">等待素材溯源 Agent 完成关键帧提取</p>
@@ -23,7 +27,10 @@ export function P8FrameGallery({ frames }: P8FrameGalleryProps) {
   }
 
   return (
-    <div data-testid="preview-p8" className="relative border-l-2 border-slate-200 ml-4 pl-8 space-y-6 pb-4 pt-2">
+    <div
+      data-testid="preview-p8"
+      className="relative border-l-2 border-slate-200 ml-4 pl-8 space-y-6 pb-4 pt-2"
+    >
       {frames.map((frame) => {
         const visualType = deriveVisualType(frame.image_url);
 
@@ -36,9 +43,13 @@ export function P8FrameGallery({ frames }: P8FrameGalleryProps) {
               {/* Header */}
               <div className="flex flex-wrap md:flex-nowrap justify-between gap-3 border-b border-slate-100 pb-3 mb-4">
                 <div className="flex items-center gap-3">
-                  <span className="bg-[#1e293b] text-white font-bold px-2 py-0.5 rounded text-xs tracking-widest">{frame.id}</span>
+                  <span className="bg-[#1e293b] text-white font-bold px-2 py-0.5 rounded text-xs tracking-widest">
+                    {frame.id}
+                  </span>
                 </div>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase border shrink-0 ${visualType === 'Template' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'}`}>
+                <span
+                  className={`text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase border shrink-0 ${visualType === "Template" ? "bg-blue-50 text-blue-600 border-blue-200" : "bg-emerald-50 text-emerald-600 border-emerald-200"}`}
+                >
                   {visualType}
                 </span>
               </div>
@@ -57,7 +68,9 @@ export function P8FrameGallery({ frames }: P8FrameGalleryProps) {
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-amber-500" />
-                      <span className="text-[12px] font-bold text-slate-800">AI Agent 物料溯源结果</span>
+                      <span className="text-[12px] font-bold text-slate-800">
+                        AI Agent 物料溯源结果
+                      </span>
                     </div>
                     <span className="text-[10px] text-green-700 font-bold border border-green-200 bg-green-100 flex items-center px-2 py-0.5 rounded shadow-sm">
                       <CheckCircle2 className="w-3 h-3 mr-1" /> Verified
@@ -66,12 +79,20 @@ export function P8FrameGallery({ frames }: P8FrameGalleryProps) {
 
                   <div className="space-y-2 mt-3">
                     <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2">
-                      <span className="text-[11px] font-bold text-slate-500 w-16 shrink-0 mt-0.5 uppercase tracking-wide">Need:</span>
-                      <span className="text-[12px] text-slate-700 font-medium">获取 {frame.id} 的相关视觉数据</span>
+                      <span className="text-[11px] font-bold text-slate-500 w-16 shrink-0 mt-0.5 uppercase tracking-wide">
+                        Need:
+                      </span>
+                      <span className="text-[12px] text-slate-700 font-medium">
+                        获取 {frame.id} 的相关视觉数据
+                      </span>
                     </div>
                     <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2">
-                      <span className="text-[11px] font-bold text-slate-500 w-16 shrink-0 mt-0.5 uppercase tracking-wide">Action:</span>
-                      <span className="text-[12px] text-blue-700 bg-blue-100 px-2 py-0.5 rounded inline-block font-bold">Fetch Asset: {frame.image_url}</span>
+                      <span className="text-[11px] font-bold text-slate-500 w-16 shrink-0 mt-0.5 uppercase tracking-wide">
+                        Action:
+                      </span>
+                      <span className="text-[12px] text-blue-700 bg-blue-100 px-2 py-0.5 rounded inline-block font-bold">
+                        Fetch Asset: {frame.image_url}
+                      </span>
                     </div>
                   </div>
 

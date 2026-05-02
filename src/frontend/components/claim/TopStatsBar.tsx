@@ -8,7 +8,9 @@ interface TopStatsBarProps {
 export function TopStatsBar({ claims }: TopStatsBarProps) {
   const total = claims.length;
   const verified = claims.filter((c) => c.verification_status === "verified").length;
-  const unverified = claims.filter((c) => c.verification_status === "unverified" && c.hard_blocking).length;
+  const unverified = claims.filter(
+    (c) => c.verification_status === "unverified" && c.hard_blocking,
+  ).length;
 
   return (
     <div

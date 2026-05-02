@@ -13,8 +13,6 @@ aliases. The two registries are intentionally non-overlapping.
 
 from __future__ import annotations
 
-from typing import FrozenSet
-
 # 5 mandatory event names per SPEC-A-contracts.md SPEC-13B.
 ROUTER_FALLBACK: str = "router_fallback"
 """Router degradation -- a route resolved to `clarify` after exhausting candidates."""
@@ -34,7 +32,7 @@ COST_WARNING: str = "cost_warning"
 LEAK_SCAN_HIT: str = "leak_scan_hit"
 """Sanitiser scan found a SECRET_REGEXES match in candidate output."""
 
-SPECIAL_EVENT_NAMES: FrozenSet[str] = frozenset(
+SPECIAL_EVENT_NAMES: frozenset[str] = frozenset(
     {
         ROUTER_FALLBACK,
         CAPABILITY_GAP,
@@ -46,7 +44,7 @@ SPECIAL_EVENT_NAMES: FrozenSet[str] = frozenset(
 """Frozen registry of the 5 SPEC-13B special event names."""
 
 # extra-field contract for source_fallback (SPEC-13B verification #3).
-SOURCE_FALLBACK_REQUIRED_EXTRAS: FrozenSet[str] = frozenset(
+SOURCE_FALLBACK_REQUIRED_EXTRAS: frozenset[str] = frozenset(
     {"source_attempted", "reason_failed", "source_used"}
 )
 

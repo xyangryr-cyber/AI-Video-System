@@ -99,10 +99,7 @@ export function PreferenceWritebackCard({
       ))}
 
       <div className="flex gap-2">
-        <button
-          className="px-3 py-1 border rounded text-sm"
-          onClick={selectAll}
-        >
+        <button className="px-3 py-1 border rounded text-sm" onClick={selectAll}>
           全选
         </button>
         <button
@@ -112,10 +109,7 @@ export function PreferenceWritebackCard({
         >
           保存勾选项
         </button>
-        <button
-          className="px-3 py-1 border rounded text-sm"
-          onClick={onDismiss}
-        >
+        <button className="px-3 py-1 border rounded text-sm" onClick={onDismiss}>
           忽略
         </button>
       </div>

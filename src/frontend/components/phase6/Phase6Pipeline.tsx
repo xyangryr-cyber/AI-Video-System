@@ -18,13 +18,8 @@ interface Props {
   segments: SegmentEntry[];
 }
 
-export function Phase6Pipeline({
-  fullText,
-  annotationSpans,
-  segments,
-}: Props): ReactElement {
-  const { step, userConfirmedLayout, finalMaster, confirmLayout } =
-    usePhase6Store();
+export function Phase6Pipeline({ fullText, annotationSpans, segments }: Props): ReactElement {
+  const { step, userConfirmedLayout, finalMaster, confirmLayout } = usePhase6Store();
 
   return (
     <div data-testid="p6-pipeline" className="space-y-4">

@@ -7,7 +7,7 @@ Placed outside reviewers/ package to avoid circular import.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 from src.backend.agents.base_reviewer import BaseReviewer
 
@@ -19,11 +19,11 @@ class L2Reviewer(BaseReviewer):
     Production subclasses inject an LLM-backed callable.
     """
 
-    def review_semantic(self, artifact: Any) -> Dict[str, Any]:
+    def review_semantic(self, artifact: Any) -> dict[str, Any]:
         """Override in subclasses. Returns standard verdict."""
         return {"verdict": "PASS", "notes": ["L2 semantic stub"]}
 
-    def review(self, artifact: Any) -> Dict[str, Any]:
+    def review(self, artifact: Any) -> dict[str, Any]:
         l2 = self.review_semantic(artifact)
         return {
             "verdict": l2.get("verdict", "PASS"),

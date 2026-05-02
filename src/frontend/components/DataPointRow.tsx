@@ -15,8 +15,7 @@ export function DataPointRow({
   onVerify,
   onManualConfirm,
 }: DataPointRowProps) {
-  const { id, value, source, trust_level, verification_status, fact_checker_notes } =
-    dataPoint;
+  const { id, value, source, trust_level, verification_status, fact_checker_notes } = dataPoint;
   const isRefuted = verification_status === "failed";
 
   return (
@@ -61,17 +60,40 @@ export function DataPointRow({
       <div style={{ display: "flex", gap: "8px", marginTop: "4px" }}>
         {trust_level === "llm_generated" && (
           <>
-            <button onClick={(e) => { e.stopPropagation(); onVerify(id); }}>Verify</button>
-            <button onClick={(e) => { e.stopPropagation(); onManualConfirm(id); }}>Manual Confirm</button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onVerify(id);
+              }}
+            >
+              Verify
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onManualConfirm(id);
+              }}
+            >
+              Manual Confirm
+            </button>
           </>
         )}
         {trust_level === "stale" && (
-          <button onClick={(e) => { e.stopPropagation(); onVerify(id); }}>Verify</button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onVerify(id);
+            }}
+          >
+            Verify
+          </button>
         )}
       </div>
 
       {isExpanded && fact_checker_notes && (
-        <div style={{ marginTop: "8px", padding: "8px", background: "#f9fafb", borderRadius: "4px" }}>
+        <div
+          style={{ marginTop: "8px", padding: "8px", background: "#f9fafb", borderRadius: "4px" }}
+        >
           {fact_checker_notes}
         </div>
       )}

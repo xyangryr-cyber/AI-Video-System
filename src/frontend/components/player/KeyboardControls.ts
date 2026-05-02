@@ -44,14 +44,9 @@ export const DEFAULT_KEYBOARD_MAPPINGS: KeyboardMapping[] = [
  * Match a keyboard event to an action.
  * Returns the matched action or null.
  */
-export function matchKeyboardAction(
-  event: KeyboardEvent
-): KeyboardMapping | null {
+export function matchKeyboardAction(event: KeyboardEvent): KeyboardMapping | null {
   for (const mapping of DEFAULT_KEYBOARD_MAPPINGS) {
-    if (
-      event.key === mapping.key &&
-      event.shiftKey === mapping.shiftKey
-    ) {
+    if (event.key === mapping.key && event.shiftKey === mapping.shiftKey) {
       return mapping;
     }
   }
@@ -65,7 +60,7 @@ export function matchKeyboardAction(
 export function handleKeyboardFrameStep(
   event: KeyboardEvent,
   currentFrame: number,
-  totalFrames: number
+  totalFrames: number,
 ): number {
   const mapping = matchKeyboardAction(event);
   if (!mapping || mapping.frameDelta === undefined) return currentFrame;

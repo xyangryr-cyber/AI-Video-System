@@ -7,16 +7,14 @@ Placed outside reviewers/ to avoid circular import.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 
 class AVSyncReviewer:
     """Pure L1 AV sync reviewer: checks offset against tolerance."""
 
     @staticmethod
-    def review(
-        *, rough_cut: Dict[str, Any], max_offset_ms: float = 100.0
-    ) -> Dict[str, Any]:
+    def review(*, rough_cut: dict[str, Any], max_offset_ms: float = 100.0) -> dict[str, Any]:
         offset = rough_cut.get("av_offset_ms", 0.0)
         if offset > max_offset_ms:
             return {

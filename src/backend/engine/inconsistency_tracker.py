@@ -5,14 +5,14 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md "Inconsistency Tracking"
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 
 class InconsistencyTracker:
     """Track cross-phase audit inconsistencies with resolution status."""
 
     def __init__(self) -> None:
-        self._records: List[Dict[str, Any]] = []
+        self._records: list[dict[str, Any]] = []
 
     def record(
         self,
@@ -39,5 +39,5 @@ class InconsistencyTracker:
         if 0 <= index < len(self._records):
             self._records[index]["status"] = status
 
-    def list_records(self) -> List[Dict[str, Any]]:
+    def list_records(self) -> list[dict[str, Any]]:
         return list(self._records)

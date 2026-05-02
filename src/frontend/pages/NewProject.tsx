@@ -1,12 +1,12 @@
-import type { ReactElement } from "react"
-import { useNavigate } from "react-router-dom"
-import { ArrowLeft } from "lucide-react"
-import { CreateProjectForm } from "../components/CreateProjectForm"
-import { useCreateProject } from "../hooks/useCreateProject"
+import type { ReactElement } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import { CreateProjectForm } from "../components/CreateProjectForm";
+import { useCreateProject } from "../hooks/useCreateProject";
 
 export function NewProject(): ReactElement {
-  const nav = useNavigate()
-  const mutation = useCreateProject()
+  const nav = useNavigate();
+  const mutation = useCreateProject();
   return (
     <div className="max-w-3xl mx-auto py-12 px-6">
       <button
@@ -23,7 +23,10 @@ export function NewProject(): ReactElement {
         </p>
       </div>
       {mutation.error && (
-        <div role="alert" className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+        <div
+          role="alert"
+          className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"
+        >
           {mutation.error.message}
         </div>
       )}
@@ -31,13 +34,16 @@ export function NewProject(): ReactElement {
         isSubmitting={mutation.isPending}
         onCancel={() => nav("/projects")}
         onSubmit={(input) =>
-          mutation.mutateAsync(input).then((data) => {
-            nav(`/projects/${data.id}/phases/0`)
-          }).catch(() => {
-            // error handled via mutation.error display
-          })
+          mutation
+            .mutateAsync(input)
+            .then((data) => {
+              nav(`/projects/${data.id}/phases/0`);
+            })
+            .catch(() => {
+              // error handled via mutation.error display
+            })
         }
       />
     </div>
-  )
+  );
 }

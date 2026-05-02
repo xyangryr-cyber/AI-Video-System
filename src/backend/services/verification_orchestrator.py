@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Protocol
+from typing import Any, Protocol
 
 from src.shared.schemas.claim import Claim, ClaimType, VerificationRecord
 
@@ -36,7 +36,7 @@ class DownstreamArtifactRef:
     """
 
     artifact_id: str
-    claim_ids: List[str]
+    claim_ids: list[str]
 
 
 class VerificationOrchestrator:
@@ -50,15 +50,15 @@ class VerificationOrchestrator:
         image_backed_verifier: _Verifier,
         citation_verifier: _Verifier,
     ) -> None:
-        self._route: Dict[ClaimType, _Verifier] = {
+        self._route: dict[ClaimType, _Verifier] = {
             "data": financial_data_verifier,
             "fact": fact_check_verifier,
             "event": fact_check_verifier,
             "image_backed": image_backed_verifier,
             "citation": citation_verifier,
         }
-        self._records: Dict[str, VerificationRecord] = {}
-        self._claim_status: Dict[str, str] = {}
+        self._records: dict[str, VerificationRecord] = {}
+        self._claim_status: dict[str, str] = {}
 
     # ------------------------------------------------------------------
     # Primary verify
@@ -82,11 +82,11 @@ class VerificationOrchestrator:
     def reverify_incremental(
         self,
         *,
-        old_claims: List[Claim],
-        new_claims: List[Claim],
-    ) -> Dict[str, List[str]]:
-        old_by_id: Dict[str, Claim] = {c.claim_id: c for c in old_claims}
-        new_by_id: Dict[str, Claim] = {c.claim_id: c for c in new_claims}
+        old_claims: list[Claim],
+        new_claims: list[Claim],
+    ) -> dict[str, list[str]]:
+        old_by_id: dict[str, Claim] = {c.claim_id: c for c in old_claims}
+        new_by_id: dict[str, Claim] = {c.claim_id: c for c in new_claims}
 
         added_ids = [cid for cid in new_by_id if cid not in old_by_id]
         removed_ids = [cid for cid in old_by_id if cid not in new_by_id]
@@ -112,8 +112,8 @@ class VerificationOrchestrator:
         self,
         *,
         claim_id: str,
-        downstream_artifacts: List[DownstreamArtifactRef],
-    ) -> Dict[str, Any]:
+        downstream_artifacts: list[DownstreamArtifactRef],
+    ) -> dict[str, Any]:
         start = time.monotonic()
         self._claim_status[claim_id] = "user_disputed"
 
@@ -148,7 +148,7 @@ class VerificationOrchestrator:
             new_record = verifier.verify(stub_claim)
             self._records[claim_id] = new_record
 
-        damaged: List[Dict[str, str]] = []
+        damaged: list[dict[str, str]] = []
         for art in downstream_artifacts:
             if claim_id in art.claim_ids:
                 damaged.append({"artifact_id": art.artifact_id, "status": "damaged"})

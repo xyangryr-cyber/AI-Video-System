@@ -1,12 +1,13 @@
-import { useState } from "react"
-import type { ReactElement } from "react"
+import { useState } from "react";
+import type { ReactElement } from "react";
 
 export function TechnicalDetails({ details }: { details: unknown }): ReactElement {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   return (
     <div className="mt-2">
       <button
-        type="button" className="text-xs text-blue-600 underline"
+        type="button"
+        className="text-xs text-blue-600 underline"
         onClick={() => setOpen(!open)}
       >
         {open ? "隐藏" : "查看"} 技术详情
@@ -17,5 +18,5 @@ export function TechnicalDetails({ details }: { details: unknown }): ReactElemen
         </pre>
       )}
     </div>
-  )
+  );
 }

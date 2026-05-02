@@ -20,9 +20,7 @@ class Observability:
         self._conn = conn
 
     def get_system_status(self) -> list[dict[str, Any]]:
-        rows = self._conn.execute(
-            "SELECT * FROM system_status ORDER BY checked_at DESC"
-        ).fetchall()
+        rows = self._conn.execute("SELECT * FROM system_status ORDER BY checked_at DESC").fetchall()
         return [dict(r) for r in rows]
 
     def get_events(self, project_id: str, limit: int = 100) -> list[dict[str, Any]]:
@@ -34,8 +32,7 @@ class Observability:
 
     def get_llm_audit(self, project_id: str, limit: int = 100) -> list[dict[str, Any]]:
         rows = self._conn.execute(
-            "SELECT * FROM agent_call_log WHERE project_id = ? "
-            "ORDER BY created_at DESC LIMIT ?",
+            "SELECT * FROM agent_call_log WHERE project_id = ? ORDER BY created_at DESC LIMIT ?",
             (project_id, limit),
         ).fetchall()
         return [dict(r) for r in rows]

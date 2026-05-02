@@ -71,9 +71,7 @@ class AudioMixPreviewService:
         narration_path = (project_root / narration_master.file_path).resolve()
         bgm_path = _resolve_bgm_source(project_root, bgm_candidate)
         if not bgm_path.is_file():
-            raise MasterAudioNotReadyError(
-                f"bgm candidate source not found: {bgm_path}"
-            )
+            raise MasterAudioNotReadyError(f"bgm candidate source not found: {bgm_path}")
 
         phase_dir = project_root / PHASE_DIR
         phase_dir.mkdir(parents=True, exist_ok=True)
@@ -112,14 +110,11 @@ def _assert_narration_ready(
         raise MasterAudioNotReadyError(f"project {project_id!r} not found") from exc
     if ref is None:
         raise MasterAudioNotReadyError(
-            "projects.master_audio_ref is empty; "
-            "run NarrationMasterAssembler (C-016) first"
+            "projects.master_audio_ref is empty; run NarrationMasterAssembler (C-016) first"
         )
     narration_path = (project_root / narration_master.file_path).resolve()
     if not narration_path.is_file():
-        raise MasterAudioNotReadyError(
-            f"narration_master file missing on disk: {narration_path}"
-        )
+        raise MasterAudioNotReadyError(f"narration_master file missing on disk: {narration_path}")
 
 
 def _resolve_bgm_source(project_root: Path, bgm_candidate: BgmCandidate) -> Path:
@@ -190,9 +185,7 @@ def _run_mix(
     ]
     proc = subprocess.run(cmd, capture_output=True, text=True)
     if proc.returncode != 0:
-        raise RuntimeError(
-            f"ffmpeg mix failed (rc={proc.returncode}): {proc.stderr.strip()}"
-        )
+        raise RuntimeError(f"ffmpeg mix failed (rc={proc.returncode}): {proc.stderr.strip()}")
 
 
 __all__ = [

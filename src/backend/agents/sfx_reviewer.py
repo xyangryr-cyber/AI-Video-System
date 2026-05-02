@@ -7,7 +7,7 @@ Placed outside reviewers/ to avoid circular import.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 _CONSECUTIVE_FAIL_THRESHOLD = 3
 _SFX_NARRATION_MARGIN_DB = 6  # SFX+BGM combined <= narration -6dB
@@ -22,10 +22,8 @@ class SFXReviewer:
         return consecutive_fails >= _CONSECUTIVE_FAIL_THRESHOLD
 
     @staticmethod
-    def review(
-        *, sfx_list: List[Dict[str, Any]], narration_volume_db: float
-    ) -> Dict[str, Any]:
-        checks: List[Dict[str, Any]] = []
+    def review(*, sfx_list: list[dict[str, Any]], narration_volume_db: float) -> dict[str, Any]:
+        checks: list[dict[str, Any]] = []
 
         # 1. Density: average interval >= 15s
         checks.append(SFXReviewer._check_density(sfx_list))
@@ -43,7 +41,7 @@ class SFXReviewer:
         return {"verdict": verdict, "checks": checks}
 
     @staticmethod
-    def _check_density(sfx_list: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _check_density(sfx_list: list[dict[str, Any]]) -> dict[str, Any]:
         if len(sfx_list) < 2:
             return {"rule": "density", "verdict": "PASS"}
 
@@ -60,7 +58,7 @@ class SFXReviewer:
         return {"rule": "density", "verdict": "PASS"}
 
     @staticmethod
-    def _check_diversity(sfx_list: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _check_diversity(sfx_list: list[dict[str, Any]]) -> dict[str, Any]:
         unique_types = {s.get("type") for s in sfx_list}
         if len(unique_types) < 3:
             return {
@@ -72,8 +70,8 @@ class SFXReviewer:
 
     @staticmethod
     def _check_voice_masking(
-        sfx_list: List[Dict[str, Any]], narration_volume_db: float
-    ) -> Dict[str, Any]:
+        sfx_list: list[dict[str, Any]], narration_volume_db: float
+    ) -> dict[str, Any]:
         max_allowed = narration_volume_db - _SFX_NARRATION_MARGIN_DB
         for sfx in sfx_list:
             vol = sfx.get("volume_db", 0)
@@ -86,7 +84,7 @@ class SFXReviewer:
         return {"rule": "voice_masking", "verdict": "PASS"}
 
     @staticmethod
-    def _check_file_completeness(sfx_list: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _check_file_completeness(sfx_list: list[dict[str, Any]]) -> dict[str, Any]:
         for sfx in sfx_list:
             if not sfx.get("file_path"):
                 return {

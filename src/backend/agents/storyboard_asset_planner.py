@@ -29,7 +29,7 @@ Implementation notes
 
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Iterable
 
 from src.shared.schemas.chart_material import derive_chart_id_from_request_id
 from src.shared.schemas.chart_request import ChartRequest
@@ -81,9 +81,7 @@ class StoryboardAssetPlanner:
                     ),
                     verification_status=VerificationStatus.PENDING,
                     fetched_at="pending",
-                    rationale=(
-                        f"chart for {req.user_intent}; linked chart_id={chart_id}"
-                    ),
+                    rationale=(f"chart for {req.user_intent}; linked chart_id={chart_id}"),
                 )
             )
             seq += 1
@@ -103,8 +101,7 @@ class StoryboardAssetPlanner:
                     verification_status=VerificationStatus.PENDING,
                     fetched_at="pending",
                     rationale=(
-                        f"supporting fact for shot {anchor.shot_id}; "
-                        f"anchor={anchor.anchor_text!r}"
+                        f"supporting fact for shot {anchor.shot_id}; anchor={anchor.anchor_text!r}"
                     ),
                 )
             )
@@ -116,9 +113,7 @@ class StoryboardAssetPlanner:
             materials=materials,
         )
         # AC-6 is enforced at construction time too.
-        StoryboardAssetPlanner.validate_shot_ids_in_anchors(
-            manifest=manifest, anchors=shots
-        )
+        StoryboardAssetPlanner.validate_shot_ids_in_anchors(manifest=manifest, anchors=shots)
         return manifest
 
     @staticmethod

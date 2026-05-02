@@ -5,15 +5,15 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.8.5
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 
 class VisualReviewer:
     """Pure L1 visual review: render completeness, number cross-check, provenance."""
 
     @staticmethod
-    def review(rendered_shots: List[Dict[str, Any]]) -> Dict[str, Any]:
-        checks: List[Dict[str, Any]] = []
+    def review(rendered_shots: list[dict[str, Any]]) -> dict[str, Any]:
+        checks: list[dict[str, Any]] = []
         for shot in rendered_shots:
             if not shot.get("render_path"):
                 checks.append(
@@ -36,9 +36,7 @@ class VisualReviewer:
         return {"verdict": verdict, "checks": checks}
 
     @staticmethod
-    def check_number_match(
-        *, oral_numbers: List[str], visual_numbers: List[str]
-    ) -> Dict[str, Any]:
+    def check_number_match(*, oral_numbers: list[str], visual_numbers: list[str]) -> dict[str, Any]:
         oral_set = set(oral_numbers)
         visual_set = set(visual_numbers)
         if oral_set != visual_set:
@@ -50,8 +48,8 @@ class VisualReviewer:
 
     @staticmethod
     def audit_data_provenance(
-        *, chart_data_points: List[str], source_data_points: List[str]
-    ) -> Dict[str, Any]:
+        *, chart_data_points: list[str], source_data_points: list[str]
+    ) -> dict[str, Any]:
         missing = set(chart_data_points) - set(source_data_points)
         if missing:
             return {"verdict": "FAIL", "detail": f"no source for: {missing}"}

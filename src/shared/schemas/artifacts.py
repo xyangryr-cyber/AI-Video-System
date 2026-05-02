@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Literal, Optional
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -110,7 +110,7 @@ class StyleLock(_Strict):
 
 
 class PolishedScriptArtifact(_Strict):
-    style_applied: Optional[str] = None
+    style_applied: str | None = None
 
 
 class AnnotationSpan(_Strict):
@@ -127,9 +127,9 @@ AssetStatus = Literal["not_needed", "fetched"]
 class AssetSourcingEntry(_Strict):
     shot_id: str = Field(min_length=1)
     status: AssetStatus
-    need: Optional[str] = None
-    action: Optional[str] = None
-    data: Optional[dict[str, Any]] = None
+    need: str | None = None
+    action: str | None = None
+    data: dict[str, Any] | None = None
 
 
 RenderStatus = Literal["pending_broll", "rendered"]
@@ -138,8 +138,8 @@ RenderStatus = Literal["pending_broll", "rendered"]
 class KeyframeRenderEntry(_Strict):
     shot_id: str = Field(min_length=1)
     render_status: RenderStatus
-    file_name: Optional[str] = None
-    thumbnail_url: Optional[str] = None
+    file_name: str | None = None
+    thumbnail_url: str | None = None
 
 
 class BRollEntry(_Strict):
@@ -147,7 +147,7 @@ class BRollEntry(_Strict):
     duration_sec: float = Field(gt=0)
     match_label: str = Field(min_length=1)
     license: str = Field(min_length=1)
-    source_url: Optional[str] = None
+    source_url: str | None = None
 
 
 class DeliveryVariant(_Strict):

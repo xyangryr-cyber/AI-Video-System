@@ -40,11 +40,11 @@ request and to cache at the registry level.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable, Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, model_validator
-
 
 Verdict = Literal["PASS", "FAIL"]
 
@@ -71,7 +71,7 @@ class ReviewerOutput(BaseModel):
     tokens_used: int = Field(default=0, ge=0)
 
     @model_validator(mode="after")
-    def _verdict_matches_blocking(self) -> "ReviewerOutput":
+    def _verdict_matches_blocking(self) -> ReviewerOutput:
         has_blockers = len(self.blocking_issues) > 0
         if has_blockers and self.verdict != "FAIL":
             raise ValueError(
@@ -80,8 +80,7 @@ class ReviewerOutput(BaseModel):
             )
         if not has_blockers and self.verdict != "PASS":
             raise ValueError(
-                "blocking_issues is empty but verdict != 'PASS' "
-                "(SPEC-5.2 AC-2 two-way invariant)"
+                "blocking_issues is empty but verdict != 'PASS' (SPEC-5.2 AC-2 two-way invariant)"
             )
         return self
 
@@ -200,9 +199,7 @@ def get_reviewer(
     """
     if name in PURE_L1_REGISTRY:
         if l2 is not None:
-            raise ValueError(
-                f"{name} is a pure-L1 reviewer; it does not accept an l2 callable"
-            )
+            raise ValueError(f"{name} is a pure-L1 reviewer; it does not accept an l2 callable")
         return PureL1Reviewer(name=name, l1=PURE_L1_REGISTRY[name])
     if name in HYBRID_REGISTRY:
         if l2 is None:

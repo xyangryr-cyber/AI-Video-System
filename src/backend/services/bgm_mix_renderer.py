@@ -38,7 +38,6 @@ from src.shared.schemas.audio_master import (
 )
 from src.shared.schemas.bgm_candidate import BgmCandidate
 
-
 PHASE_DIR = "phase_5"
 _MASTER_STEM = "bgm_mix_master"
 

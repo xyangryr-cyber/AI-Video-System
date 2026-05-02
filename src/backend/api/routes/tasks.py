@@ -56,6 +56,7 @@ def _serialize(row: sqlite3.Row, position: int) -> dict[str, Any]:
 @router.get("/projects/{project_id}/tasks")
 def list_project_tasks(
     project_id: str,
+    phase: int | None = None,
     db: sqlite3.Connection = Depends(get_db),
 ) -> dict[str, Any]:
     repo = AsyncTaskRepository(db)
@@ -65,5 +66,15 @@ def list_project_tasks(
         raise HTTPException(status_code=404, detail="project not found")
 
     rows = repo.list_for_project(project_id)
+    if phase is not None:
+        rows = [r for r in rows if r["phase"] == phase]
     tasks = [_serialize(r, repo.count_ahead(r["task_id"])) for r in rows]
-    return {"project_id": project_id, "tasks": tasks}
+
+    # Find current task: first "running", else first "queued", else None
+    current_task = None
+    for t in tasks:
+        if t["status"] in ("running", "queued"):
+            current_task = {"id": t["task_id"], "type": t["type"], "status": t["status"]}
+            break
+
+    return {"project_id": project_id, "tasks": tasks, "current_task": current_task}

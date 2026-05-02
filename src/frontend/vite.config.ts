@@ -9,17 +9,29 @@ export default defineConfig({
     alias: {
       "@frontend": fileURLToPath(new URL("./", import.meta.url)),
       "@shared": fileURLToPath(new URL("../shared", import.meta.url)),
-      "react": fileURLToPath(new URL("./node_modules/react", import.meta.url)),
+      react: fileURLToPath(new URL("./node_modules/react", import.meta.url)),
       "react-dom": fileURLToPath(new URL("./node_modules/react-dom", import.meta.url)),
-      "react/jsx-runtime": fileURLToPath(new URL("./node_modules/react/jsx-runtime.js", import.meta.url)),
-      "react/jsx-dev-runtime": fileURLToPath(new URL("./node_modules/react/jsx-dev-runtime.js", import.meta.url)),
-      "@testing-library/react": fileURLToPath(new URL("./node_modules/@testing-library/react", import.meta.url)),
-      "@testing-library/user-event": fileURLToPath(new URL("./node_modules/@testing-library/user-event", import.meta.url)),
+      "react/jsx-runtime": fileURLToPath(
+        new URL("./node_modules/react/jsx-runtime.js", import.meta.url),
+      ),
+      "react/jsx-dev-runtime": fileURLToPath(
+        new URL("./node_modules/react/jsx-dev-runtime.js", import.meta.url),
+      ),
+      "@testing-library/react": fileURLToPath(
+        new URL("./node_modules/@testing-library/react", import.meta.url),
+      ),
+      "@testing-library/user-event": fileURLToPath(
+        new URL("./node_modules/@testing-library/user-event", import.meta.url),
+      ),
       "mock-socket": fileURLToPath(new URL("./node_modules/mock-socket", import.meta.url)),
-      "@tanstack/react-query": fileURLToPath(new URL("./node_modules/@tanstack/react-query", import.meta.url)),
-      "react-router-dom": fileURLToPath(new URL("./node_modules/react-router-dom", import.meta.url)),
-      "dayjs": fileURLToPath(new URL("./node_modules/dayjs", import.meta.url)),
-      "zustand": fileURLToPath(new URL("./node_modules/zustand", import.meta.url)),
+      "@tanstack/react-query": fileURLToPath(
+        new URL("./node_modules/@tanstack/react-query", import.meta.url),
+      ),
+      "react-router-dom": fileURLToPath(
+        new URL("./node_modules/react-router-dom", import.meta.url),
+      ),
+      dayjs: fileURLToPath(new URL("./node_modules/dayjs", import.meta.url)),
+      zustand: fileURLToPath(new URL("./node_modules/zustand", import.meta.url)),
     },
     conditions: ["browser"],
   },
@@ -46,9 +58,6 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
     globals: true,
-    include: [
-      "../../tests/unit/frontend/**/*.test.{ts,tsx}",
-      "src/**/*.test.{ts,tsx}",
-    ],
+    include: ["../../tests/unit/frontend/**/*.test.{ts,tsx}", "src/**/*.test.{ts,tsx}"],
   },
 });

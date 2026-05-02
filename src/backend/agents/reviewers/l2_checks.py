@@ -16,10 +16,10 @@ LLM path is dependency-injected, not imported implicitly.
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from src.backend.agents.reviewer_agent import ReviewerOutput
-
 
 L2Callable = Callable[[Any], ReviewerOutput]
 

@@ -6,8 +6,7 @@ so that ``get_gate(phase)`` returns the correct gate class at runtime.
 
 from __future__ import annotations
 
-from src.backend.gates.gate_registry import register_gate
-
+from src.backend.gates.gate_7a import Gate7A
 from src.backend.gates.gate_p0 import GateP0
 from src.backend.gates.gate_p1 import GateP1
 from src.backend.gates.gate_p2 import GateP2
@@ -16,11 +15,11 @@ from src.backend.gates.gate_p4 import GateP4Checker
 from src.backend.gates.gate_p5 import GateP5
 from src.backend.gates.gate_p6 import GateP6
 from src.backend.gates.gate_p7 import GateP7
-from src.backend.gates.gate_7a import Gate7A
 from src.backend.gates.gate_p8 import GateP8
 from src.backend.gates.gate_p9 import GateP9
 from src.backend.gates.gate_p10 import GateP10
 from src.backend.gates.gate_p11 import GateP11
+from src.backend.gates.gate_registry import register_gate
 
 register_gate(0, GateP0)
 register_gate(1, GateP1)

@@ -76,9 +76,7 @@ ARTIFACT_REGISTRY: dict[str, ArtifactEntry] = {
             "P6/SfxSegmentMixService",
             "frontend/P5MasterPlayer",
         ),
-        validation=(
-            "audio_master.schema.json + checksum chain back to narration_master"
-        ),
+        validation=("audio_master.schema.json + checksum chain back to narration_master"),
     ),
     "phase_6/final_audio_with_bgm_sfx.mp3": ArtifactEntry(
         producer="FinalAudioAssembler",
@@ -105,9 +103,7 @@ ARTIFACT_REGISTRY: dict[str, ArtifactEntry] = {
             "FinalAudioAssembler",
             "SfxMixReviewer",
         ),
-        validation=(
-            "sfx_mix_segments.schema.json + checksum chain back to base_master"
-        ),
+        validation=("sfx_mix_segments.schema.json + checksum chain back to base_master"),
     ),
     # -------- SPEC-A-015 (A-AUDP7A-3) P7A material-manifest entries ---------
     "phase_7a/material_manifest.json": ArtifactEntry(

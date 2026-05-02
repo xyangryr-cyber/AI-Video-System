@@ -15,7 +15,8 @@ top of this scaffold in later task cards (SPEC-C-018, SPEC-C-020 etc.).
 
 from __future__ import annotations
 
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 from src.backend.agents.reviewer_agent import ReviewerOutput
 
@@ -45,9 +46,7 @@ def _basic_shape(artifact: Any, reviewer: str) -> ReviewerOutput:
     if artifact is None:
         return _fail(f"{reviewer}: artifact is None")
     if not _is_mapping(artifact):
-        return _fail(
-            f"{reviewer}: artifact must be a mapping, got {type(artifact).__name__}"
-        )
+        return _fail(f"{reviewer}: artifact must be a mapping, got {type(artifact).__name__}")
     return _pass()
 
 

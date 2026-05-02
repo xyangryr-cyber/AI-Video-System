@@ -20,11 +20,10 @@ from __future__ import annotations
 import hashlib
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Union
+from datetime import UTC, datetime
+from typing import Any
 
 from src.shared.schemas.claim import Claim, ClaimType, SourcePhase, TimeRange
-
 
 _NUMERIC_TEXT_PATTERN = re.compile(
     r"([一-鿿A-Za-z0-9·\-]+?)\s*"
@@ -47,10 +46,10 @@ class _RegistryEntry:
 class ClaimRegistry:
     """In-memory dedup store: dedup_key -> claim_id."""
 
-    _by_key: Dict[str, _RegistryEntry] = field(default_factory=dict)
+    _by_key: dict[str, _RegistryEntry] = field(default_factory=dict)
     _counter: int = 0
 
-    def lookup(self, dedup_key: str) -> Optional[str]:
+    def lookup(self, dedup_key: str) -> str | None:
         entry = self._by_key.get(dedup_key)
         return entry.claim_id if entry else None
 
@@ -70,9 +69,9 @@ class ClaimRegistry:
 
 def _compute_dedup_key(
     claim_type: str,
-    entity: Optional[str],
-    value: Optional[Union[float, int, str]],
-    time_range: Optional[Union[dict[str, Any], TimeRange]],
+    entity: str | None,
+    value: float | int | str | None,
+    time_range: dict[str, Any] | TimeRange | None,
 ) -> str:
     if time_range is None:
         tr = ""
@@ -85,13 +84,13 @@ def _compute_dedup_key(
 
 
 def _utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 class ClaimExtractor:
     """Stateful w.r.t. its `ClaimRegistry`; rule-based parsers per phase."""
 
-    def __init__(self, registry: Optional[ClaimRegistry] = None) -> None:
+    def __init__(self, registry: ClaimRegistry | None = None) -> None:
         self._registry = registry or ClaimRegistry()
 
     # ------------------------------------------------------------------
@@ -101,34 +100,26 @@ class ClaimExtractor:
     def extract(
         self,
         *,
-        raw_input: Union[str, dict[str, Any]],
+        raw_input: str | dict[str, Any],
         source_phase: SourcePhase,
         source_artifact: str,
-    ) -> List[Claim]:
+    ) -> list[Claim]:
         if source_phase == "P2":
             if not isinstance(raw_input, str):
                 raise TypeError("P2 trigger expects text input")
-            return self.extract_from_p2_text(
-                text=raw_input, source_artifact=source_artifact
-            )
+            return self.extract_from_p2_text(text=raw_input, source_artifact=source_artifact)
         if source_phase == "P7":
             if not isinstance(raw_input, dict):
                 raise TypeError("P7 trigger expects structured shot dict")
-            return self.extract_from_p7_shot(
-                shot=raw_input, source_artifact=source_artifact
-            )
+            return self.extract_from_p7_shot(shot=raw_input, source_artifact=source_artifact)
         if source_phase == "P8":
             if not isinstance(raw_input, dict):
                 raise TypeError("P8 trigger expects chart config dict")
-            return self.extract_from_p8_chart(
-                chart=raw_input, source_artifact=source_artifact
-            )
+            return self.extract_from_p8_chart(chart=raw_input, source_artifact=source_artifact)
         if source_phase == "P9":
             if not isinstance(raw_input, str):
                 raise TypeError("P9 trigger expects metadata text")
-            return self.extract_from_p9_broll(
-                metadata=raw_input, source_artifact=source_artifact
-            )
+            return self.extract_from_p9_broll(metadata=raw_input, source_artifact=source_artifact)
         if source_phase == "user_input":
             if not isinstance(raw_input, str):
                 raise TypeError("user trigger expects text input")
@@ -139,7 +130,7 @@ class ClaimExtractor:
     # Trigger 1: P2 text
     # ------------------------------------------------------------------
 
-    def extract_from_p2_text(self, *, text: str, source_artifact: str) -> List[Claim]:
+    def extract_from_p2_text(self, *, text: str, source_artifact: str) -> list[Claim]:
         candidates = self._parse_text_candidates(text)
         return self._materialize(
             candidates=candidates,
@@ -152,9 +143,7 @@ class ClaimExtractor:
     # Trigger 2: P7 shot (structured)
     # ------------------------------------------------------------------
 
-    def extract_from_p7_shot(
-        self, *, shot: dict[str, Any], source_artifact: str
-    ) -> List[Claim]:
+    def extract_from_p7_shot(self, *, shot: dict[str, Any], source_artifact: str) -> list[Claim]:
         cand = self._structured_candidate(
             payload=shot,
             default_claim_type="fact",
@@ -170,9 +159,7 @@ class ClaimExtractor:
     # Trigger 3: P8 chart config
     # ------------------------------------------------------------------
 
-    def extract_from_p8_chart(
-        self, *, chart: dict[str, Any], source_artifact: str
-    ) -> List[Claim]:
+    def extract_from_p8_chart(self, *, chart: dict[str, Any], source_artifact: str) -> list[Claim]:
         cand = self._structured_candidate(
             payload=chart,
             default_claim_type="data",
@@ -188,9 +175,7 @@ class ClaimExtractor:
     # Trigger 4: P9 B-Roll metadata text
     # ------------------------------------------------------------------
 
-    def extract_from_p9_broll(
-        self, *, metadata: str, source_artifact: str
-    ) -> List[Claim]:
+    def extract_from_p9_broll(self, *, metadata: str, source_artifact: str) -> list[Claim]:
         candidates = self._parse_text_candidates(metadata)
         return self._materialize(
             candidates=candidates,
@@ -203,7 +188,7 @@ class ClaimExtractor:
     # Trigger 5: user supplement_claim
     # ------------------------------------------------------------------
 
-    def extract_from_user_supplement(self, *, text: str) -> List[Claim]:
+    def extract_from_user_supplement(self, *, text: str) -> list[Claim]:
         candidates = self._parse_text_candidates(text)
         return self._materialize(
             candidates=candidates,
@@ -217,10 +202,10 @@ class ClaimExtractor:
     # ------------------------------------------------------------------
 
     @staticmethod
-    def _parse_text_candidates(text: str) -> List[Dict[str, Any]]:
+    def _parse_text_candidates(text: str) -> list[dict[str, Any]]:
         """Rule-based text parse. Extracts (entity, value, time_range) if present."""
         year_match = _YEAR_PATTERN.search(text)
-        time_range: Optional[Dict[str, str]] = None
+        time_range: dict[str, str] | None = None
         if year_match:
             year = year_match.group(1)
             quarter = year_match.group(2)
@@ -248,7 +233,7 @@ class ClaimExtractor:
         value_str = m.group(2)
         unit = m.group(3) or None
         try:
-            value: Union[float, str] = float(value_str) if value_str else value_str
+            value: float | str = float(value_str) if value_str else value_str
         except ValueError:
             value = value_str
         return [
@@ -267,27 +252,26 @@ class ClaimExtractor:
         *,
         payload: dict[str, Any],
         default_claim_type: ClaimType,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         return {
             "claim_type": payload.get("claim_type") or default_claim_type,
             "entity": payload.get("entity"),
             "value": payload.get("value"),
             "unit": payload.get("unit"),
             "time_range": payload.get("time_range"),
-            "text": payload.get("text")
-            or f"{payload.get('entity')} {payload.get('value')}",
+            "text": payload.get("text") or f"{payload.get('entity')} {payload.get('value')}",
         }
 
     def _materialize(
         self,
         *,
-        candidates: List[Dict[str, Any]],
+        candidates: list[dict[str, Any]],
         source_phase: SourcePhase,
         source_artifact: str,
         default_claim_type: ClaimType,
-    ) -> List[Claim]:
+    ) -> list[Claim]:
         now = _utc_now()
-        out: List[Claim] = []
+        out: list[Claim] = []
         for cand in candidates:
             claim_type: ClaimType = cand.get("claim_type") or default_claim_type
             entity = cand.get("entity")
@@ -295,7 +279,7 @@ class ClaimExtractor:
             time_range_raw = cand.get("time_range")
             dedup_key = _compute_dedup_key(claim_type, entity, value, time_range_raw)
             claim_id, _reused = self._registry.resolve(dedup_key, source_phase)
-            tr_obj: Optional[TimeRange] = None
+            tr_obj: TimeRange | None = None
             if isinstance(time_range_raw, TimeRange):
                 tr_obj = time_range_raw
             elif isinstance(time_range_raw, dict):

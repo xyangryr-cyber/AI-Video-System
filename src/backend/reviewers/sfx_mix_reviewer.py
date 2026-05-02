@@ -22,7 +22,8 @@ token budget is zero on L1 failure.
 
 from __future__ import annotations
 
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -36,7 +37,6 @@ from src.backend.reviewers.music_fit_reviewer import (
     Verdict,
 )
 
-
 CLIP_PEAK_THRESHOLD = 0.99
 SPEECH_SNR_DB_MIN = -6.0
 SYNERGY_CORR_MIN = 0.3
@@ -45,9 +45,7 @@ SYNERGY_CORR_MIN = 0.3
 LlmReviewCallable = Callable[[np.ndarray, Any], ReviewVerdict]
 
 
-def _default_llm_review(
-    segment_audio: np.ndarray, layout_context: Any
-) -> ReviewVerdict:
+def _default_llm_review(segment_audio: np.ndarray, layout_context: Any) -> ReviewVerdict:
     """No-op L2 stub used when a real LLM judge is not wired.
 
     Returns ``PASS`` so the 3-check L1 verdict determines the final
@@ -64,7 +62,7 @@ def _default_llm_review(
 class SfxMixReviewer:
     """L1 (programmatic) + L2 (LLM fallback) Reviewer for sfx mix segments."""
 
-    def __init__(self, llm_review: Optional[LlmReviewCallable] = None) -> None:
+    def __init__(self, llm_review: LlmReviewCallable | None = None) -> None:
         self._llm_review = llm_review or _default_llm_review
 
     def check_clipping(self, segment_audio: np.ndarray) -> ReviewVerdict:
@@ -86,8 +84,7 @@ class SfxMixReviewer:
                 check_name="clipping",
                 verdict="FAIL",
                 reason=(
-                    f"peak_abs={peak:.4f} >= {CLIP_PEAK_THRESHOLD}; "
-                    f"{clipped} clipped sample(s)."
+                    f"peak_abs={peak:.4f} >= {CLIP_PEAK_THRESHOLD}; {clipped} clipped sample(s)."
                 ),
                 metrics=metrics,
             )
@@ -110,8 +107,7 @@ class SfxMixReviewer:
                 check_name="speech_snr",
                 verdict="FAIL",
                 reason=(
-                    f"speech_snr={snr:.2f} dB < {SPEECH_SNR_DB_MIN} dB; "
-                    "BGM/SFX masks narration."
+                    f"speech_snr={snr:.2f} dB < {SPEECH_SNR_DB_MIN} dB; BGM/SFX masks narration."
                 ),
                 metrics=metrics,
             )

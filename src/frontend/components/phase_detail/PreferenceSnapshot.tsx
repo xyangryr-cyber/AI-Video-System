@@ -21,9 +21,7 @@ export function PreferenceSnapshot({ preferences, readOnly: _readOnly }: Props):
         {preferences.map((p, i) => (
           <li key={i} className="text-sm">
             <span className="text-gray-500">{p.scope}</span>{" "}
-            <span className="font-mono">{p.key}</span>{" "}
-            <span>=</span>{" "}
-            <span>{p.value}</span>
+            <span className="font-mono">{p.key}</span> <span>=</span> <span>{p.value}</span>
           </li>
         ))}
       </ul>

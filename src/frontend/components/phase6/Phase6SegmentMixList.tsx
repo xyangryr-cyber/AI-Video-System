@@ -13,11 +13,7 @@ interface Props {
   onMixFeedback: (segmentId: string) => void;
 }
 
-export function Phase6SegmentMixList({
-  segments,
-  confirmed,
-  onMixFeedback,
-}: Props): ReactElement {
+export function Phase6SegmentMixList({ segments, confirmed, onMixFeedback }: Props): ReactElement {
   return (
     <div
       data-testid="segment-mix-list"

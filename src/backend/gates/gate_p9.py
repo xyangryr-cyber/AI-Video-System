@@ -5,7 +5,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.9.7
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 
 class GateP9:
@@ -14,9 +14,9 @@ class GateP9:
         *,
         broll_complete: bool,
         reviewer_passed: bool,
-        pending_tasks: List[Any],
+        pending_tasks: list[Any],
         preferences_confirmed: bool,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         failed: list[str] = []
         passed: list[str] = []
 

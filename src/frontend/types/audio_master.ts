@@ -1,9 +1,6 @@
 // [SPEC-E-015] MasterAudioView — frontend View type mirroring MasterAudioArtifact.
 // Keep in lockstep with src/shared/types/audio_master.ts and SPEC-A-013.
-export type MasterAudioKind =
-  | "narration_master"
-  | "bgm_mix_master"
-  | "final_audio_master";
+export type MasterAudioKind = "narration_master" | "bgm_mix_master" | "final_audio_master";
 
 export type UpstreamMasterKind = "narration_master" | "bgm_mix_master";
 
@@ -35,7 +32,4 @@ export interface FinalAudioMasterView extends MasterAudioCommon {
   source_ref: SourceRef;
 }
 
-export type MasterAudioView =
-  | NarrationMasterView
-  | BgmMixMasterView
-  | FinalAudioMasterView;
+export type MasterAudioView = NarrationMasterView | BgmMixMasterView | FinalAudioMasterView;

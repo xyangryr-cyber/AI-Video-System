@@ -18,8 +18,8 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timezone
-from typing import Any, Dict, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 from pydantic import ValidationError
 
@@ -73,7 +73,7 @@ _RESERVED: frozenset[str] = frozenset(
 
 def _isoformat(record_created: float) -> str:
     """RFC3339-ish UTC string with millisecond precision and trailing `Z`."""
-    dt = datetime.fromtimestamp(record_created, tz=timezone.utc)
+    dt = datetime.fromtimestamp(record_created, tz=UTC)
     return dt.strftime("%Y-%m-%dT%H:%M:%S.") + f"{dt.microsecond // 1000:03d}Z"
 
 
@@ -104,7 +104,7 @@ class JsonLineFormatter(logging.Formatter):
         level = to_canonical_level(record.levelname)
         event = getattr(record, "event", None) or record.name
 
-        payload: Dict[str, Any] = {
+        payload: dict[str, Any] = {
             "ts": ts,
             "level": level,
             "service": self._service,
@@ -125,8 +125,8 @@ class JsonLineFormatter(logging.Formatter):
         # `extra={...}` keys are flattened onto the LogRecord by the stdlib.
         # Anything not consumed above is rolled into the `extra` slot so
         # the row stays schema-compliant.
-        explicit_extra: Optional[Dict[str, Any]] = getattr(record, "extra", None)
-        rolled: Dict[str, Any] = dict(explicit_extra) if explicit_extra else {}
+        explicit_extra: dict[str, Any] | None = getattr(record, "extra", None)
+        rolled: dict[str, Any] = dict(explicit_extra) if explicit_extra else {}
         for key, value in record.__dict__.items():
             if key in _RESERVED or key.startswith("_"):
                 continue

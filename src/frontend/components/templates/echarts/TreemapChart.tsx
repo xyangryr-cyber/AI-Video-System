@@ -1,12 +1,8 @@
-import React, { useMemo } from 'react';
-import ReactECharts from 'echarts-for-react';
-import type { TemplateProps } from '@shared/types/template_props';
+import React, { useMemo } from "react";
+import ReactECharts from "echarts-for-react";
+import type { TemplateProps } from "@shared/types/template_props";
 
-const TreemapChart: React.FC<TemplateProps> = ({
-  data,
-  annotationKeyframes,
-  theme,
-}) => {
+const TreemapChart: React.FC<TemplateProps> = ({ data, annotationKeyframes, theme }) => {
   const option = useMemo(() => {
     const raw = data as {
       name: string;
@@ -15,26 +11,28 @@ const TreemapChart: React.FC<TemplateProps> = ({
     if (!raw) return {};
 
     const colorPalette = theme?.color_palette ?? [
-      '#5470C6', '#91CC75', '#FAC858', '#EE6666', '#73C0DE',
+      "#5470C6",
+      "#91CC75",
+      "#FAC858",
+      "#EE6666",
+      "#73C0DE",
     ];
 
     return {
       color: colorPalette,
-      backgroundColor: theme?.background_color ?? 'transparent',
+      backgroundColor: theme?.background_color ?? "transparent",
       animation: true,
       animationDurationUpdate: 800,
       tooltip: {
         formatter(params: { name: string; value: number; treePathInfo?: { name: string }[] }) {
-          const path = (params.treePathInfo ?? [])
-            .map((n) => n.name)
-            .join(' > ');
+          const path = (params.treePathInfo ?? []).map((n) => n.name).join(" > ");
           return `${path}<br/>${params.name}: ${params.value}`;
         },
       },
       series: [
         {
-          name: raw.name ?? 'Treemap',
-          type: 'treemap' as const,
+          name: raw.name ?? "Treemap",
+          type: "treemap" as const,
           visibleMin: 300,
           label: {
             show: true,
@@ -48,7 +46,7 @@ const TreemapChart: React.FC<TemplateProps> = ({
             fontSize: theme?.chart_style?.label_font_size ?? 12,
           },
           itemStyle: {
-            borderColor: theme?.background_color ?? '#fff',
+            borderColor: theme?.background_color ?? "#fff",
             borderWidth: 2,
           },
           roam: false,
@@ -74,7 +72,7 @@ const TreemapChart: React.FC<TemplateProps> = ({
     };
   }, [data, annotationKeyframes, theme]);
 
-  return <ReactECharts option={option} style={{ width: '100%', height: '100%' }} />;
+  return <ReactECharts option={option} style={{ width: "100%", height: "100%" }} />;
 };
 
 export default TreemapChart;

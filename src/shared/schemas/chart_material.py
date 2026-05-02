@@ -35,7 +35,7 @@ from __future__ import annotations
 import re
 from datetime import date, timedelta
 from enum import Enum
-from typing import Any, List, Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -84,13 +84,13 @@ class ChartSource(_Strict):
 
 class ChartSpec(_Strict):
     kind: ChartKind
-    series: List[Any] = Field(min_length=1)
+    series: list[Any] = Field(min_length=1)
 
 
 class XAxis(_Strict):
     type: XAxisType
-    labels: List[Any]
-    range: List[Any] = Field(min_length=2, max_length=2)
+    labels: list[Any]
+    range: list[Any] = Field(min_length=2, max_length=2)
 
 
 class YAxis(_Strict):
@@ -117,12 +117,11 @@ class ChartMaterial(_Strict):
     axis_spec: AxisSpec
 
     @model_validator(mode="after")
-    def _y_axis_min_lt_max(self) -> "ChartMaterial":
+    def _y_axis_min_lt_max(self) -> ChartMaterial:
         y = self.axis_spec.y_axis
         if not (y.min < y.max):
             raise ValueError(
-                f"axis_spec.y_axis.min ({y.min}) must be strictly less than "
-                f"max ({y.max})"
+                f"axis_spec.y_axis.min ({y.min}) must be strictly less than max ({y.max})"
             )
         return self
 
@@ -179,9 +178,7 @@ def derive_request_id_from_chart_id(chart_id: str) -> str:
     return "req_" + chart_id[len("chart_") :]
 
 
-def build_axis_x_labels(
-    start: str, end: str, granularity: str | Granularity
-) -> List[str]:
+def build_axis_x_labels(start: str, end: str, granularity: str | Granularity) -> list[str]:
     """Emit the canonical x_axis labels for a given date_range + granularity.
 
     AC-4 invariant (tolerance +/-1):
@@ -193,16 +190,12 @@ def build_axis_x_labels(
     Labels are ISO-8601 `YYYY-MM-DD` strings. Used by generators and
     tests to verify count-matching before the ChartMaterial is sealed.
     """
-    g = (
-        Granularity(granularity)
-        if not isinstance(granularity, Granularity)
-        else granularity
-    )
+    g = Granularity(granularity) if not isinstance(granularity, Granularity) else granularity
     s = date.fromisoformat(start)
     e = date.fromisoformat(end)
     if e < s:
         raise ValueError(f"end {end} must be >= start {start}")
-    labels: List[str] = []
+    labels: list[str] = []
     if g is Granularity.DAY:
         cur = s
         while cur <= e:

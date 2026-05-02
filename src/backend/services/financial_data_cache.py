@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-from typing import Any, Dict
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
 
 class FinancialDataCache:
@@ -12,7 +12,7 @@ class FinancialDataCache:
     @staticmethod
     def lookup(
         *, symbol: str, granularity: str, date_range_start: str, date_range_end: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         return {"hit": False}
 
     @staticmethod
@@ -22,7 +22,5 @@ class FinancialDataCache:
         except ValueError:
             dt = datetime.strptime(fetched_at, "%Y-%m-%dT%H:%M:%S")
         if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
-        return datetime.now(timezone.utc) - dt > timedelta(
-            days=FinancialDataCache.TTL_DAYS
-        )
+            dt = dt.replace(tzinfo=UTC)
+        return datetime.now(UTC) - dt > timedelta(days=FinancialDataCache.TTL_DAYS)

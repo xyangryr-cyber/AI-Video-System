@@ -28,8 +28,9 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 # ---------- AC-1: task configs -----------------------------------------
 
@@ -154,8 +155,7 @@ def fetch_with_retry(
             if attempt == max_attempts - 1:
                 _mark_material_missing(manifest_path, material_id)
                 raise FetchExhaustedError(
-                    f"material_id={material_id} failed after "
-                    f"{max_attempts} attempts: {err}"
+                    f"material_id={material_id} failed after {max_attempts} attempts: {err}"
                 ) from err
             # else: try again
     # Unreachable; the loop either returns, raises TransientProviderError

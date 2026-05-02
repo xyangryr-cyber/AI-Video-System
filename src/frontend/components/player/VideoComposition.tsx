@@ -36,12 +36,7 @@ const VideoComposition: FC<VideoCompositionProps> = ({
   return (
     <Composition
       id="VideoComposition"
-      component={() => (
-        <SegmentSequencer
-          shots={shots}
-          fps={fps}
-        />
-      )}
+      component={() => <SegmentSequencer shots={shots} fps={fps} />}
       fps={fps}
       width={width}
       height={height}

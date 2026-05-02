@@ -35,11 +35,7 @@ export function MaterialDetailDrawer({
     >
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-sm font-medium">{materialId}</h3>
-        <button
-          aria-label="关闭"
-          className="text-gray-400 text-lg"
-          onClick={onClose}
-        >
+        <button aria-label="关闭" className="text-gray-400 text-lg" onClick={onClose}>
           ×
         </button>
       </div>

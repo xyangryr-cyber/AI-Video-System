@@ -5,7 +5,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.7
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 _DARK_SCHEMES = [
     {
@@ -44,13 +44,13 @@ class StoryboardAgent:
     @staticmethod
     def produce_storyboard(
         *,
-        timeline: Dict[str, Any],
-        script: List[Dict[str, Any]],
+        timeline: dict[str, Any],
+        script: list[dict[str, Any]],
         measured_duration_sec: float | None = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         segments = timeline.get("segments", [])
         num_segments = len(segments)
-        shots: List[Dict[str, Any]] = []
+        shots: list[dict[str, Any]] = []
 
         # If measured_duration_sec is available, redistribute time evenly
         if measured_duration_sec is not None and num_segments > 0:
@@ -107,8 +107,8 @@ class StoryboardAgent:
 
     @staticmethod
     def check_data_coverage(
-        *, shots: List[Dict[str, Any]], key_data_points: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+        *, shots: list[dict[str, Any]], key_data_points: list[dict[str, Any]]
+    ) -> dict[str, Any]:
         all_dp_ids = {dp["data_point_id"] for dp in key_data_points}
         covered: set[str] = set()
         for shot in shots:
@@ -124,14 +124,14 @@ class StoryboardAgent:
 
     @staticmethod
     def generate_style_candidates(
-        *, count: int = 3, visual_preferences: Dict[str, Any] | None = None
-    ) -> List[Dict[str, Any]]:
+        *, count: int = 3, visual_preferences: dict[str, Any] | None = None
+    ) -> list[dict[str, Any]]:
         palette = (visual_preferences or {}).get("preferred_palette", "")
         source = _DARK_SCHEMES if "dark" in palette.lower() else _LIGHT_SCHEMES
         return list(source[:count])
 
     @staticmethod
-    def confirm_style_lock(*, scheme_id: str) -> Dict[str, Any]:
+    def confirm_style_lock(*, scheme_id: str) -> dict[str, Any]:
         return {
             "style_lock_path": f"phase_7/style_lock_{scheme_id}.json",
             "confirmed": True,
@@ -139,7 +139,7 @@ class StoryboardAgent:
         }
 
     @staticmethod
-    def check_consecutive_same_type(shots: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def check_consecutive_same_type(shots: list[dict[str, Any]]) -> dict[str, Any]:
         if len(shots) < 3:
             return {"verdict": "PASS", "rule": "consecutive_same_type"}
         for i in range(len(shots) - 2):
@@ -154,8 +154,8 @@ class StoryboardAgent:
 
     @staticmethod
     def check_scene_switch(
-        *, shots: List[Dict[str, Any]], window_seconds: float = 30.0
-    ) -> Dict[str, Any]:
+        *, shots: list[dict[str, Any]], window_seconds: float = 30.0
+    ) -> dict[str, Any]:
         # Every 30s window must have at least 1 scene/type switch
         if not shots:
             return {"verdict": "PASS", "rule": "scene_switch"}

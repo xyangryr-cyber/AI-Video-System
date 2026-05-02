@@ -27,9 +27,9 @@ fan-out and exercise the logic in-process.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, Type
 
 from src.backend.agents.material_fetcher import MaterialFetcher
 from src.backend.agents.material_verifier import MaterialVerifier
@@ -72,7 +72,7 @@ class Phase7aOrchestrator:
         *,
         project_id: str,
         project_root: Path,
-        planner: Type[StoryboardAssetPlanner],
+        planner: type[StoryboardAssetPlanner],
         fetcher: MaterialFetcher,
         verifier: MaterialVerifier,
     ) -> None:
@@ -99,9 +99,7 @@ class Phase7aOrchestrator:
             chart_requests=requests_list,
         )
         self._repo.save(manifest)
-        return self._run_fanout(
-            manifest=manifest, shots=shots_list, chart_requests=requests_list
-        )
+        return self._run_fanout(manifest=manifest, shots=shots_list, chart_requests=requests_list)
 
     def run_with_manifest(
         self,
@@ -111,9 +109,7 @@ class Phase7aOrchestrator:
         chart_requests: list[ChartRequest] | Iterable[ChartRequest] | None = None,
     ) -> OrchestratorResult:
         shots_list = list(shots)
-        StoryboardAssetPlanner.validate_shot_ids_in_anchors(
-            manifest=manifest, anchors=shots_list
-        )
+        StoryboardAssetPlanner.validate_shot_ids_in_anchors(manifest=manifest, anchors=shots_list)
         self._repo.save(manifest)
         return self._run_fanout(
             manifest=manifest,

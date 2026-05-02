@@ -27,8 +27,7 @@ export function useModelConfigMutation() {
 export function usePreferencesQuery() {
   return useQuery({
     queryKey: ["settings", "preferences"],
-    queryFn: () =>
-      apiClient.get<PreferencesResponse>("/api/settings/preferences"),
+    queryFn: () => apiClient.get<PreferencesResponse>("/api/settings/preferences"),
   });
 }
 
@@ -36,20 +35,15 @@ export function usePreferencesMutation() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data: PreferencesUpdateRequest) =>
-      apiClient.put<{ ok: boolean; snapshot_id: string }>(
-        "/api/settings/preferences",
-        data,
-      ),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: ["settings", "preferences"] }),
+      apiClient.put<{ ok: boolean; snapshot_id: string }>("/api/settings/preferences", data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["settings", "preferences"] }),
   });
 }
 
 export function useBrandKitMutation() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: BrandKit) =>
-      apiClient.put<{ ok: boolean }>("/api/settings/brand-kit", data),
+    mutationFn: (data: BrandKit) => apiClient.put<{ ok: boolean }>("/api/settings/brand-kit", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["settings"] }),
   });
 }
@@ -57,10 +51,7 @@ export function useBrandKitMutation() {
 export function useSnapshotsQuery() {
   return useQuery({
     queryKey: ["settings", "preferences", "snapshots"],
-    queryFn: () =>
-      apiClient.get<SnapshotListResponse>(
-        "/api/settings/preferences/snapshots",
-      ),
+    queryFn: () => apiClient.get<SnapshotListResponse>("/api/settings/preferences/snapshots"),
   });
 }
 

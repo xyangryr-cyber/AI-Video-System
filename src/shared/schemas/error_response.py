@@ -13,7 +13,7 @@ MUST be reported via ``GateFailureDetails.passed_checks`` /
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
@@ -38,7 +38,7 @@ class ErrorBody(_StrictModel):
 
     code: str
     message: str
-    details: Optional[Dict[str, Any]] = None
+    details: dict[str, Any] | None = None
 
 
 class ErrorResponse(_StrictModel):
@@ -65,8 +65,8 @@ class GateFailureDetails(_StrictModel):
     to the user without another round-trip.
     """
 
-    failed_checks: List[FailedGateCheck]
-    passed_checks: List[str]
+    failed_checks: list[FailedGateCheck]
+    passed_checks: list[str]
 
 
 __all__ = [

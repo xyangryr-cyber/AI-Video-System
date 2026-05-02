@@ -9,19 +9,19 @@ Provides two check functions:
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 
 def check_shot_claims_verified(
     *,
-    claim_statuses: Dict[str, str],
-    shot_claim_refs: List[Dict[str, Any]],
-) -> Dict[str, Any]:
+    claim_statuses: dict[str, str],
+    shot_claim_refs: list[dict[str, Any]],
+) -> dict[str, Any]:
     """Check per-shot claim_refs. Returns blocked_shots for shots with any unverified claim.
 
     For P8: shots with unverified claims are skipped individually, not block the entire gate.
     """
-    blocked_shots: List[str] = []
+    blocked_shots: list[str] = []
 
     for shot_ref in shot_claim_refs:
         shot_id = shot_ref["shot_id"]
@@ -45,14 +45,14 @@ def check_shot_claims_verified(
 
 def check_hard_claims_verified(
     *,
-    claim_statuses: Dict[str, str],
-    hard_claim_ids: List[str],
-) -> Dict[str, Any]:
+    claim_statuses: dict[str, str],
+    hard_claim_ids: list[str],
+) -> dict[str, Any]:
     """Check that all hard blocking claims are verified.
 
     For P10/P11: if any hard claim is not verified, the gate returns BLOCK + alert event.
     """
-    failed_claims: List[str] = []
+    failed_claims: list[str] = []
 
     for cid in hard_claim_ids:
         status = claim_statuses.get(cid, "pending")
@@ -62,16 +62,12 @@ def check_hard_claims_verified(
     all_pass = len(failed_claims) == 0
     unverified_count = len(failed_claims)
 
-    result: Dict[str, Any] = {
+    result: dict[str, Any] = {
         "passed": all_pass,
         "verdict": "PASS" if all_pass else "BLOCK",
         "failed_claims": failed_claims,
-        "failed_checks": (
-            [] if all_pass else [f"unverified hard claims: {failed_claims}"]
-        ),
-        "passed_checks": (
-            [f"{len(hard_claim_ids)} hard claims verified"] if all_pass else []
-        ),
+        "failed_checks": ([] if all_pass else [f"unverified hard claims: {failed_claims}"]),
+        "passed_checks": ([f"{len(hard_claim_ids)} hard claims verified"] if all_pass else []),
         "alert_event": (
             None
             if all_pass

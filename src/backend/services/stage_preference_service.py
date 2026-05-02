@@ -14,7 +14,7 @@ Two responsibilities:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Literal
 
 from src.shared.constants.stage_injection_matrix import stage_accepts_key
 from src.shared.schemas.stage_preference import Stage, StagePreference
@@ -41,15 +41,15 @@ class StagePreferenceService:
         self,
         *,
         stage: Stage,
-        available: List[StagePreference],
-    ) -> List[StagePreference]:
+        available: list[StagePreference],
+    ) -> list[StagePreference]:
         """Return the subset of ``available`` that is legal to inject at ``stage``.
 
         - Global / cross_project / project scope: always pass through.
         - Stage scope: must match ``stage`` AND key must be accepted by the
           STAGE_INJECTION_MATRIX row for that stage.
         """
-        surfaced: List[StagePreference] = []
+        surfaced: list[StagePreference] = []
         for pref in available:
             if pref.scope == "stage":
                 if pref.stage != stage:
@@ -64,10 +64,10 @@ class StagePreferenceService:
         *,
         project_id: str,
         phase: str,
-        current_settings: Dict[str, Any],
-        historical_preferences: List[StagePreference],
+        current_settings: dict[str, Any],
+        historical_preferences: list[StagePreference],
         confidence: float = 0.7,
-    ) -> List[WritebackSuggestion]:
+    ) -> list[WritebackSuggestion]:
         """Produce one suggestion per key in ``current_settings``.
 
         SPEC-C §C-BDD-3 step 2:
@@ -77,10 +77,10 @@ class StagePreferenceService:
         Step 3: confidence > 0.85 on update/add_stage_override -> auto_save,
         otherwise ask_writeback.
         """
-        by_key: Dict[str, StagePreference] = {p.key: p for p in historical_preferences}
-        out: List[WritebackSuggestion] = []
+        by_key: dict[str, StagePreference] = {p.key: p for p in historical_preferences}
+        out: list[WritebackSuggestion] = []
         for key, current_value in current_settings.items():
-            historical_pref: Optional[StagePreference] = by_key.get(key)
+            historical_pref: StagePreference | None = by_key.get(key)
             if historical_pref is None:
                 action: RecommendedAction = "add_stage_override"
                 historical_value: Any = None

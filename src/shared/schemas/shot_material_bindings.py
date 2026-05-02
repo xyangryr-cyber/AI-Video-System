@@ -13,8 +13,6 @@ Keep in lockstep with `schemas/shot_material_bindings.schema.json` and
 
 from __future__ import annotations
 
-from typing import List
-
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.shared.schemas.material_manifest import MaterialManifest
@@ -29,8 +27,8 @@ class _Strict(BaseModel):
 
 class ShotBinding(_Strict):
     shot_id: str = Field(pattern=_SHOT_ID_RE)
-    required_materials: List[str] = Field(default_factory=list)
-    optional_materials: List[str] = Field(default_factory=list)
+    required_materials: list[str] = Field(default_factory=list)
+    optional_materials: list[str] = Field(default_factory=list)
 
     def model_post_init(self, __context: object) -> None:
         import re
@@ -49,7 +47,7 @@ class ShotBinding(_Strict):
 
 
 class ShotMaterialBindings(_Strict):
-    bindings: List[ShotBinding]
+    bindings: list[ShotBinding]
 
 
 def validate_bindings_against_manifest(

@@ -8,7 +8,7 @@ discriminated union of DiscreteKeyframe and ContinuousKeyframe from
 
 from __future__ import annotations
 
-from typing import Any, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -31,11 +31,11 @@ class TimelineSegmentRange(_Strict):
 class TemplateProps(_Strict):
     templateId: str = Field(min_length=1)
     data: Any
-    annotationKeyframes: List[AnnotationKeyframe]
+    annotationKeyframes: list[AnnotationKeyframe]
     timelineSegment: TimelineSegmentRange
     theme: ThemeConfig
     fps: int = Field(ge=1)
-    chart_material: Optional[ChartMaterial] = Field(default=None)
+    chart_material: ChartMaterial | None = Field(default=None)
 
 
 __all__ = [

@@ -23,7 +23,6 @@ unit-testable without a DB / Huey stack.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import List
 
 from src.backend.engine.event_publisher import ShotBlockedPublisher
 from src.backend.services.material_readiness_check import (
@@ -39,7 +38,7 @@ from src.shared.schemas.ws_events import PhaseShotBlockedEvent
 class P8StartResult:
     started: bool
     readiness: ReadinessResult
-    emitted_events: List[PhaseShotBlockedEvent] = field(default_factory=list)
+    emitted_events: list[PhaseShotBlockedEvent] = field(default_factory=list)
 
 
 def start_p8(
@@ -54,7 +53,7 @@ def start_p8(
     if readiness.ok:
         return P8StartResult(started=True, readiness=readiness)
 
-    emitted: List[PhaseShotBlockedEvent] = []
+    emitted: list[PhaseShotBlockedEvent] = []
     for blocked in readiness.blocked_shots:
         event = publisher.publish(
             project_id=project_id,
