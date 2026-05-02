@@ -2,7 +2,7 @@
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
 **Created**: 2026-05-02
-**Updated**: 2026-05-02 (post-clarification)
+**Updated**: 2026-05-02 (post-clarification round 2)
 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
@@ -33,5 +33,5 @@
 ## Notes
 
 - All items pass. Spec is ready for `/speckit-plan`.
-- Clarifications applied: (1) Markdown-only display, no card components; (2) All duration rules removed from Phase 1; (3) FactChecker agent added with extraction, verification, and source citation requirements.
-- 6 user stories, 33 functional requirements, 9 success criteria, 10 edge cases, 8 key entities.
+- Round 2 clarifications applied: (1) Mandatory fact-check + review after every outline update; (2) Fact-check results persisted as versioned `fact_check.json`; (3) Agent prompts in config files; (4) High-authority sources + free APIs; (5) Structured fact output, no LLM free-form.
+- 6 user stories, 39 functional requirements, 13 success criteria, 12 edge cases, 9 key entities.

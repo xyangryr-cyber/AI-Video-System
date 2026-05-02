@@ -21,7 +21,10 @@ const DEFAULT_PROPS: any = {
   fps: 30,
 };
 
-const calculateMetadata: CalculateMetadataFunction<Record<string, unknown>> = ({ defaultProps, props }) => {
+const calculateMetadata: CalculateMetadataFunction<Record<string, unknown>> = ({
+  defaultProps,
+  props,
+}) => {
   const durationInFrames = (props.durationInFrames ?? defaultProps.durationInFrames) as number;
   return {
     durationInFrames: Math.max(1, Math.round(durationInFrames)),
