@@ -10,7 +10,7 @@ must have their status flipped to 'damaged' synchronously, well within the
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 
 class ArtifactDamageMarker:
@@ -20,10 +20,10 @@ class ArtifactDamageMarker:
         self,
         *,
         claim_id: str,
-        downstream_artifacts: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        downstream_artifacts: list[dict[str, Any]],
+    ) -> dict[str, Any]:
         start = time.monotonic()
-        damaged: List[Dict[str, Any]] = []
+        damaged: list[dict[str, Any]] = []
 
         for art in downstream_artifacts:
             if claim_id in art.get("claim_ids", []):

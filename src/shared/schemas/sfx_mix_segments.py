@@ -12,8 +12,6 @@ with `schemas/sfx_mix_segments.schema.json` and
 
 from __future__ import annotations
 
-from typing import List
-
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.shared.schemas.sfx_layout_plan import SfxLayoutPlan
@@ -35,7 +33,7 @@ class SfxMixSegment(_Strict):
 
     segment_id: str = Field(pattern=_SEGMENT_ID_RE)
     file_path: str = Field(pattern=_FILE_PATH_RE)
-    applied_triggers: List[str] = Field(default_factory=list)
+    applied_triggers: list[str] = Field(default_factory=list)
     checksum: str = Field(pattern=_CHECKSUM_RE)
     version: int = Field(ge=1)
 
@@ -55,7 +53,7 @@ class SfxMixSegments(_Strict):
     """Local SFX mix artifact — N segments derived from one base_master."""
 
     base_master: str = Field(pattern=BASE_MASTER_RE)
-    segments: List[SfxMixSegment]
+    segments: list[SfxMixSegment]
 
 
 def validate_applied_triggers_against_plan(
@@ -76,8 +74,7 @@ def validate_applied_triggers_against_plan(
     if orphans:
         details = ", ".join(f"{s}->{t}" for s, t in orphans)
         raise ValueError(
-            "applied_triggers references trigger_id(s) not in "
-            f"sfx_layout_plan.triggers: {details}"
+            f"applied_triggers references trigger_id(s) not in sfx_layout_plan.triggers: {details}"
         )
 
 

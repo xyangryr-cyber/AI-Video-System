@@ -19,7 +19,7 @@ Each legal target maps to exactly one WS event type (SPEC-11A):
 
 from __future__ import annotations
 
-from typing import FrozenSet, Mapping, Tuple
+from collections.abc import Mapping
 
 from src.shared.constants.event_types import EventType
 
@@ -30,13 +30,11 @@ class IllegalStateTransition(Exception):
     def __init__(self, from_status: str, to_status: str) -> None:
         self.from_status = from_status
         self.to_status = to_status
-        super().__init__(
-            f"Illegal task status transition: {from_status!r} -> {to_status!r}"
-        )
+        super().__init__(f"Illegal task status transition: {from_status!r} -> {to_status!r}")
 
 
 # SPEC-3.6 transition matrix -- exactly 10 legal edges.
-LEGAL_TRANSITIONS: FrozenSet[Tuple[str, str]] = frozenset(
+LEGAL_TRANSITIONS: frozenset[tuple[str, str]] = frozenset(
     {
         ("pending", "queued"),
         ("pending", "superseded"),

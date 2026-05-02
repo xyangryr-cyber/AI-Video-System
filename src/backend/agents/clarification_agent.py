@@ -6,7 +6,7 @@ Phase-aware: different prompt templates for P0, P1, and later phases.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 # Phase-aware clarification templates
 _P0_PROMPT = (
@@ -23,14 +23,9 @@ _P1_PROMPT = (
     "2. 大纲结构有什么特别要求吗？（例如：先讲背景再讲数据、先抛结论再展开）"
 )
 
-_GENERIC_PROMPT = (
-    "请进一步描述你的需求，我会根据你的反馈给出更精准的建议。"
-)
+_GENERIC_PROMPT = "请进一步描述你的需求，我会根据你的反馈给出更精准的建议。"
 
-_INITIAL_PROMPT = (
-    "你好！我是你的AI视频制作助手。让我们开始制作视频吧。\n\n"
-    + _P0_PROMPT
-)
+_INITIAL_PROMPT = "你好！我是你的AI视频制作助手。让我们开始制作视频吧。\n\n" + _P0_PROMPT
 
 
 class ClarificationAgent:
@@ -40,7 +35,7 @@ class ClarificationAgent:
         self,
         *,
         phase: int = 0,
-        project_meta: Dict[str, Any] | None = None,
+        project_meta: dict[str, Any] | None = None,
     ) -> str:
         """Return a clarification prompt appropriate for the current phase.
 
@@ -72,10 +67,7 @@ class ClarificationAgent:
             An initial prompt string combining greeting and P0 clarification.
         """
         if title:
-            return (
-                f"你好！项目「{title}」已创建。我是你的AI视频制作助手。\n\n"
-                + _P0_PROMPT
-            )
+            return f"你好！项目「{title}」已创建。我是你的AI视频制作助手。\n\n" + _P0_PROMPT
         return _INITIAL_PROMPT
 
 

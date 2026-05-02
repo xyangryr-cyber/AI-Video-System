@@ -1,5 +1,5 @@
-declare module 'react-simple-maps' {
-  import type { FC, ReactNode } from 'react';
+declare module "react-simple-maps" {
+  import type { FC, ReactNode } from "react";
 
   interface GeographyProps {
     geography: Record<string, unknown>;
@@ -46,7 +46,9 @@ declare module 'react-simple-maps' {
 
   export const Geographies: FC<{
     geography: string | Record<string, unknown>;
-    children: (data: { geographies: Array<{ rsmKey: string; properties: Record<string, unknown> }> }) => ReactNode;
+    children: (data: {
+      geographies: Array<{ rsmKey: string; properties: Record<string, unknown> }>;
+    }) => ReactNode;
     [key: string]: unknown;
   }>;
 

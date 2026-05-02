@@ -12,18 +12,12 @@ interface Props {
   onRequestChange: (req: ChartChangeRequest) => void;
 }
 
-export function ChartMaterialConfirmCard({
-  chartMaterial,
-  onRequestChange,
-}: Props): ReactElement {
+export function ChartMaterialConfirmCard({ chartMaterial, onRequestChange }: Props): ReactElement {
   const xAxis = chartMaterial.axis_spec.x_axis;
   const yAxis = chartMaterial.axis_spec.y_axis;
 
   return (
-    <div
-      data-testid="chart-confirm-card"
-      className="border rounded p-4"
-    >
+    <div data-testid="chart-confirm-card" className="border rounded p-4">
       <h3 className="text-sm font-medium mb-2">
         {chartMaterial.chart_id}: {chartMaterial.metric_name}
       </h3>

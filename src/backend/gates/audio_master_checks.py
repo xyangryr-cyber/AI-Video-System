@@ -22,11 +22,10 @@ from __future__ import annotations
 import hashlib
 import shutil
 import subprocess
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
 from src.backend.engine.gatekeeper import CheckResult
-
 
 ProbeFn = Callable[[Path], float]
 

@@ -7,7 +7,8 @@ Placed outside reviewers/ package to avoid circular import.
 
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, List
+from collections.abc import Callable
+from typing import Any
 
 from src.backend.agents.base_reviewer import BaseReviewer
 
@@ -22,17 +23,17 @@ class L1Reviewer(BaseReviewer):
     """
 
     def __init__(self) -> None:
-        self._checks: List[str] = []
-        self._check_fn: Dict[str, Callable[..., Any]] = {}
+        self._checks: list[str] = []
+        self._check_fn: dict[str, Callable[..., Any]] = {}
 
-    def register_checks(self, check_names: List[str]) -> None:
+    def register_checks(self, check_names: list[str]) -> None:
         self._checks = list(check_names)
         for name in check_names:
             self._check_fn[name] = getattr(self, name)
 
-    def review(self, artifact: Any) -> Dict[str, Any]:
-        notes: List[str] = []
-        blocking: List[str] = []
+    def review(self, artifact: Any) -> dict[str, Any]:
+        notes: list[str] = []
+        blocking: list[str] = []
         any_fail = False
 
         for name in self._checks:

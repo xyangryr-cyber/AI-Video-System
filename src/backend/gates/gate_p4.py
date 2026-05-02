@@ -39,7 +39,6 @@ from src.backend.gates.audio_master_checks import (
     ffprobe_duration_seconds,
 )
 
-
 # Tolerance for concat-integrity sum-of-segment durations (v3.17 AC-1).
 DEFAULT_CONCAT_TOLERANCE_SECONDS: float = 0.050  # 50 ms
 
@@ -87,14 +86,10 @@ def check_concat_integrity(
     try:
         timeline = json.loads(tp.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
-        return CheckResult(
-            "concat_integrity", False, f"timeline.json unreadable: {exc}"
-        )
+        return CheckResult("concat_integrity", False, f"timeline.json unreadable: {exc}")
     segments = timeline.get("segments")
     if not isinstance(segments, list) or not segments:
-        return CheckResult(
-            "concat_integrity", False, "timeline.segments empty or missing"
-        )
+        return CheckResult("concat_integrity", False, "timeline.segments empty or missing")
 
     sum_seg = 0.0
     for i, seg in enumerate(segments):
@@ -151,9 +146,7 @@ def check_concat_integrity(
     return CheckResult("concat_integrity", True)
 
 
-def check_master_audio_ref_switched(
-    conn: sqlite3.Connection, project_id: str
-) -> CheckResult:
+def check_master_audio_ref_switched(conn: sqlite3.Connection, project_id: str) -> CheckResult:
     """``projects.master_audio_ref.kind`` must be ``narration_master``."""
     row = conn.execute(
         "SELECT master_audio_ref FROM projects WHERE project_id = ?",
@@ -286,9 +279,7 @@ class GateP4Checker:
             probe=self._probe,
         )
         r_checksum = self._run_checksum_check(master_mp3, master_json)
-        r_ref = check_master_audio_ref_switched(
-            cast(sqlite3.Connection, self._conn), project_id
-        )
+        r_ref = check_master_audio_ref_switched(cast(sqlite3.Connection, self._conn), project_id)
         new_checks: list[CheckResult] = [
             r_exists,
             r_playable,

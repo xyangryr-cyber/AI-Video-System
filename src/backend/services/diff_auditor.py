@@ -17,8 +17,7 @@ block artifact commit.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, List, Literal
-
+from typing import Any, Literal
 
 __all__ = [
     "DiffViolation",
@@ -41,7 +40,7 @@ class DiffViolation:
 class DiffResult:
     verdict: Verdict
     unrelated_change_ratio: float
-    violations: List[DiffViolation] = field(default_factory=list)
+    violations: list[DiffViolation] = field(default_factory=list)
 
     @property
     def can_commit(self) -> bool:
@@ -62,14 +61,10 @@ class DiffAuditor:
         max_ratio = float(expected_diff_scope.get("max_unrelated_change_ratio", 0.05))
 
         old_segments = {
-            s["segment_id"]: s
-            for s in (old_artifact.get("segments") or [])
-            if s.get("segment_id")
+            s["segment_id"]: s for s in (old_artifact.get("segments") or []) if s.get("segment_id")
         }
         new_segments = {
-            s["segment_id"]: s
-            for s in (new_artifact.get("segments") or [])
-            if s.get("segment_id")
+            s["segment_id"]: s for s in (new_artifact.get("segments") or []) if s.get("segment_id")
         }
 
         total = len(old_segments)
@@ -77,7 +72,7 @@ class DiffAuditor:
             # Nothing to audit against — trivially PASS, ratio 0.
             return DiffResult(verdict="PASS", unrelated_change_ratio=0.0, violations=[])
 
-        violations: List[DiffViolation] = []
+        violations: list[DiffViolation] = []
         unrelated_count = 0
 
         for seg_id, old_seg in old_segments.items():

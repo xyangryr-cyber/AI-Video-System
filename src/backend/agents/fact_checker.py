@@ -9,7 +9,7 @@ Same pattern as CompletenessReviewer (D-002).
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 
 class FactChecker:
@@ -20,7 +20,7 @@ class FactChecker:
     """
 
     @staticmethod
-    def check_l1(data_point: Dict[str, Any]) -> Dict[str, Any]:
+    def check_l1(data_point: dict[str, Any]) -> dict[str, Any]:
         """Check whether a single data point's source is well-formed."""
         source = data_point.get("source", "")
         if not source:
@@ -42,7 +42,7 @@ class FactChecker:
         }
 
     @staticmethod
-    def check_l2(data_point: Dict[str, Any]) -> Dict[str, Any]:
+    def check_l2(data_point: dict[str, Any]) -> dict[str, Any]:
         """L2 semantic comparison stub (LLM-backed in production)."""
         return {
             "data_point_id": data_point.get("data_point_id", "?"),
@@ -51,14 +51,14 @@ class FactChecker:
         }
 
     @classmethod
-    def review(cls, segments: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def review(cls, segments: list[dict[str, Any]]) -> dict[str, Any]:
         """Review all data points across segments.
 
         - L1: check source reachability for every data point
         - llm_generated data points with empty source -> FAIL
         """
-        notes: List[str] = []
-        blocking: List[str] = []
+        notes: list[str] = []
+        blocking: list[str] = []
 
         for seg in segments:
             for dp in seg.get("key_data_points", []):

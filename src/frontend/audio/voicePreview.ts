@@ -26,9 +26,7 @@ const PREVIEW_DURATION_SECONDS = 15;
  * Generate 2-3 voice preview clips of ~15 seconds each.
  * Used for A/B voice selection in P4 phase.
  */
-export async function generateVoicePreviews(
-  options: VoicePreviewOptions
-): Promise<PreviewClip[]> {
+export async function generateVoicePreviews(options: VoicePreviewOptions): Promise<PreviewClip[]> {
   const { provider, sampleText, clipCount = 2 } = options;
   const count = Math.max(2, Math.min(3, clipCount));
 
@@ -36,20 +34,13 @@ export async function generateVoicePreviews(
   for (let i = 0; i < count; i++) {
     const label = `Preview ${i + 1}`;
     try {
-      const audio = await provider.synthesize(
-        sampleText,
-        undefined,
-        undefined
-      );
+      const audio = await provider.synthesize(sampleText, undefined, undefined);
       // Ensure duration is in 14-16s range for valid preview
-      const durationOk =
-        audio.durationSeconds >= 14 && audio.durationSeconds <= 16;
+      const durationOk = audio.durationSeconds >= 14 && audio.durationSeconds <= 16;
       clips.push({
         audio: {
           ...audio,
-          durationSeconds: durationOk
-            ? audio.durationSeconds
-            : PREVIEW_DURATION_SECONDS,
+          durationSeconds: durationOk ? audio.durationSeconds : PREVIEW_DURATION_SECONDS,
         },
         label,
       });

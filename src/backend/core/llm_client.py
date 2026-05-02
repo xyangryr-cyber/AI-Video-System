@@ -10,7 +10,8 @@ from __future__ import annotations
 import logging
 import sqlite3
 import time
-from typing import Any, Callable, Mapping, Sequence, Type, TypeVar
+from collections.abc import Callable, Mapping, Sequence
+from typing import Any, TypeVar
 
 from pydantic import BaseModel
 
@@ -63,15 +64,9 @@ def _extract_content(response: Any) -> str:
         choices = response.get("choices", [])
         if choices:
             first = choices[0]
-            msg = (
-                first.get("message", first)
-                if isinstance(first, Mapping)
-                else first.message
-            )
+            msg = first.get("message", first) if isinstance(first, Mapping) else first.message
             content = (
-                msg.get("content", "")
-                if isinstance(msg, Mapping)
-                else getattr(msg, "content", "")
+                msg.get("content", "") if isinstance(msg, Mapping) else getattr(msg, "content", "")
             )
             return str(content) if content else ""
     else:
@@ -102,7 +97,7 @@ class LLMClient:
         agent_name: str,
         phase: int | None = None,
         project_id: str | None = None,
-        response_model: Type[M] | None = None,
+        response_model: type[M] | None = None,
         _completion_fn: Callable[..., Any] | None = None,
         **extra: Any,
     ) -> Any:

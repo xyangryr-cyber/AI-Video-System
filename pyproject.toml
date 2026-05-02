@@ -20,6 +20,7 @@ dev = [
 
 [tool.pytest.ini_options]
 markers = [
+  "contract: API contract shape tests; run with `pytest -m contract`. Validate request/response schemas against spec contracts.",
   "eval: agent eval set; run with `pytest tests/eval/ --eval-mode` (HARNESS §10.2). Skipped in default unit/integration runs.",
   "bdd: pytest-bdd scenario wrapper; tag-selectable via `-m '<tag>'`.",
   "router: IntentRouter BDD scenarios (auto-tagged by pytest-bdd from @router feature tag).",
@@ -43,3 +44,54 @@ bdd_features_base_dir = "tests"
 
 [tool.mypy]
 explicit_package_bases = true
+strict = false
+warn_return_any = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+disallow_untyped_defs = false
+check_untyped_defs = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
+ignore = [
+  "E402",  # module-level imports (FastAPI setup pattern)
+  "E501",  # line length
+  "B008",  # FastAPI Depends() in defaults is standard
+  "B007",  # loop control variable style
+  "B904",  # raise from err (style)
+  "C401",  # set comprehension style
+  "F401",  # re-exported imports
+  "F821",  # dynamic names
+  "F841",  # unused vars (handled by type checker)
+  "N802",  # generated SDK uses camelCase
+  "N806",  # function-level constants use _UPPER_CASE
+  "N815",  # shared schemas mirror TypeScript mixedCase
+  "N818",  # exception naming conventions
+  "UP042", # StrEnum style (py3.11+)
+  "UP045", # X | None style
+  "SIM",   # refactoring suggestions, not errors
+  "UP007", # X | Y annotation style
+  "UP038", # isinstance union style
+]
+exclude = [
+  ".venv",
+  ".mypy_cache",
+  ".ruff_cache",
+  ".pytest_cache",
+  "build",
+  "dist",
+  "node_modules",
+  "prototype",
+  "migrations",
+  ".worktrees",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

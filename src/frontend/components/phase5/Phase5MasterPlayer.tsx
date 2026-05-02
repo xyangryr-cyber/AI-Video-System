@@ -16,9 +16,7 @@ export function Phase5MasterPlayer({ masterAudio }: Props): ReactElement | null 
       className="border rounded p-4 mt-4"
     >
       <h3 className="text-sm font-medium mb-2">
-        {masterAudio.kind === "bgm_mix_master"
-          ? "BGM 混音主音频"
-          : "旁白主音频"}
+        {masterAudio.kind === "bgm_mix_master" ? "BGM 混音主音频" : "旁白主音频"}
       </h3>
 
       <div className="mb-2 h-16 bg-gray-100 rounded flex items-center justify-center">

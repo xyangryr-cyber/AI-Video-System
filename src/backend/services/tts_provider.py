@@ -15,7 +15,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 _PLATFORM_PROFILES_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
@@ -24,7 +24,7 @@ _PLATFORM_PROFILES_PATH = os.path.join(
 )
 
 
-def _load_platform_audio_config() -> Dict[str, Any]:
+def _load_platform_audio_config() -> dict[str, Any]:
     """Load bilibili.audio defaults from platform_profiles.json.
 
     Returns an empty dict if the file is missing or unreadable so the
@@ -52,8 +52,8 @@ class TTSProvider:
     )
 
     def synthesize(
-        self, *, text: str, voice_params: Dict[str, Any], ssml_tags: str | None = None
-    ) -> Dict[str, Any]:
+        self, *, text: str, voice_params: dict[str, Any], ssml_tags: str | None = None
+    ) -> dict[str, Any]:
         # Log unsupported params as capability_gap (no crash)
         for key in voice_params:
             if key not in self._SUPPORTED_PARAMS:

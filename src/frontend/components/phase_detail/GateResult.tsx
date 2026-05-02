@@ -20,15 +20,11 @@ export function GateResult({ results, readOnly: _readOnly }: Props): ReactElemen
       <ul className="space-y-1">
         {results.map((g, i) => (
           <li key={i} className="text-sm">
-            <span
-              className={g.passed ? "text-green-600" : "text-red-600"}
-            >
+            <span className={g.passed ? "text-green-600" : "text-red-600"}>
               {g.passed ? "[PASS]" : "[FAIL]"}
             </span>{" "}
             <span className="font-medium">{g.check_name}</span>
-            {!g.passed && g.reason && (
-              <span className="ml-1 text-red-500">Reason: {g.reason}</span>
-            )}
+            {!g.passed && g.reason && <span className="ml-1 text-red-500">Reason: {g.reason}</span>}
           </li>
         ))}
       </ul>

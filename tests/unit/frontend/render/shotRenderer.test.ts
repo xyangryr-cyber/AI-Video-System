@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-explicit-any */
+// @ts-nocheck
 // @vitest-environment node
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -6,16 +8,17 @@ const mockBundle = vi.fn();
 const mockRenderMedia = vi.fn();
 const mockSelectComposition = vi.fn();
 
-const mod = await import(
-  "../../../../src/frontend/render/shotRenderer.mjs"
-);
+const mod = await import("../../../../src/frontend/render/shotRenderer.mjs");
 
 const { parseArgs, renderShot, __setRemotionModules } = mod;
 
 // Inject mock Remotion modules before any renderShot call
 __setRemotionModules(
   { bundle: (...args: any[]) => mockBundle(...args) },
-  { renderMedia: (...args: any[]) => mockRenderMedia(...args), selectComposition: (...args: any[]) => mockSelectComposition(...args) }
+  {
+    renderMedia: (...args: any[]) => mockRenderMedia(...args),
+    selectComposition: (...args: any[]) => mockSelectComposition(...args),
+  },
 );
 
 beforeEach(() => {
@@ -36,13 +39,20 @@ describe("parseArgs", () => {
     const argv = [
       "/usr/local/bin/node",
       "/app/shotRenderer.mjs",
-      "--shot-id", "shot_01",
-      "--template", "animated_line_chart",
-      "--input", '{"content":{"title":"test"}}',
-      "--output", "data/projects/p1/phase_8/shot_01.mp4",
-      "--duration", "15.5",
-      "--resolution", "1920x1080",
-      "--fps", "30",
+      "--shot-id",
+      "shot_01",
+      "--template",
+      "animated_line_chart",
+      "--input",
+      '{"content":{"title":"test"}}',
+      "--output",
+      "data/projects/p1/phase_8/shot_01.mp4",
+      "--duration",
+      "15.5",
+      "--resolution",
+      "1920x1080",
+      "--fps",
+      "30",
     ];
 
     const opts = parseArgs(argv);
@@ -60,11 +70,16 @@ describe("parseArgs", () => {
     const argv = [
       "node",
       "render.mjs",
-      "--shot-id", "s1",
-      "--template", "data_card",
-      "--input", "{}",
-      "--output", "out.mp4",
-      "--duration", "10",
+      "--shot-id",
+      "s1",
+      "--template",
+      "data_card",
+      "--input",
+      "{}",
+      "--output",
+      "out.mp4",
+      "--duration",
+      "10",
     ];
 
     const opts = parseArgs(argv);

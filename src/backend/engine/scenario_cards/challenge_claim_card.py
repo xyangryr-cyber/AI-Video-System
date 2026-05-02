@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import hashlib
 import time
-from typing import Any, Dict
+from typing import Any
 
 
 class ChallengeClaimCard:
@@ -21,10 +21,10 @@ class ChallengeClaimCard:
     IDEMPOTENCY_TTL_SECONDS = 24 * 3600  # 24h
 
     def __init__(self) -> None:
-        self._idempotency_store: Dict[str, float] = {}
+        self._idempotency_store: dict[str, float] = {}
 
     def _idempotency_key(self, claim_id: str, evidence_hash: str) -> str:
-        return hashlib.sha256(f"{claim_id}:{evidence_hash}".encode("utf-8")).hexdigest()
+        return hashlib.sha256(f"{claim_id}:{evidence_hash}".encode()).hexdigest()
 
     def challenge_with_idempotency(
         self,
@@ -32,7 +32,7 @@ class ChallengeClaimCard:
         claim_id: str,
         reason: str,
         evidence_hash: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Challenge a claim with idempotency gate.
 
         Returns {"accepted": True/False, "reason": str}.
@@ -58,9 +58,9 @@ class ChallengeClaimCard:
     def preserve_dual_records(
         self,
         *,
-        old_record: Dict[str, Any],
-        new_record: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        old_record: dict[str, Any],
+        new_record: dict[str, Any],
+    ) -> dict[str, Any]:
         """Preserve both verification records when re-verify yields a different result.
 
         If old and new verdicts differ, both records are kept for audit trail.

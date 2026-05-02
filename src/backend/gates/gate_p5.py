@@ -5,7 +5,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.5.6, SPEC-9.5.3 (v3.17)
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 
 class GateP5:
@@ -19,17 +19,15 @@ class GateP5:
         skipped: bool,
         bgm_exists: bool,
         reviewer_passed: bool,
-        pending_tasks: List[Any],
+        pending_tasks: list[Any],
         preferences_confirmed: bool,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if skipped:
             failed_pending = bool(pending_tasks)
             failed_prefs = not preferences_confirmed
             return {
                 "passed": not failed_pending and not failed_prefs,
-                "failed_checks": (
-                    [f"{len(pending_tasks)} pending tasks"] if failed_pending else []
-                )
+                "failed_checks": ([f"{len(pending_tasks)} pending tasks"] if failed_pending else [])
                 + (["preferences not confirmed"] if failed_prefs else []),
                 "passed_checks": (["no pending tasks"] if not failed_pending else [])
                 + (["preferences confirmed"] if not failed_prefs else []),
@@ -77,7 +75,7 @@ class GateP5:
         source_ref_valid: bool = False,
         master_audio_ref_switched: bool = False,
         reviewer_passed: bool = False,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if no_bgm:
             return {
                 "passed": True,

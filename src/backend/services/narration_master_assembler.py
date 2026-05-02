@@ -22,7 +22,7 @@ import shutil
 import sqlite3
 import subprocess
 from pathlib import Path
-from typing import Any, List
+from typing import Any
 
 from src.backend.repositories.project_state_repo import (
     ProjectStateRepository,
@@ -78,8 +78,7 @@ class NarrationMasterAssembler:
         missing = [p for p in segment_paths if not p.is_file()]
         if missing:
             raise MissingSegmentError(
-                "missing narration segment file(s): "
-                + ", ".join(str(p) for p in missing)
+                "missing narration segment file(s): " + ", ".join(str(p) for p in missing)
             )
 
         final_mp3 = phase_dir / f"{_MASTER_STEM}.mp3"
@@ -164,7 +163,7 @@ class NarrationMasterAssembler:
     def _read_timeline(
         timeline_path: Path,
         phase_dir: Path,
-    ) -> tuple[List[str], List[Path]]:
+    ) -> tuple[list[str], list[Path]]:
         if not timeline_path.is_file():
             raise TimelineError(f"timeline.json not found at {timeline_path}")
         try:
@@ -173,11 +172,9 @@ class NarrationMasterAssembler:
             raise TimelineError(f"timeline.json is not valid JSON: {exc}") from exc
         segments = data.get("segments")
         if not isinstance(segments, list) or not segments:
-            raise TimelineError(
-                "timeline.json must contain a non-empty 'segments' list"
-            )
-        ids: List[str] = []
-        paths: List[Path] = []
+            raise TimelineError("timeline.json must contain a non-empty 'segments' list")
+        ids: list[str] = []
+        paths: list[Path] = []
         for i, seg in enumerate(segments):
             if not isinstance(seg, dict):
                 raise TimelineError(f"segment #{i} is not an object")
@@ -234,9 +231,7 @@ def _probe_duration_seconds(path: Path) -> float:
     try:
         return float(txt)
     except ValueError as exc:
-        raise AudioConcatError(
-            f"ffprobe returned non-numeric duration {txt!r}"
-        ) from exc
+        raise AudioConcatError(f"ffprobe returned non-numeric duration {txt!r}") from exc
 
 
 def _compact_ref(artifact: NarrationMasterArtifact) -> dict[str, Any]:

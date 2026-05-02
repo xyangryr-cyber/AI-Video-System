@@ -90,7 +90,9 @@ export function PhaseDetailDrawer({
   }
 
   const handleRevert = async () => {
-    if (!window.confirm(`Roll back to Phase ${phaseNumber} and continue editing from this stage?`)) {
+    if (
+      !window.confirm(`Roll back to Phase ${phaseNumber} and continue editing from this stage?`)
+    ) {
       return;
     }
     await onRevert(phaseNumber);
@@ -98,7 +100,10 @@ export function PhaseDetailDrawer({
   };
 
   return (
-    <div data-testid="phase-detail-drawer" className="fixed inset-y-0 right-0 w-96 bg-white shadow-lg z-50 flex flex-col">
+    <div
+      data-testid="phase-detail-drawer"
+      className="fixed inset-y-0 right-0 w-96 bg-white shadow-lg z-50 flex flex-col"
+    >
       {/* Header */}
       <div className="p-4 border-b flex items-center justify-between">
         <h2 className="text-lg font-bold">
@@ -136,7 +141,7 @@ export function PhaseDetailDrawer({
             onClick={handleRevert}
             className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
-从此阶段继续修改
+            从此阶段继续修改
           </button>
         </div>
       )}

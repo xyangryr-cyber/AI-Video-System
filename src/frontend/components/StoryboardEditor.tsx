@@ -38,8 +38,7 @@ export function StoryboardEditor({
     externalSelectedId,
   );
 
-  const selectedShotId =
-    externalSelectedId !== undefined ? externalSelectedId : internalSelectedId;
+  const selectedShotId = externalSelectedId !== undefined ? externalSelectedId : internalSelectedId;
 
   const selectedShot = shots.find((s) => s.id === selectedShotId);
 

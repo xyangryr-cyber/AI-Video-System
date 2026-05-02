@@ -6,7 +6,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.10
 from __future__ import annotations
 
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class RoughCutAgent:
@@ -16,13 +16,13 @@ class RoughCutAgent:
     def compose(
         *,
         project_id: str,
-        storyboard: List[Dict[str, Any]],
-        timeline: Dict[str, Any],
-        keyframe_renders: List[Dict[str, Any]],
+        storyboard: list[dict[str, Any]],
+        timeline: dict[str, Any],
+        keyframe_renders: list[dict[str, Any]],
         measured_duration_sec: float | None = None,
-        polished_script: Optional[Dict[str, Any]] = None,
-        transitions: Optional[List[Dict[str, Any]]] = None,
-    ) -> Dict[str, Any]:
+        polished_script: dict[str, Any] | None = None,
+        transitions: list[dict[str, Any]] | None = None,
+    ) -> dict[str, Any]:
         """Assemble rough cut video via 5-step PRD 7.12.3 process.
 
         1. Visual track: assembly by storyboard timeline
@@ -37,7 +37,7 @@ class RoughCutAgent:
         p6_audio = os.path.join(project_dir, "phase_6", "final_audio_with_bgm_sfx.mp3")
         p4_audio = os.path.join(project_dir, "phase_4", "narration_master.mp3")
 
-        audio_source: Optional[str] = None
+        audio_source: str | None = None
         if os.path.isfile(p6_audio):
             audio_source = "phase_6/final_audio_with_bgm_sfx.mp3"
         elif os.path.isfile(p4_audio):
@@ -62,13 +62,13 @@ class RoughCutAgent:
 
         # -- Subtitle track --------------------------------------------------
         subtitle_track = False
-        subtitle_path: Optional[str] = None
+        subtitle_path: str | None = None
         if polished_script is not None and polished_script.get("segments"):
             subtitle_track = True
             subtitle_path = "phase_10/subtitle.srt"
 
         # -- Transitions -----------------------------------------------------
-        applied_transitions: List[Dict[str, Any]] = []
+        applied_transitions: list[dict[str, Any]] = []
         if transitions:
             applied_transitions = [
                 {
@@ -79,7 +79,7 @@ class RoughCutAgent:
                 for t in transitions
             ]
 
-        result: Dict[str, Any] = {
+        result: dict[str, Any] = {
             "rough_cut_path": rel_output_path,
             "duration_seconds": duration_seconds,
             "resolution": "1920x1080",
@@ -98,8 +98,8 @@ class RoughCutAgent:
 
     @staticmethod
     def apply_transitions(
-        transitions: List[Dict[str, Any]],
-    ) -> List[Dict[str, Any]]:
+        transitions: list[dict[str, Any]],
+    ) -> list[dict[str, Any]]:
         return [
             {
                 "type": t["type"],
@@ -110,9 +110,7 @@ class RoughCutAgent:
         ]
 
     @staticmethod
-    def run_audit_2(
-        *, rough_cut: Dict[str, Any], timeline: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    def run_audit_2(*, rough_cut: dict[str, Any], timeline: dict[str, Any]) -> dict[str, Any]:
         rc_dur = rough_cut.get("duration_seconds", 0)
         tl_dur = timeline.get("total_duration_sec", 0)
         inconsistency = 0 if abs(rc_dur - tl_dur) < 0.5 else 1
@@ -122,7 +120,7 @@ class RoughCutAgent:
         }
 
     @staticmethod
-    def encode_for_platform(*, rough_cut_path: str, platform: str) -> Dict[str, Any]:
+    def encode_for_platform(*, rough_cut_path: str, platform: str) -> dict[str, Any]:
         return {
             "output_path": rough_cut_path.replace(".mp4", f"_{platform}.mp4"),
             "codec": "h264",
@@ -130,7 +128,7 @@ class RoughCutAgent:
         }
 
 
-def _measure_duration_ffprobe(file_path: str) -> Optional[float]:
+def _measure_duration_ffprobe(file_path: str) -> float | None:
     """Use ffprobe to measure actual duration of a media file.
 
     Returns None if ffprobe is unavailable or fails.
@@ -147,8 +145,10 @@ def _measure_duration_ffprobe(file_path: str) -> Optional[float]:
         result = subprocess.run(
             [
                 ffprobe_bin,
-                "-v", "quiet",
-                "-print_format", "json",
+                "-v",
+                "quiet",
+                "-print_format",
+                "json",
                 "-show_format",
                 file_path,
             ],

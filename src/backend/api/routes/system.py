@@ -17,7 +17,6 @@ from src.backend.db.repositories.system_status_repo import (
     SystemStatusRepository,
 )
 
-
 router = APIRouter(prefix="/api/system", tags=["system"])
 
 

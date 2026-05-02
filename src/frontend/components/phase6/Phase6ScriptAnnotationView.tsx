@@ -27,9 +27,7 @@ export function Phase6ScriptAnnotationView({
     <div data-testid="p6-annotation-view" className="border rounded p-4">
       <h3 className="text-sm font-medium mb-2">全文标注视图</h3>
       <p className="text-sm leading-relaxed mb-4">
-        {Array.from(spansByPosition.entries()).length > 0
-          ? "annotated"
-          : fullText}
+        {Array.from(spansByPosition.entries()).length > 0 ? "annotated" : fullText}
       </p>
 
       <div className="space-y-2">

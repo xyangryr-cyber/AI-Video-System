@@ -6,7 +6,7 @@ render path fails. Must complete in < 2 seconds per shot (AC-5).
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 
 def render_default_text_card(
@@ -15,7 +15,7 @@ def render_default_text_card(
     text: str = "Content unavailable",
     width: int = 1920,
     height: int = 1080,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Render a minimal default text card as degradation fallback.
 
     This is a lightweight SVG-based render that must complete in < 2s.

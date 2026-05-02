@@ -25,7 +25,8 @@ incremental-redo contract (AC-5) and the 100% branch-coverage contract
 
 from __future__ import annotations
 
-from typing import Any, Callable, Literal, Mapping, Optional, Sequence
+from collections.abc import Callable, Mapping, Sequence
+from typing import Any, Literal
 
 import numpy as np
 
@@ -34,7 +35,6 @@ from src.backend.reviewers.sfx_layout_reviewer import SfxLayoutReviewer
 from src.backend.reviewers.sfx_mix_reviewer import SfxMixReviewer
 from src.shared.schemas.feedback_protocol import SfxReviewerFeedback
 from src.shared.schemas.sfx_layout_plan import SfxLayoutPlan
-
 
 DispatchDecision = Literal["layout_replan", "segment_remix"]
 FeedbackHandler = Callable[[SfxReviewerFeedback], Any]
@@ -45,8 +45,8 @@ class SfxReviewerOrchestrator:
 
     def __init__(
         self,
-        layout_reviewer: Optional[SfxLayoutReviewer] = None,
-        mix_reviewer: Optional[SfxMixReviewer] = None,
+        layout_reviewer: SfxLayoutReviewer | None = None,
+        mix_reviewer: SfxMixReviewer | None = None,
     ) -> None:
         self._layout_reviewer = layout_reviewer or SfxLayoutReviewer()
         self._mix_reviewer = mix_reviewer or SfxMixReviewer()

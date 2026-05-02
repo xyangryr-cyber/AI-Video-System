@@ -11,7 +11,7 @@ Strategy:
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -22,13 +22,13 @@ class SubtitleGenerator:
     # --- whisper path ---
 
     @staticmethod
-    def _try_whisper_alignment(audio_path: str, text: str) -> Dict[str, Any] | None:
+    def _try_whisper_alignment(audio_path: str, text: str) -> dict[str, Any] | None:
         """Use the openai-whisper Python library for word-level timestamps.
 
         Returns None if whisper is not installed or if alignment fails.
         """
         try:
-            import whisper  # type: ignore[import-untyped]
+            import whisper
         except ImportError:
             return None
 
@@ -43,22 +43,26 @@ class SubtitleGenerator:
         if not segments:
             return None
 
-        subtitles: List[Dict[str, Any]] = []
+        subtitles: list[dict[str, Any]] = []
         for seg in segments:
             seg_words = seg.get("words", [])
             if not seg_words:
-                subtitles.append({
-                    "start_sec": round(seg["start"], 2),
-                    "end_sec": round(seg["end"], 2),
-                    "text": seg.get("text", "").strip(),
-                })
+                subtitles.append(
+                    {
+                        "start_sec": round(seg["start"], 2),
+                        "end_sec": round(seg["end"], 2),
+                        "text": seg.get("text", "").strip(),
+                    }
+                )
                 continue
             for w_info in seg_words:
-                subtitles.append({
-                    "start_sec": round(w_info["start"], 2),
-                    "end_sec": round(w_info["end"], 2),
-                    "text": w_info.get("word", "").strip(),
-                })
+                subtitles.append(
+                    {
+                        "start_sec": round(w_info["start"], 2),
+                        "end_sec": round(w_info["end"], 2),
+                        "text": w_info.get("word", "").strip(),
+                    }
+                )
 
         duration = result.get("duration", max(1.0, len(text) / 3.0))
         return {"subtitles": subtitles, "duration_seconds": duration}
@@ -66,7 +70,7 @@ class SubtitleGenerator:
     # --- heuristic fallback ---
 
     @staticmethod
-    def _heuristic_alignment(text: str) -> Dict[str, Any]:
+    def _heuristic_alignment(text: str) -> dict[str, Any]:
         """Smart heuristic: phrase grouping + char-weighted timing.
 
         - Group words into phrases of up to 15 chars per subtitle segment.
@@ -82,8 +86,8 @@ class SubtitleGenerator:
         duration = max(1.0, char_count / 4.0)
 
         # Phrase grouping: accumulate words until ~15 chars
-        phrases: List[List[str]] = []
-        current_phrase: List[str] = []
+        phrases: list[list[str]] = []
+        current_phrase: list[str] = []
         current_char_len = 0
 
         for w in words:
@@ -105,19 +109,29 @@ class SubtitleGenerator:
         total_gap_time = gap * max(len(phrases) - 1, 0)
         available_time = max(0.0, duration - total_gap_time)
 
-        subtitles: List[Dict[str, Any]] = []
+        subtitles: list[dict[str, Any]] = []
         current = 0.0
 
         for phrase_idx, phrase_words in enumerate(phrases):
             phrase_char_len = sum(len(w) for w in phrase_words)
-            phrase_dur = (phrase_char_len / total_weight) * available_time if total_weight > 0 else available_time / max(len(phrases), 1)
-            phrase_text = "".join(phrase_words) if all(len(w) <= 2 for w in phrase_words) else " ".join(phrase_words)
+            phrase_dur = (
+                (phrase_char_len / total_weight) * available_time
+                if total_weight > 0
+                else available_time / max(len(phrases), 1)
+            )
+            phrase_text = (
+                "".join(phrase_words)
+                if all(len(w) <= 2 for w in phrase_words)
+                else " ".join(phrase_words)
+            )
 
-            subtitles.append({
-                "start_sec": round(current, 2),
-                "end_sec": round(current + phrase_dur, 2),
-                "text": phrase_text,
-            })
+            subtitles.append(
+                {
+                    "start_sec": round(current, 2),
+                    "end_sec": round(current + phrase_dur, 2),
+                    "text": phrase_text,
+                }
+            )
             current += phrase_dur + gap
 
         return {"subtitles": subtitles, "duration_seconds": round(duration, 2)}
@@ -125,7 +139,7 @@ class SubtitleGenerator:
     # --- public interface ---
 
     @staticmethod
-    def generate(*, audio_path: str, text: str) -> Dict[str, Any]:
+    def generate(*, audio_path: str, text: str) -> dict[str, Any]:
         # Try whisper first, fall back to heuristic.
         whisper_result = SubtitleGenerator._try_whisper_alignment(audio_path, text)
         if whisper_result is not None:

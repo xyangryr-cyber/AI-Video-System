@@ -5,9 +5,9 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.12
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
-_PHASE_RETRY_LIMITS: Dict[int, int] = {
+_PHASE_RETRY_LIMITS: dict[int, int] = {
     0: 5,
     1: 5,
     2: 5,
@@ -33,24 +33,18 @@ class FailureRecovery:
         return _PHASE_RETRY_LIMITS.get(phase, 5)
 
     @staticmethod
-    def should_retry(
-        *, phase: int, attempt: int, max_retries: int | None = None
-    ) -> bool:
-        limit = (
-            max_retries
-            if max_retries is not None
-            else _PHASE_RETRY_LIMITS.get(phase, 5)
-        )
+    def should_retry(*, phase: int, attempt: int, max_retries: int | None = None) -> bool:
+        limit = max_retries if max_retries is not None else _PHASE_RETRY_LIMITS.get(phase, 5)
         return attempt < limit
 
     @staticmethod
-    def handle_p0_short_description(*, description: str) -> Dict[str, Any]:
+    def handle_p0_short_description(*, description: str) -> dict[str, Any]:
         if len(description) < 300:
             return {"action": "prompt_user", "reason": "description < 300 chars"}
         return {"action": "proceed"}
 
     @staticmethod
-    def handle_phase_failure(*, phase: int, consecutive_fails: int) -> Dict[str, Any]:
+    def handle_phase_failure(*, phase: int, consecutive_fails: int) -> dict[str, Any]:
         if phase == 3 and consecutive_fails >= 5:
             return {"action": "freeze", "detail": "freeze current + manual edit mode"}
         if consecutive_fails >= _PHASE_RETRY_LIMITS.get(phase, 5):

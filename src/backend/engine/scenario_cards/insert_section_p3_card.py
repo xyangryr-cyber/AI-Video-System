@@ -9,7 +9,7 @@ Handles insert_section at P3 (polished script phase):
 from __future__ import annotations
 
 import hashlib
-from typing import Any, Dict, List
+from typing import Any
 
 
 class InsertSectionP3Card:
@@ -20,18 +20,16 @@ class InsertSectionP3Card:
     def handle_insert(
         self,
         *,
-        old_segments: List[Dict[str, Any]],
+        old_segments: list[dict[str, Any]],
         after_segment_id: str,
         content_intent: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Handle insert_section at P3: create new segment, run DiffAuditor, return gate result."""
 
-        seg_hash = hashlib.sha256(
-            f"{after_segment_id}:{content_intent}".encode("utf-8")
-        ).hexdigest()[:10]
+        seg_hash = hashlib.sha256(f"{after_segment_id}:{content_intent}".encode()).hexdigest()[:10]
         new_segment_id = f"seg_new_{seg_hash}"
 
-        new_segment: Dict[str, Any] = {
+        new_segment: dict[str, Any] = {
             "segment_id": new_segment_id,
             "text": f"[POLISHED INSERT] {content_intent}",
             "section_title": "",
@@ -69,10 +67,10 @@ class InsertSectionP3Card:
     def _run_diff_audit(
         self,
         *,
-        old_segments: List[Dict[str, Any]],
-        new_segments: List[Dict[str, Any]],
-        allowed_modify_segments: List[str],
-    ) -> Dict[str, Any]:
+        old_segments: list[dict[str, Any]],
+        new_segments: list[dict[str, Any]],
+        allowed_modify_segments: list[str],
+    ) -> dict[str, Any]:
         allowed = set(allowed_modify_segments)
         total = len(old_segments)
 
@@ -87,9 +85,7 @@ class InsertSectionP3Card:
             if seg_id in allowed:
                 continue
             new_seg = new_map.get(seg_id)
-            if new_seg is None:
-                unrelated_count += 1
-            elif old_seg.get("text", "") != new_seg.get("text", ""):
+            if new_seg is None or old_seg.get("text", "") != new_seg.get("text", ""):
                 unrelated_count += 1
 
         ratio = unrelated_count / total

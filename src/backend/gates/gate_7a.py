@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 
 class Gate7A:
@@ -15,7 +15,7 @@ class Gate7A:
         hard_materials_verified: bool = False,
         soft_materials_ready: bool = False,
         advanced_to_p8: bool = False,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         failed: list[str] = []
         passed: list[str] = []
 

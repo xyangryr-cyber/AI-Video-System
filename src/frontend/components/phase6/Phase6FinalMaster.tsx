@@ -9,10 +9,7 @@ export function Phase6FinalMaster({ masterAudio }: Props): ReactElement | null {
   if (!masterAudio || masterAudio.kind !== "final_audio_master") return null;
 
   return (
-    <section
-      data-testid="p6-final-master"
-      className="border rounded p-4 mt-4"
-    >
+    <section data-testid="p6-final-master" className="border rounded p-4 mt-4">
       <h3 className="text-sm font-medium mb-2">最终主音频</h3>
       <p className="text-xs text-gray-500 mb-2">
         基于片段: {masterAudio.derived_from_segments.join(", ")}

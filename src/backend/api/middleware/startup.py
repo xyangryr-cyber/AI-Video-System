@@ -10,9 +10,9 @@ in-memory DB, and production ``main`` wiring can drop in a real
 from __future__ import annotations
 
 import sqlite3
-from typing import Any
+from collections.abc import Callable
 from contextlib import asynccontextmanager
-from typing import Callable, Dict, Optional
+from typing import Any
 
 from fastapi import FastAPI
 
@@ -22,7 +22,7 @@ from src.backend.core.preflight import Runner, run_full_preflight
 def register_preflight_startup(
     app: FastAPI,
     conn_provider: Callable[[], sqlite3.Connection],
-    runners: Optional[Dict[str, Runner]] = None,
+    runners: dict[str, Runner] | None = None,
 ) -> None:
     """Attach a Pre-flight sweep to the FastAPI lifespan startup phase.
 

@@ -13,8 +13,8 @@ from __future__ import annotations
 import shutil
 import subprocess
 import tempfile
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence
 
 
 class AudioConcatError(RuntimeError):
@@ -42,9 +42,7 @@ def concat_losslessly(
         raise AudioConcatError("segments is empty")
 
     ffmpeg = _ffmpeg_bin()
-    with tempfile.NamedTemporaryFile(
-        "w", suffix=".txt", delete=False, encoding="utf-8"
-    ) as listf:
+    with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False, encoding="utf-8") as listf:
         for seg in segments:
             seg = Path(seg).resolve()
             # concat demuxer "file '...'" syntax; escape single quotes.

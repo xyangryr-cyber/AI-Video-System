@@ -10,8 +10,7 @@ interface Props {
 }
 
 export function Phase5CandidateGrid({ candidates }: Props): ReactElement {
-  const { masterAudio, selectedCandidateId, setMasterAudio, selectCandidate } =
-    usePhase5Store();
+  const { masterAudio, selectedCandidateId, setMasterAudio, selectCandidate } = usePhase5Store();
 
   const handleSelect = (candidate: BgmCandidate) => {
     selectCandidate(candidate.id);

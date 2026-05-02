@@ -13,18 +13,16 @@ Defines:
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from enum import Enum
-from typing import Any, Dict, FrozenSet, List, Mapping, Optional, Type
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from src.shared.constants.event_types import EventType
 
-
 _ISO8601_RE = re.compile(
-    r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}"
-    r"(?:\.\d+)?"
-    r"(?:Z|[+-]\d{2}:\d{2})$"
+    r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}" r"(?:\.\d+)?" r"(?:Z|[+-]\d{2}:\d{2})$"
 )
 
 
@@ -88,12 +86,12 @@ class TaskStartedPayload(_StrictModel):
 class TaskProgressPayload(_StrictModel):
     task_id: str
     progress: int = Field(ge=0, le=100)
-    message: Optional[str] = None
+    message: str | None = None
 
 
 class TaskCompletedPayload(_StrictModel):
     task_id: str
-    result_ref: Optional[str] = None
+    result_ref: str | None = None
 
 
 class TaskFailedPayload(_StrictModel):
@@ -104,7 +102,7 @@ class TaskFailedPayload(_StrictModel):
 
 class TaskSupersededPayload(_StrictModel):
     task_id: str
-    superseded_by: Optional[str] = None
+    superseded_by: str | None = None
 
 
 class ArtifactProducedPayload(_StrictModel):
@@ -134,8 +132,8 @@ class ReviewCompletedPayload(_StrictModel):
     phase_num: int
     reviewer_name: str
     verdict: ReviewVerdict
-    notes: List[str]
-    blocking_issues: List[str]
+    notes: list[str]
+    blocking_issues: list[str]
 
 
 class GatePassedPayload(_StrictModel):
@@ -144,7 +142,7 @@ class GatePassedPayload(_StrictModel):
 
 class GateFailedPayload(_StrictModel):
     phase_num: int
-    failed_checks: List[FailedCheck]
+    failed_checks: list[FailedCheck]
 
 
 class PreferenceCandidate(_StrictModel):
@@ -155,7 +153,7 @@ class PreferenceCandidate(_StrictModel):
 
 class PreferenceExtractedPayload(_StrictModel):
     candidates_count: int = Field(ge=0)
-    candidates: List[PreferenceCandidate]
+    candidates: list[PreferenceCandidate]
 
 
 # ---- Streaming payloads (NOT in EventType) --------------------------------
@@ -190,7 +188,7 @@ class WsEventEnvelope(_StrictModel):
     type: EventType
     timestamp: str
     project_id: str
-    payload: Dict[str, Any]
+    payload: dict[str, Any]
 
     @field_validator("timestamp")
     @classmethod
@@ -217,12 +215,12 @@ class AgentEventListItem(_StrictModel):
     type: str = Field(min_length=1)
     project_id: str = Field(min_length=1)
     timestamp: str = Field(min_length=1)
-    payload: Dict[str, Any]
+    payload: dict[str, Any]
 
 
 # ---- Registry + audit-only list -------------------------------------------
 
-EVENT_PAYLOAD_REGISTRY: Dict[EventType, Type[_StrictModel]] = {
+EVENT_PAYLOAD_REGISTRY: dict[EventType, type[_StrictModel]] = {
     EventType.PHASE_ENTERED: PhaseEnteredPayload,
     EventType.PHASE_EXITED: PhaseExitedPayload,
     EventType.PHASE_INVALIDATED: PhaseInvalidatedPayload,
@@ -243,12 +241,10 @@ EVENT_PAYLOAD_REGISTRY: Dict[EventType, Type[_StrictModel]] = {
 }
 
 
-AUDIT_ONLY_EVENTS: FrozenSet[str] = frozenset({"preference.rollback"})
+AUDIT_ONLY_EVENTS: frozenset[str] = frozenset({"preference.rollback"})
 
 
-def validate_event_payload(
-    event_type: EventType, payload: Mapping[str, Any]
-) -> _StrictModel:
+def validate_event_payload(event_type: EventType, payload: Mapping[str, Any]) -> _StrictModel:
     """Return the validated Pydantic model instance for `payload` under `event_type`.
 
     Raises:

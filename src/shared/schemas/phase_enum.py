@@ -21,7 +21,7 @@ Keep in lockstep with `src/shared/types/phase_enum.ts`.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Final, FrozenSet
+from typing import Final
 
 
 class PhaseId(str, Enum):
@@ -60,12 +60,10 @@ CANONICAL_PHASES: Final[tuple[PhaseId, ...]] = (
 SUB_STATES: Final[tuple[PhaseId, ...]] = (PhaseId.PHASE_7A,)
 
 
-PHASE_DETAIL_ALLOWED_PHASES: Final[FrozenSet[PhaseId]] = frozenset(
-    CANONICAL_PHASES + SUB_STATES
-)
+PHASE_DETAIL_ALLOWED_PHASES: Final[frozenset[PhaseId]] = frozenset(CANONICAL_PHASES + SUB_STATES)
 
 
-PHASES_TABLE_PHASE_ID_ALLOWED_VALUES: Final[FrozenSet[str]] = frozenset(
+PHASES_TABLE_PHASE_ID_ALLOWED_VALUES: Final[frozenset[str]] = frozenset(
     m.value for m in (*CANONICAL_PHASES, *SUB_STATES)
 )
 

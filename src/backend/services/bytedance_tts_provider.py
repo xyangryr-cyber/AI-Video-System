@@ -24,7 +24,7 @@ import urllib.error
 import urllib.request
 import uuid
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from src.backend.services.tts_provider import TTSProvider, _load_platform_audio_config
 
@@ -51,18 +51,16 @@ class ByteDanceTTSProvider(TTSProvider):
         self,
         *,
         text: str,
-        voice_params: Dict[str, Any],
+        voice_params: dict[str, Any],
         ssml_tags: str | None = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         # Reuse the abstract parent's capability_gap logging for unsupported keys.
         super().synthesize(text=text, voice_params=voice_params, ssml_tags=ssml_tags)
 
         app_id = os.environ.get("BYTEDANCE_TTS_APP_ID")
         access_token = os.environ.get("BYTEDANCE_TTS_ACCESS_TOKEN")
         if not app_id or not access_token:
-            _logger.warning(
-                "bytedance_tts.missing_env: degrading to stub fallback"
-            )
+            _logger.warning("bytedance_tts.missing_env: degrading to stub fallback")
             return self._fallback(text, reason="missing_env")
 
         body = self._build_body(
@@ -121,7 +119,7 @@ class ByteDanceTTSProvider(TTSProvider):
         app_id: str,
         access_token: str,
         text: str,
-        voice_params: Dict[str, Any],
+        voice_params: dict[str, Any],
         ssml_tags: str | None,
     ) -> bytes:
         voice_type = voice_params.get("voice_id") or _DEFAULT_VOICE_TYPE
@@ -132,7 +130,7 @@ class ByteDanceTTSProvider(TTSProvider):
         speed_ratio = round(rate_wpm / 160.0, 3)
         volume_ratio = float(voice_params.get("volume", 1.0))
         pitch_ratio = float(voice_params.get("pitch", 1.0))
-        body: Dict[str, Any] = {
+        body: dict[str, Any] = {
             "app": {
                 "appid": app_id,
                 "token": access_token,
@@ -179,7 +177,7 @@ class ByteDanceTTSProvider(TTSProvider):
     def _estimate_duration(self, text: str) -> float:
         return max(1.0, len(text) / 3.0)
 
-    def _fallback(self, text: str, *, reason: str) -> Dict[str, Any]:
+    def _fallback(self, text: str, *, reason: str) -> dict[str, Any]:
         return {
             "audio_path": f"phase_4/seg_audio_{hash(text) & 0xFFFF:04x}.mp3",
             "duration_seconds": round(self._estimate_duration(text), 2),

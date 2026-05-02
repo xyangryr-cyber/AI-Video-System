@@ -17,14 +17,14 @@ and ``phase == "P8"`` invariants at validation time.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Any, Callable, List, Literal
+from collections.abc import Callable
+from datetime import UTC, datetime
+from typing import Any, Literal
 
 from src.shared.schemas.ws_events import (
     PHASE_SHOT_BLOCKED_TYPE,
     PhaseShotBlockedEvent,
 )
-
 
 Sink = Callable[[str, str, dict[str, Any]], None]
 """``(project_id, event_type, payload_dict) -> None`` — side-effect sink.
@@ -35,7 +35,7 @@ WebSocket broker; tests inject a capture list.
 
 
 def _iso_now() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
 
 class ShotBlockedPublisher:
@@ -50,7 +50,7 @@ class ShotBlockedPublisher:
         project_id: str,
         shot_id: str,
         error_code: Literal["material_missing", "material_unverified"],
-        blocking_material_ids: List[str],
+        blocking_material_ids: list[str],
     ) -> PhaseShotBlockedEvent:
         event = PhaseShotBlockedEvent(
             type=PHASE_SHOT_BLOCKED_TYPE,

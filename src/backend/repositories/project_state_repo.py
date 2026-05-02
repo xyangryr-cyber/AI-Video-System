@@ -20,7 +20,8 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 
 class ProjectStateRepository:
@@ -49,9 +50,7 @@ class ProjectStateRepository:
             (payload, project_id),
         )
         if cur.rowcount == 0:
-            raise KeyError(
-                f"project {project_id!r} not found; cannot set master_audio_ref"
-            )
+            raise KeyError(f"project {project_id!r} not found; cannot set master_audio_ref")
 
     def get_master_audio_ref(self, project_id: str) -> dict[str, Any] | None:
         """Return the current compact pointer, or None."""

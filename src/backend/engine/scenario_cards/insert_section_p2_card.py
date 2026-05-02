@@ -12,7 +12,7 @@ Handles insert_section at P2 (draft script phase):
 from __future__ import annotations
 
 import hashlib
-from typing import Any, Dict, List
+from typing import Any
 
 
 class InsertSectionP2Card:
@@ -23,19 +23,17 @@ class InsertSectionP2Card:
     def handle_insert(
         self,
         *,
-        old_segments: List[Dict[str, Any]],
+        old_segments: list[dict[str, Any]],
         after_segment_id: str,
         content_intent: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Handle insert_section at P2: create new segment, run DiffAuditor, return gate result."""
 
         # Generate a new segment_id deterministically
-        seg_hash = hashlib.sha256(
-            f"{after_segment_id}:{content_intent}".encode("utf-8")
-        ).hexdigest()[:10]
+        seg_hash = hashlib.sha256(f"{after_segment_id}:{content_intent}".encode()).hexdigest()[:10]
         new_segment_id = f"seg_new_{seg_hash}"
 
-        new_segment: Dict[str, Any] = {
+        new_segment: dict[str, Any] = {
             "segment_id": new_segment_id,
             "text": f"[INSERTED] {content_intent}",
             "section_title": "",
@@ -75,10 +73,10 @@ class InsertSectionP2Card:
     def _run_diff_audit(
         self,
         *,
-        old_segments: List[Dict[str, Any]],
-        new_segments: List[Dict[str, Any]],
-        allowed_modify_segments: List[str],
-    ) -> Dict[str, Any]:
+        old_segments: list[dict[str, Any]],
+        new_segments: list[dict[str, Any]],
+        allowed_modify_segments: list[str],
+    ) -> dict[str, Any]:
         """Run DiffAuditor logic inline: count changes outside allowed scope.
 
         unrelated_change_ratio = (changed/deleted segments outside allowed) / total_old_segments
@@ -97,9 +95,7 @@ class InsertSectionP2Card:
             if seg_id in allowed:
                 continue
             new_seg = new_map.get(seg_id)
-            if new_seg is None:
-                unrelated_count += 1
-            elif old_seg.get("text", "") != new_seg.get("text", ""):
+            if new_seg is None or old_seg.get("text", "") != new_seg.get("text", ""):
                 unrelated_count += 1
 
         ratio = unrelated_count / total

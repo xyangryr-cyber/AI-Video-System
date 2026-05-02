@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import logging
 import subprocess
-from typing import Any, Dict, List
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -45,10 +45,14 @@ class BrandKitOverlay:
             result = subprocess.run(
                 [
                     "ffprobe",
-                    "-v", "error",
-                    "-select_streams", "v:0",
-                    "-show_entries", "stream=width,height",
-                    "-of", "csv=p=0",
+                    "-v",
+                    "error",
+                    "-select_streams",
+                    "v:0",
+                    "-show_entries",
+                    "stream=width,height",
+                    "-of",
+                    "csv=p=0",
                     video_path,
                 ],
                 capture_output=True,
@@ -74,7 +78,9 @@ class BrandKitOverlay:
         return None
 
     @staticmethod
-    def _resolve_watermark_position(brand_kit: Dict[str, Any], width: int, height: int) -> tuple[str, str]:
+    def _resolve_watermark_position(
+        brand_kit: dict[str, Any], width: int, height: int
+    ) -> tuple[str, str]:
         """Return (x_expr, y_expr) FFmpeg drawtext coordinate expressions."""
         position = brand_kit.get(_KEY_WATERMARK_POSITION, "bottom-right")
         margin = brand_kit.get("watermark_margin", _DEFAULT_MARGIN)
@@ -91,17 +97,17 @@ class BrandKitOverlay:
     @staticmethod
     def _build_filter_complex(
         video_path: str,
-        brand_kit: Dict[str, Any],
+        brand_kit: dict[str, Any],
         width: int,
         height: int,
         output_path: str,
-    ) -> tuple[List[str], List[str]]:
+    ) -> tuple[list[str], list[str]]:
         """Build ffmpeg command args and applied overlay names.
 
         Returns (ffmpeg_args, applied_overlays).
         """
-        filters: List[str] = []
-        applied: List[str] = []
+        filters: list[str] = []
+        applied: list[str] = []
 
         intro_dur = brand_kit.get(_KEY_INTRO_DURATION, 0.0)
         outro_dur = brand_kit.get(_KEY_OUTRO_DURATION, 0.0)
@@ -158,7 +164,7 @@ class BrandKitOverlay:
     # ------------------------------------------------------------------
 
     @staticmethod
-    def apply(*, video_path: str, brand_kit: Dict[str, Any]) -> Dict[str, Any]:
+    def apply(*, video_path: str, brand_kit: dict[str, Any]) -> dict[str, Any]:
         output_path = video_path.replace(".mp4", "_branded.mp4")
 
         # Probe dimensions
@@ -183,7 +189,8 @@ class BrandKitOverlay:
         cmd = [
             "ffmpeg",
             "-y",
-            "-i", video_path,
+            "-i",
+            video_path,
             *ffmpeg_args,
             output_path,
         ]

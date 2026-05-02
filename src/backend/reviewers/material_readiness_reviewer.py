@@ -24,7 +24,6 @@ from src.backend.services.material_readiness_check import (
 from src.shared.schemas.material_manifest import MaterialManifest
 from src.shared.schemas.shot_material_bindings import ShotMaterialBindings
 
-
 Verdict = Literal["PASS", "FAIL"]
 
 
@@ -73,11 +72,7 @@ class MaterialReadinessReviewer:
                     check_name="material_readiness",
                     verdict=verdict,
                     reason=reason,
-                    metrics={
-                        "blocked_shots": [
-                            bs.model_dump() for bs in result.blocked_shots
-                        ]
-                    },
+                    metrics={"blocked_shots": [bs.model_dump() for bs in result.blocked_shots]},
                 )
             ],
         )

@@ -55,7 +55,7 @@ def build_huey(db_dir: Path | None = None, immediate: bool = False) -> Any:
     When *immediate* is ``True`` the returned huey instance executes
     tasks synchronously in-process (used by BDD :memory: fixtures).
     """
-    from huey import SqliteHuey  # type: ignore[import-untyped]
+    from huey import SqliteHuey
 
     directory = Path(db_dir) if db_dir is not None else DEFAULT_DB_DIR
     directory.mkdir(parents=True, exist_ok=True)

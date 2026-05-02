@@ -115,9 +115,7 @@ def compute_sfx_timeline(segments: list[dict[str, Any]]) -> list[dict[str, Any]]
     return events
 
 
-def compute_roughcut_params(
-    segments: list[dict[str, Any]], *, fps: int = 30
-) -> dict[str, Any]:
+def compute_roughcut_params(segments: list[dict[str, Any]], *, fps: int = 30) -> dict[str, Any]:
     """Compute RoughCut parameters including clip boundaries.
 
     Returns dict with 'clips' (one per segment with frame in/out),

@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 
 class BGMProvider:
     @staticmethod
-    def fetch(*, emotion: str, energy: int) -> Dict[str, Any]:
+    def fetch(*, emotion: str, energy: int) -> dict[str, Any]:
         return {"track_id": f"local_{emotion}_01", "source": "local_library"}

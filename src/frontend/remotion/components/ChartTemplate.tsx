@@ -5,10 +5,7 @@
 import type { FC } from "react";
 import type { ChartStyleOverrides } from "@shared/types/chart_request";
 import type { TemplateProps } from "@shared/types/template_props";
-import {
-  mergeChartStyle,
-  type MergedChartStyle,
-} from "../utils/chart_style_merger";
+import { mergeChartStyle, type MergedChartStyle } from "../utils/chart_style_merger";
 
 export interface ChartTemplateProps extends TemplateProps {
   /** Optional ChartStyleOverrides for runtime style customization.
@@ -38,44 +35,46 @@ const ChartTemplate: FC<ChartTemplateProps> = (props) => {
   const showLabel = merged.show_source_label && source_verified === true;
 
   return (
-    <div
-      className="chart-template"
-      style={{ backgroundColor: merged.background_color }}
-    >
-      <svg
-        width="100%"
-        height="100%"
-        viewBox="0 0 800 400"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <rect
-          x="0"
-          y="0"
-          width="800"
-          height="400"
-          fill={merged.background_color}
-        />
+    <div className="chart-template" style={{ backgroundColor: merged.background_color }}>
+      <svg width="100%" height="100%" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="800" height="400" fill={merged.background_color} />
         {merged.grid_visible && (
           <>
             <line
-              x1="50" y1="50" x2="750" y2="50"
+              x1="50"
+              y1="50"
+              x2="750"
+              y2="50"
               stroke={theme.chart_style.grid_color}
-              strokeWidth="0.5" strokeDasharray="4 4"
+              strokeWidth="0.5"
+              strokeDasharray="4 4"
             />
             <line
-              x1="50" y1="150" x2="750" y2="150"
+              x1="50"
+              y1="150"
+              x2="750"
+              y2="150"
               stroke={theme.chart_style.grid_color}
-              strokeWidth="0.5" strokeDasharray="4 4"
+              strokeWidth="0.5"
+              strokeDasharray="4 4"
             />
             <line
-              x1="50" y1="250" x2="750" y2="250"
+              x1="50"
+              y1="250"
+              x2="750"
+              y2="250"
               stroke={theme.chart_style.grid_color}
-              strokeWidth="0.5" strokeDasharray="4 4"
+              strokeWidth="0.5"
+              strokeDasharray="4 4"
             />
             <line
-              x1="50" y1="350" x2="750" y2="350"
+              x1="50"
+              y1="350"
+              x2="750"
+              y2="350"
               stroke={theme.chart_style.grid_color}
-              strokeWidth="0.5" strokeDasharray="4 4"
+              strokeWidth="0.5"
+              strokeDasharray="4 4"
             />
           </>
         )}
@@ -89,7 +88,8 @@ const ChartTemplate: FC<ChartTemplateProps> = (props) => {
         />
         {showLabel && (
           <text
-            x="750" y="390"
+            x="750"
+            y="390"
             textAnchor="end"
             fontSize="10"
             fill={theme.chart_style.axis_color}
@@ -99,12 +99,20 @@ const ChartTemplate: FC<ChartTemplateProps> = (props) => {
           </text>
         )}
         <line
-          x1="50" y1="50" x2="50" y2="360"
-          stroke={theme.chart_style.axis_color} strokeWidth="1"
+          x1="50"
+          y1="50"
+          x2="50"
+          y2="360"
+          stroke={theme.chart_style.axis_color}
+          strokeWidth="1"
         />
         <line
-          x1="50" y1="360" x2="750" y2="360"
-          stroke={theme.chart_style.axis_color} strokeWidth="1"
+          x1="50"
+          y1="360"
+          x2="750"
+          y2="360"
+          stroke={theme.chart_style.axis_color}
+          strokeWidth="1"
         />
       </svg>
     </div>

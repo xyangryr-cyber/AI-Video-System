@@ -8,13 +8,13 @@ Placed outside reviewers/ package to avoid circular import.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any
 
 
 class BaseReviewer(ABC):
     """Abstract reviewer: every reviewer must implement review()."""
 
     @abstractmethod
-    def review(self, artifact: Any) -> Dict[str, Any]:
+    def review(self, artifact: Any) -> dict[str, Any]:
         """Return standard verdict: {verdict, notes[], blocking_issues[]}."""
         ...

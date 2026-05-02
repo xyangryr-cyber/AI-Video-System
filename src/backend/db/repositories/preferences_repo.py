@@ -20,7 +20,7 @@ Writers land here. The public surface is:
 from __future__ import annotations
 
 import sqlite3
-from typing import Optional, cast
+from typing import cast
 
 from src.backend.db.repositories.base import BaseRepository
 
@@ -50,11 +50,11 @@ class PreferencesRepository(BaseRepository):
         self,
         project_id: str,
         *,
-        global_rules_md: Optional[str] = None,
-        user_preferences_md: Optional[str] = None,
-        project_preferences_md: Optional[str] = None,
-        brand_kit_json: Optional[str] = None,
-        last_candidates_json: Optional[str] = None,
+        global_rules_md: str | None = None,
+        user_preferences_md: str | None = None,
+        project_preferences_md: str | None = None,
+        brand_kit_json: str | None = None,
+        last_candidates_json: str | None = None,
     ) -> None:
         """Partial update -- only the fields explicitly supplied are
         overwritten. Bumps ``updated_at`` to now."""
@@ -108,9 +108,7 @@ class PreferencesRepository(BaseRepository):
         """Write the project-level preferences markdown blob."""
         self.update(project_id, project_preferences_md=prefs_md)
 
-    def create_snapshot(
-        self, project_id: str, version: int, snapshot_json: str
-    ) -> None:
+    def create_snapshot(self, project_id: str, version: int, snapshot_json: str) -> None:
         """Insert a single versioned snapshot row."""
         self.execute(
             "INSERT INTO preference_snapshots "

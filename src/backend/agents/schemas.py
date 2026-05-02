@@ -5,12 +5,13 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.0.1..9.3
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+import json
+from typing import Any
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 
-def _coerce_str_list(v: object) -> List[str]:
+def _coerce_str_list(v: object) -> list[str]:
     """Coerce a single string or list of strings into a list of strings."""
     if v is None:
         return []
@@ -21,7 +22,7 @@ def _coerce_str_list(v: object) -> List[str]:
     return [str(v)]
 
 
-def _coerce_list(v: object) -> List[Any]:
+def _coerce_list(v: object) -> list[Any]:
     """Coerce a single item, dict values, or list into a list."""
     if v is None:
         return []
@@ -49,42 +50,57 @@ class SubtitlePreferences(BaseModel):
 
 class RequirementsLLMOutput(BaseModel):
     clarified_topic: str = Field(
-        ..., description="Structured topic description, not a verbatim copy of input"
+        default="", description="Structured topic description, not a verbatim copy of input"
     )
+
+    @field_validator("clarified_topic", mode="before")
+    @classmethod
+    def _coerce_clarified_topic(cls, v: object) -> str:
+        if isinstance(v, str):
+            return v
+        if isinstance(v, dict):
+            # LLM sometimes returns a structured dict; flatten to string
+            domain = v.get("domain", "")
+            topic = v.get("topic", "")
+            angle = v.get("angle", "")
+            parts = [p for p in (domain, topic, angle) if p]
+            return " / ".join(parts) if parts else json.dumps(v, ensure_ascii=False)
+        return str(v) if v else ""
+
     voice_preferences: VoicePreferences = Field(default_factory=VoicePreferences)
-    subtitle_preferences: SubtitlePreferences = Field(
-        default_factory=SubtitlePreferences
-    )
+    subtitle_preferences: SubtitlePreferences = Field(default_factory=SubtitlePreferences)
 
 
 # -- OutlineAgent (P1) ---------------------------------------------------
 
 
 class NarrativeBeat(BaseModel):
-    type: str = Field(default="analysis", description="Beat type: hook/context/argument/climax/conclusion")
+    type: str = Field(
+        default="analysis", description="Beat type: hook/context/argument/climax/conclusion"
+    )
     title: str = Field(default="未命名段落", description="Beat title")
     viewpoint: str = Field(default="待分析", description="Core viewpoint of this beat")
     start_seconds: int = Field(default=0, description="Start time offset in seconds")
     end_seconds: int = Field(default=60, description="End time offset in seconds")
     transition_to_next: str = ""
-    supporting_data: List[str] = Field(default_factory=list)
-    key_points: List[str] = Field(default_factory=list)
+    supporting_data: list[str] = Field(default_factory=list)
+    key_points: list[str] = Field(default_factory=list)
 
     @field_validator("supporting_data", "key_points", mode="before")
     @classmethod
-    def _coerce_str_to_list(cls, v: object) -> List[str]:
+    def _coerce_str_to_list(cls, v: object) -> list[str]:
         return _coerce_str_list(v)
 
 
 class OutlineVersion(BaseModel):
     version_id: str
     viewpoint: str
-    narrative_beats: List[NarrativeBeat]
-    estimated_word_count: Dict[str, int] = Field(default_factory=dict)
+    narrative_beats: list[NarrativeBeat]
+    estimated_word_count: dict[str, int] = Field(default_factory=dict)
 
 
 class OutlineLLMOutput(BaseModel):
-    versions: List[OutlineVersion]
+    versions: list[OutlineVersion]
 
     @model_validator(mode="before")
     @classmethod
@@ -152,7 +168,9 @@ def _coerce_narrative_beats(version: dict) -> None:
 
 
 class DataPoint(BaseModel):
-    data_point_id: str = Field(default="dp_auto", description="Unique identifier for this data point")
+    data_point_id: str = Field(
+        default="dp_auto", description="Unique identifier for this data point"
+    )
     value: str = Field(default="待补充", description="Data value or statement")
     source: str = "llm_generated"
     trust_level: str = "llm_generated"
@@ -164,13 +182,13 @@ class ScriptSegment(BaseModel):
     outline_section_ref: str = Field(default="auto", description="Reference to outline section")
     content: str = Field(default="待生成", description="Narration script content")
     word_count: int = Field(default=0, description="Word count for this segment")
-    key_data_points: List[DataPoint] = Field(default_factory=list)
+    key_data_points: list[DataPoint] = Field(default_factory=list)
     emotion_tone: str = "neutral"
     transition_note: str = ""
 
 
 class ScriptLLMOutput(BaseModel):
-    segments: List[ScriptSegment]
+    segments: list[ScriptSegment]
 
 
 # -- PolishAgent (P3) ----------------------------------------------------
@@ -180,7 +198,7 @@ class VoiceDirection(BaseModel):
     emotion: str
     pace: str
     energy: str
-    key_emphasis: List[str] = Field(default_factory=list)
+    key_emphasis: list[str] = Field(default_factory=list)
     pause_after: float = 0.3
     notes: str = ""
 
@@ -191,14 +209,16 @@ class PolishedSegment(BaseModel):
     outline_section_ref: str = Field(default="auto", description="Reference to outline section")
     content: str = Field(default="待生成", description="Polished narration content")
     word_count: int = Field(default=0, description="Word count for this segment")
-    key_data_points: List[Dict[str, Any]] = Field(default_factory=list)
+    key_data_points: list[dict[str, Any]] = Field(default_factory=list)
     emotion_tone: str = "neutral"
     transition_note: str = ""
-    voice_direction: VoiceDirection = Field(default_factory=VoiceDirection)
+    voice_direction: VoiceDirection = Field(
+        default_factory=lambda: VoiceDirection(emotion="neutral", pace="medium", energy="medium")
+    )
 
 
 class PolishLLMOutput(BaseModel):
-    segments: List[PolishedSegment]
+    segments: list[PolishedSegment]
     is_authoritative_text_source: bool = True
 
 

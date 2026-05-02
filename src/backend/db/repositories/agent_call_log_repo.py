@@ -65,8 +65,7 @@ class AgentCallLogRepository(BaseRepository):
 
     def project_total_tokens(self, project_id: str) -> int:
         row = self.execute(
-            "SELECT COALESCE(SUM(tokens), 0) AS n FROM agent_call_log "
-            "WHERE project_id = ?",
+            "SELECT COALESCE(SUM(tokens), 0) AS n FROM agent_call_log WHERE project_id = ?",
             (project_id,),
         ).fetchone()
         return int(row["n"]) if row else 0

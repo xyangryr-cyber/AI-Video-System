@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 
 class PhaseScenarios:
     """Look up scenario cards for each pipeline phase."""
 
-    _CARDS: Dict[int, Dict[str, Any]] = {
+    _CARDS: dict[int, dict[str, Any]] = {
         0: {"retry_limit": 5, "on_failure": "prompt_user"},
         1: {"retry_limit": 5, "on_failure": "return_to_p0"},
         2: {"retry_limit": 5, "on_failure": "retry_or_return"},
@@ -24,5 +24,5 @@ class PhaseScenarios:
     }
 
     @classmethod
-    def get_scenario(cls, *, phase: int) -> Dict[str, Any]:
+    def get_scenario(cls, *, phase: int) -> dict[str, Any]:
         return dict(cls._CARDS.get(phase, {"retry_limit": 3, "on_failure": "retry"}))

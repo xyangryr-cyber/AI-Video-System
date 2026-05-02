@@ -16,8 +16,6 @@ Mirrored in TypeScript by
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
@@ -31,9 +29,9 @@ class DownstreamBindings(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    p8_template_shot_id: Optional[str] = None
-    p9_broll_shot_id: Optional[str] = None
-    p10_track_ref: Optional[str] = None
+    p8_template_shot_id: str | None = None
+    p9_broll_shot_id: str | None = None
+    p10_track_ref: str | None = None
 
 
 class StoryboardShotAnchor(BaseModel):
@@ -44,11 +42,11 @@ class StoryboardShotAnchor(BaseModel):
     script_span_id: str = Field(min_length=1)
     start_char: int = Field(ge=0)
     end_char: int = Field(ge=0)
-    split_from_shot_id: Optional[str] = None
+    split_from_shot_id: str | None = None
     downstream_bindings: DownstreamBindings = Field(default_factory=DownstreamBindings)
 
     @model_validator(mode="after")
-    def _end_not_before_start(self) -> "StoryboardShotAnchor":
+    def _end_not_before_start(self) -> StoryboardShotAnchor:
         if self.end_char < self.start_char:
             raise ValueError(
                 f"end_char ({self.end_char}) must be >= start_char "

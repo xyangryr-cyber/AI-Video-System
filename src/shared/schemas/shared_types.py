@@ -12,19 +12,19 @@ it. Storage field is `phases.style_lock_path`.
 
 from __future__ import annotations
 
-from typing import Annotated, Any, Dict, List, Literal, Optional, Tuple, Union
+from typing import Annotated, Any, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
 TrustLevel = Literal["user_verified", "source_verified", "llm_generated"]
-TRUST_LEVEL_VALUES: Tuple[TrustLevel, ...] = (
+TRUST_LEVEL_VALUES: tuple[TrustLevel, ...] = (
     "user_verified",
     "source_verified",
     "llm_generated",
 )
 
 HighlightType = Optional[Literal["key_data", "percentage", "number", "proper_noun"]]
-HIGHLIGHT_TYPE_VALUES: Tuple[Optional[str], ...] = (
+HIGHLIGHT_TYPE_VALUES: tuple[str | None, ...] = (
     "key_data",
     "percentage",
     "number",
@@ -33,7 +33,7 @@ HIGHLIGHT_TYPE_VALUES: Tuple[Optional[str], ...] = (
 )
 
 DiscreteAction = Literal["highlight", "zoom_in", "zoom_out", "annotate", "dim", "reset"]
-DISCRETE_ACTION_VALUES: Tuple[DiscreteAction, ...] = (
+DISCRETE_ACTION_VALUES: tuple[DiscreteAction, ...] = (
     "highlight",
     "zoom_in",
     "zoom_out",
@@ -43,7 +43,7 @@ DISCRETE_ACTION_VALUES: Tuple[DiscreteAction, ...] = (
 )
 
 ContinuousEasing = Literal["linear", "ease_in", "ease_out", "ease_in_out"]
-CONTINUOUS_EASING_VALUES: Tuple[ContinuousEasing, ...] = (
+CONTINUOUS_EASING_VALUES: tuple[ContinuousEasing, ...] = (
     "linear",
     "ease_in",
     "ease_out",
@@ -58,13 +58,13 @@ class _Strict(BaseModel):
 class KeyDataPoint(_Strict):
     data_point_id: str = Field(pattern=r"^dp_[A-Za-z0-9_-]+$")
     label: str = Field(min_length=1)
-    value: Union[str, float, int]
+    value: str | float | int
     unit: str
     source: str = Field(min_length=1)
     trust_level: TrustLevel
     segment_id: str = Field(min_length=1)
-    usage: Optional[str] = None
-    link: Optional[str] = None
+    usage: str | None = None
+    link: str | None = None
 
 
 class VoiceParams(_Strict):
@@ -80,7 +80,7 @@ class SegmentVoiceOverrides(_Strict):
     rate_multiplier: float = Field(ge=0.8, le=1.2)
     emotion: str = Field(min_length=1)
     style_degree: float = Field(ge=0.01, le=2.0)
-    emphasis_words: List[str]
+    emphasis_words: list[str]
     volume: float
 
 
@@ -94,7 +94,7 @@ class SubtitleWord(_Strict):
 class ProgressMapping(_Strict):
     progress: float = Field(ge=0.0, le=1.0)
     data_index: int = Field(ge=0)
-    label: Optional[str] = None
+    label: str | None = None
 
 
 class PauseTrigger(_Strict):
@@ -102,7 +102,7 @@ class PauseTrigger(_Strict):
     duration_sec: float = Field(ge=0)
     narration_keyword: str = Field(min_length=1)
     action: str = Field(min_length=1)
-    target_data_range: Optional[Tuple[int, int]] = None
+    target_data_range: tuple[int, int] | None = None
 
 
 class DiscreteKeyframe(_Strict):
@@ -110,7 +110,7 @@ class DiscreteKeyframe(_Strict):
     time_offset_sec: float = Field(ge=0)
     action: DiscreteAction
     target: str = Field(min_length=1)
-    annotation: Optional[str] = None
+    annotation: str | None = None
 
 
 class ContinuousKeyframe(_Strict):
@@ -118,12 +118,12 @@ class ContinuousKeyframe(_Strict):
     start_sec: float = Field(ge=0)
     end_sec: float = Field(ge=0)
     easing: ContinuousEasing
-    progress_mapping: List[ProgressMapping] = Field(min_length=1)
-    pause_triggers: Optional[List[PauseTrigger]] = None
+    progress_mapping: list[ProgressMapping] = Field(min_length=1)
+    pause_triggers: list[PauseTrigger] | None = None
 
 
 AnnotationKeyframe = Annotated[
-    Union[DiscreteKeyframe, ContinuousKeyframe],
+    DiscreteKeyframe | ContinuousKeyframe,
     Field(discriminator="type"),
 ]
 
@@ -132,20 +132,20 @@ class ThemeChartStyle(_Strict):
     axis_color: str = Field(min_length=1)
     grid_color: str = Field(min_length=1)
     label_font_size: int = Field(ge=1)
-    tooltip_style: Dict[str, Any]
+    tooltip_style: dict[str, Any]
 
 
 class ThemeConfig(_Strict):
-    color_palette: List[str] = Field(min_length=1)
+    color_palette: list[str] = Field(min_length=1)
     background_color: str = Field(min_length=1)
     font_family: str = Field(min_length=1)
     chart_style: ThemeChartStyle
-    subtitle_style: Dict[str, Any]
+    subtitle_style: dict[str, Any]
 
 
 # SPEC-0A.6: style_lock state ownership. Programmatic reference for anyone
 # implementing read/write paths around phases.style_lock_path.
-STYLE_LOCK_OWNERSHIP: Dict[str, Any] = {
+STYLE_LOCK_OWNERSHIP: dict[str, Any] = {
     "storage_field": "phases.style_lock_path",
     "file_path_template": "data/projects/{project_id}/phase_7/style_lock.json",
     "write_agent": "StoryboardAgent",

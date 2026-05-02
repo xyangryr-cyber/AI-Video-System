@@ -28,11 +28,7 @@ export interface TimelineAnnotationProps {
  * Press M to open annotation input, type text, press Enter to confirm.
  * Creates a task_ledger entry with task_type=user_annotation.
  */
-const TimelineAnnotation: FC<TimelineAnnotationProps> = ({
-  currentFrame,
-  fps,
-  onAnnotation,
-}) => {
+const TimelineAnnotation: FC<TimelineAnnotationProps> = ({ currentFrame, fps, onAnnotation }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [text, setText] = useState("");
 
@@ -69,7 +65,7 @@ const TimelineAnnotation: FC<TimelineAnnotationProps> = ({
         setText("");
       }
     },
-    [isOpen, currentFrame, timeSec, text, onAnnotation]
+    [isOpen, currentFrame, timeSec, text, onAnnotation],
   );
 
   if (!isOpen) {

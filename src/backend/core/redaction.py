@@ -44,6 +44,5 @@ def truncate_large_payload(text: str) -> str:
     head = text[:TRUNCATION_HEAD_BYTES]
     tail = text[-TRUNCATION_TAIL_BYTES:]
     return (
-        f"{head}\n... [TRUNCATED: {len(text.encode('utf-8'))} bytes] ...\n{tail}\n"
-        f"[MD5: {md5_hash}]"
+        f"{head}\n... [TRUNCATED: {len(text.encode('utf-8'))} bytes] ...\n{tail}\n[MD5: {md5_hash}]"
     )

@@ -1,5 +1,5 @@
-import type { ScriptSegment } from '@frontend/types/preview';
-import { CheckCircle2, List } from 'lucide-react';
+import type { ScriptSegment } from "@frontend/types/preview";
+import { CheckCircle2, List } from "lucide-react";
 
 interface P2SegmentViewProps {
   segments?: ScriptSegment[];
@@ -22,18 +22,12 @@ function estimateDuration(wordCount: number): number {
 
 function deriveTitle(segment: ScriptSegment, index: number): string {
   // Use first ~15 chars of content as title if no explicit title
-  const firstLine = segment.content.split(/[\n\r]+/)[0] || '';
-  if (firstLine.length > 15) return firstLine.slice(0, 15) + '...';
+  const firstLine = segment.content.split(/[\n\r]+/)[0] || "";
+  if (firstLine.length > 15) return firstLine.slice(0, 15) + "...";
   return firstLine || `段落 ${index + 1}`;
 }
 
-function SegmentCard({
-  segment,
-  index,
-}: {
-  segment: ScriptSegment;
-  index: number;
-}) {
+function SegmentCard({ segment, index }: { segment: ScriptSegment; index: number }) {
   const wordCount = countChineseChars(segment.content);
   const duration = estimateDuration(wordCount);
   const title = deriveTitle(segment, index);
@@ -57,15 +51,12 @@ function SegmentCard({
         </span>
       </div>
       <div className="p-4">
-        <p className="text-slate-700 leading-relaxed text-[15px]">
-          {segment.content}
-        </p>
+        <p className="text-slate-700 leading-relaxed text-[15px]">{segment.content}</p>
 
         {hasDataPoints && (
           <div className="mt-4 pt-4 border-t border-blue-100/50">
             <h4 className="text-[11px] font-bold text-slate-500 mb-2 flex items-center uppercase tracking-wider">
-              <CheckCircle2 className="w-4 h-4 text-green-500 mr-1.5" />{' '}
-              关键数据点核查
+              <CheckCircle2 className="w-4 h-4 text-green-500 mr-1.5" /> 关键数据点核查
             </h4>
             {segment.key_data_points.map((kdp, i) => (
               <div
@@ -73,9 +64,7 @@ function SegmentCard({
                 className="bg-white rounded-lg border border-slate-200 p-2.5 text-xs flex justify-between items-center shadow-sm mb-1.5"
               >
                 <div>
-                  <span className="font-bold text-slate-700">
-                    &ldquo;{kdp.label}&rdquo;
-                  </span>
+                  <span className="font-bold text-slate-700">&ldquo;{kdp.label}&rdquo;</span>
                   <span className="text-slate-400 ml-2">{kdp.source}</span>
                 </div>
                 <span className="text-green-700 bg-green-100 border border-green-200 px-2 py-0.5 rounded-md font-bold text-[10px] tracking-wider uppercase">

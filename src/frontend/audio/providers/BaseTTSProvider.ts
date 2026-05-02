@@ -26,7 +26,7 @@ export abstract class BaseTTSProvider implements TTSProvider {
   async synthesize(
     text: string,
     ssmlTags?: string,
-    voiceParams?: VoiceParams
+    voiceParams?: VoiceParams,
   ): Promise<AudioResult> {
     const gaps: CapabilityGap[] = [];
 
@@ -49,7 +49,7 @@ export abstract class BaseTTSProvider implements TTSProvider {
           vendor: this.getVendorName(),
           parameter: gap.parameter,
           reason: gap.reason,
-        })
+        }),
       );
     }
 
@@ -64,7 +64,7 @@ export abstract class BaseTTSProvider implements TTSProvider {
           vendor: this.getVendorName(),
           error: String(err),
           fallback: "returning empty audio result",
-        })
+        }),
       );
       return this.emptyAudioResult();
     }
@@ -74,7 +74,7 @@ export abstract class BaseTTSProvider implements TTSProvider {
   protected abstract synthesizeInternal(
     text: string,
     ssmlTags?: string,
-    voiceParams?: VoiceParams
+    voiceParams?: VoiceParams,
   ): Promise<AudioResult>;
 
   /** Return vendor name for logging. */

@@ -1,5 +1,5 @@
-import type { BrollItem } from '@frontend/types/preview';
-import { CheckCircle2, Clock, ImageIcon, Play, Video } from 'lucide-react';
+import type { BrollItem } from "@frontend/types/preview";
+import { CheckCircle2, Clock, ImageIcon, Play, Video } from "lucide-react";
 
 interface P9BrollGalleryProps {
   brolls?: BrollItem[];
@@ -8,7 +8,10 @@ interface P9BrollGalleryProps {
 export function P9BrollGallery({ brolls }: P9BrollGalleryProps) {
   if (!brolls || brolls.length === 0) {
     return (
-      <div data-testid="preview-p9" className="flex flex-col items-center justify-center h-64 text-slate-400">
+      <div
+        data-testid="preview-p9"
+        className="flex flex-col items-center justify-center h-64 text-slate-400"
+      >
         <Video className="w-8 h-8 mb-2 opacity-50" />
         <p className="text-sm font-medium">暂无关键帧数据</p>
       </div>
@@ -16,7 +19,10 @@ export function P9BrollGallery({ brolls }: P9BrollGalleryProps) {
   }
 
   return (
-    <div data-testid="preview-p9" className="relative border-l-2 border-slate-200 ml-4 pl-8 space-y-6 pb-4 pt-2">
+    <div
+      data-testid="preview-p9"
+      className="relative border-l-2 border-slate-200 ml-4 pl-8 space-y-6 pb-4 pt-2"
+    >
       {brolls.map((item) => {
         const isRendered = !item.is_placeholder;
         return (
@@ -72,7 +78,9 @@ export function P9BrollGallery({ brolls }: P9BrollGalleryProps) {
                 ) : (
                   <div className="flex flex-col items-center justify-center text-slate-400 p-4 text-center">
                     <Video className="w-8 h-8 mb-2 opacity-50" />
-                    <span className="text-[11px] font-bold uppercase tracking-wider">等待 B-Roll 库填充</span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider">
+                      等待 B-Roll 库填充
+                    </span>
                   </div>
                 )}
               </div>

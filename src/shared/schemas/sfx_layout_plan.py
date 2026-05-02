@@ -11,8 +11,6 @@ to produce per-segment sfx_mix_segments.json. Keep in lockstep with
 
 from __future__ import annotations
 
-from typing import List
-
 from pydantic import BaseModel, ConfigDict, Field
 
 _TRIGGER_ID_RE = r"^trg_\d{3,}$"
@@ -34,7 +32,7 @@ class SfxLayoutTrigger(_Strict):
 
     trigger_id: str = Field(pattern=_TRIGGER_ID_RE)
     script_anchor: SfxScriptAnchor
-    keyword_span: List[int] = Field(min_length=2, max_length=2)
+    keyword_span: list[int] = Field(min_length=2, max_length=2)
     planned_time_sec: float = Field(ge=0)
     sfx_type: str = Field(min_length=1)
     rationale: str = Field(min_length=1)
@@ -45,16 +43,14 @@ class SfxLayoutTrigger(_Strict):
     def model_post_init(self, __context: object) -> None:
         for v in self.keyword_span:
             if v < 0:
-                raise ValueError(
-                    f"keyword_span values must be >= 0; got {self.keyword_span}"
-                )
+                raise ValueError(f"keyword_span values must be >= 0; got {self.keyword_span}")
 
 
 class SfxLayoutPlan(_Strict):
     """Global SFX layout plan — consumed to produce sfx_mix_segments.json."""
 
     plan_version: int = Field(ge=1)
-    triggers: List[SfxLayoutTrigger]
+    triggers: list[SfxLayoutTrigger]
 
 
 __all__ = [

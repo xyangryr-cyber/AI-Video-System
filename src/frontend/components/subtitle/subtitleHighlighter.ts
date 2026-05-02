@@ -53,7 +53,7 @@ function isProperNoun(word: string, knownNouns: Set<string>): boolean {
 export function getHighlightType(
   word: string,
   keyDataPointWords: Set<string>,
-  knownProperNouns: Set<string> = new Set()
+  knownProperNouns: Set<string> = new Set(),
 ): HighlightedWord {
   // Check rules in priority order — first match wins
   for (const ruleType of RULES_BY_PRIORITY) {
@@ -93,10 +93,7 @@ export function getHighlightType(
  * Highlight all words in a sentence.
  * Each word gets at most one highlight type (highest priority wins).
  */
-export function highlightWords(
-  words: string[],
-  keyDataPointWords: Set<string>
-): HighlightedWord[] {
+export function highlightWords(words: string[], keyDataPointWords: Set<string>): HighlightedWord[] {
   return words.map((word) => getHighlightType(word, keyDataPointWords));
 }
 
@@ -107,7 +104,7 @@ export function highlightWords(
 export function checkKeyDataPointConsistency(
   word: string,
   highlightType: HighlightRuleType | null,
-  keyDataPointValue: string | number | undefined
+  keyDataPointValue: string | number | undefined,
 ): boolean {
   if (highlightType === "key_data_point" && keyDataPointValue !== undefined) {
     const normalized = String(keyDataPointValue).toLowerCase();

@@ -27,7 +27,8 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from typing import Any, Mapping, Optional
+from collections.abc import Mapping
+from typing import Any
 
 from src.backend.engine.event_bus import EventBus
 from src.backend.engine.state_machine import (
@@ -36,7 +37,6 @@ from src.backend.engine.state_machine import (
 )
 from src.backend.engine.task_types import TaskType, make_task_id
 from src.shared.constants.event_types import EventType
-
 
 # -- SQL constants (split to honour SPEC-B-002 line-level scan) -----------
 
@@ -71,10 +71,9 @@ class WorkflowEngine:
 
     # ---- Reads -------------------------------------------------------
 
-    def get_project(self, project_id: str) -> Optional[dict[str, Any]]:
+    def get_project(self, project_id: str) -> dict[str, Any] | None:
         row = self._conn.execute(
-            "SELECT project_id, title, current_phase, status "
-            "FROM projects WHERE project_id = ?",
+            "SELECT project_id, title, current_phase, status FROM projects WHERE project_id = ?",
             (project_id,),
         ).fetchone()
         if row is None:
@@ -86,7 +85,7 @@ class WorkflowEngine:
             "status": row[3],
         }
 
-    def get_phase(self, project_id: str, phase_num: int) -> Optional[dict[str, Any]]:
+    def get_phase(self, project_id: str, phase_num: int) -> dict[str, Any] | None:
         row = self._conn.execute(
             "SELECT phase_num, phase_name, status, artifact_version, "
             "artifact_path FROM phases "
@@ -103,7 +102,7 @@ class WorkflowEngine:
             "artifact_path": row[4],
         }
 
-    def get_task(self, task_id: str) -> Optional[dict[str, Any]]:
+    def get_task(self, task_id: str) -> dict[str, Any] | None:
         row = self._conn.execute(
             "SELECT id, project_id, phase, type, status, params, "
             "produces_version, target_version "
@@ -130,10 +129,10 @@ class WorkflowEngine:
         project_id: str,
         phase: int,
         task_type: str,
-        task_id: Optional[str] = None,
-        params: Optional[Mapping[str, Any]] = None,
-        produces_version: Optional[int] = None,
-        target_version: Optional[int] = None,
+        task_id: str | None = None,
+        params: Mapping[str, Any] | None = None,
+        produces_version: int | None = None,
+        target_version: int | None = None,
     ) -> str:
         """Insert a new ``task_ledger`` row and emit ``task.created``.
 
@@ -257,8 +256,7 @@ class WorkflowEngine:
             ``"pending"`` otherwise.
         """
         rows = self._conn.execute(
-            "SELECT status FROM task_ledger "
-            "WHERE project_id = ? AND phase = ? AND type = 'review'",
+            "SELECT status FROM task_ledger WHERE project_id = ? AND phase = ? AND type = 'review'",
             (project_id, phase),
         ).fetchall()
         if not rows:
@@ -300,14 +298,12 @@ class WorkflowEngine:
     @staticmethod
     def _validate_version_fields(
         task_type: str,
-        produces_version: Optional[int],
-        target_version: Optional[int],
+        produces_version: int | None,
+        target_version: int | None,
     ) -> None:
         if task_type == TaskType.REVIEW.value:
             if produces_version is not None:
-                raise ValueError(
-                    "review tasks must not carry produces_version (SPEC-3.2 AC-2)"
-                )
+                raise ValueError("review tasks must not carry produces_version (SPEC-3.2 AC-2)")
             if target_version is None:
                 raise ValueError("review tasks require target_version (SPEC-3.5)")
         elif task_type in {
@@ -315,14 +311,10 @@ class WorkflowEngine:
             TaskType.USER_REVISION.value,
         }:
             if target_version is not None:
-                raise ValueError(
-                    f"{task_type} tasks must not carry target_version (SPEC-3.2 AC-2)"
-                )
+                raise ValueError(f"{task_type} tasks must not carry target_version (SPEC-3.2 AC-2)")
         else:
             if produces_version is not None or target_version is not None:
-                raise ValueError(
-                    f"{task_type} tasks must not carry produces/target version fields"
-                )
+                raise ValueError(f"{task_type} tasks must not carry produces/target version fields")
 
     def _seed_next_seq(self) -> int:
         """Seed the next-id counter from the current MAX in task_ledger.

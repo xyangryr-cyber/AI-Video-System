@@ -5,7 +5,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.6.6, v3.17 update
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 
 class GateP6:
@@ -19,17 +19,15 @@ class GateP6:
         skipped: bool,
         sfx_exists: bool,
         reviewer_passed: bool,
-        pending_tasks: List[Any],
+        pending_tasks: list[Any],
         preferences_confirmed: bool,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if skipped:
             failed_pending = bool(pending_tasks)
             failed_prefs = not preferences_confirmed
             return {
                 "passed": not failed_pending and not failed_prefs,
-                "failed_checks": (
-                    [f"{len(pending_tasks)} pending tasks"] if failed_pending else []
-                )
+                "failed_checks": ([f"{len(pending_tasks)} pending tasks"] if failed_pending else [])
                 + (["preferences not confirmed"] if failed_prefs else []),
                 "passed_checks": (["no pending tasks"] if not failed_pending else [])
                 + (["preferences confirmed"] if not failed_prefs else []),
@@ -75,7 +73,7 @@ class GateP6:
         source_ref_valid: bool = False,
         reviewer_passed: bool = False,
         segment_mix_complete: bool = False,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         failed: list[str] = []
         passed: list[str] = []
 

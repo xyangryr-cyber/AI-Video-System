@@ -48,14 +48,16 @@ def get_settings() -> dict[str, Any]:
     conn = _get_db()
     try:
         _ensure_settings_table(conn)
-        row = conn.execute(
-            "SELECT value FROM settings WHERE key = 'brand_kit'"
-        ).fetchone()
-        brand_kit = json.loads(row["value"]) if row else {
-            "primary_color": "#1a1a2e",
-            "accent_color": "#e94560",
-            "font_family": "Inter",
-        }
+        row = conn.execute("SELECT value FROM settings WHERE key = 'brand_kit'").fetchone()
+        brand_kit = (
+            json.loads(row["value"])
+            if row
+            else {
+                "primary_color": "#1a1a2e",
+                "accent_color": "#e94560",
+                "font_family": "Inter",
+            }
+        )
     finally:
         conn.close()
 
@@ -81,9 +83,7 @@ def get_preferences() -> dict[str, Any]:
     conn = _get_db()
     try:
         _ensure_settings_table(conn)
-        row = conn.execute(
-            "SELECT value FROM settings WHERE key = 'preferences'"
-        ).fetchone()
+        row = conn.execute("SELECT value FROM settings WHERE key = 'preferences'").fetchone()
         prefs = json.loads(row["value"]) if row else {}
     finally:
         conn.close()
@@ -92,8 +92,8 @@ def get_preferences() -> dict[str, Any]:
 
 @router.put("/preferences")
 def update_preferences(body: dict[str, Any]) -> dict[str, Any]:
-    import uuid
     import datetime
+    import uuid
 
     conn = _get_db()
     try:
@@ -101,15 +101,15 @@ def update_preferences(body: dict[str, Any]) -> dict[str, Any]:
         now = datetime.datetime.utcnow().isoformat() + "Z"
         snapshot_id = f"snap_{uuid.uuid4().hex[:8]}"
         # Save old value as snapshot
-        old = conn.execute(
-            "SELECT value FROM settings WHERE key = 'preferences'"
-        ).fetchone()
+        old = conn.execute("SELECT value FROM settings WHERE key = 'preferences'").fetchone()
         if old:
             snaps = conn.execute(
                 "SELECT value FROM settings WHERE key = 'preferences_snapshots'"
             ).fetchone()
             snapshots = json.loads(snaps["value"]) if snaps else []
-            snapshots.append({"id": snapshot_id, "data": json.loads(old["value"]), "created_at": now})
+            snapshots.append(
+                {"id": snapshot_id, "data": json.loads(old["value"]), "created_at": now}
+            )
             conn.execute(
                 "INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES (?, ?, ?)",
                 ["preferences_snapshots", json.dumps(snapshots), now],

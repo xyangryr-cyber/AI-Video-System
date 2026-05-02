@@ -7,3 +7,5 @@ speech_intelligibility). Does NOT replace `src/backend/agents/reviewers/`
 SPEC-C-010. This module lives at the import path mandated by SPEC-C-018
 task card `allowed_files`.
 """
+
+from src.backend.agents.completeness_reviewer import CompletenessReviewer

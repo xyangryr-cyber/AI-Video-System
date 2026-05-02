@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  ComposableMap,
-  Geographies,
-  Geography,
-  Marker,
-  Line,
-  Annotation,
-} from "react-simple-maps";
+import { ComposableMap, Geographies, Geography, Marker, Line, Annotation } from "react-simple-maps";
 import { motion } from "motion";
 import type { TemplateProps } from "@shared/types/template_props";
 
@@ -53,12 +46,7 @@ const MapAnnotationComp: React.FC<TemplateProps> = ({ data, theme }) => {
         <Geographies geography={geoUrl}>
           {({ geographies }) =>
             geographies.map((geo) => (
-              <Geography
-                key={geo.rsmKey}
-                geography={geo}
-                fill="#EAEAEC"
-                stroke="#D6D6DA"
-              />
+              <Geography key={geo.rsmKey} geography={geo} fill="#EAEAEC" stroke="#D6D6DA" />
             ))
           }
         </Geographies>
@@ -113,9 +101,7 @@ const MapAnnotationComp: React.FC<TemplateProps> = ({ data, theme }) => {
               dy={ann.dy}
               connectorProps={{ stroke: color_palette[0], strokeWidth: 1 }}
             >
-              <text style={{ fontSize: 10, fill: color_palette[0] }}>
-                {ann.text}
-              </text>
+              <text style={{ fontSize: 10, fill: color_palette[0] }}>{ann.text}</text>
             </Annotation>
           </motion.g>
         ))}

@@ -17,7 +17,8 @@ function getDataLength(data: unknown): number {
     const s0 = d.series[0] as Record<string, unknown> | undefined;
     if (s0 && Array.isArray(s0.data)) return s0.data.length;
   }
-  if (Array.isArray((d.xAxis as Record<string, unknown> | undefined)?.data)) return ((d.xAxis as Record<string, unknown>).data as unknown[]).length;
+  if (Array.isArray((d.xAxis as Record<string, unknown> | undefined)?.data))
+    return ((d.xAxis as Record<string, unknown>).data as unknown[]).length;
   return 0;
 }
 
@@ -27,19 +28,11 @@ function buildBaseOption(
   annotationKeyframes: TemplateProps["annotationKeyframes"],
 ): Record<string, unknown> {
   const d = data as Record<string, unknown> | null;
-  const colors =
-    theme?.color_palette ?? [
-      "#5470C6",
-      "#91CC75",
-      "#FAC858",
-      "#EE6666",
-      "#73C0DE",
-    ];
+  const colors = theme?.color_palette ?? ["#5470C6", "#91CC75", "#FAC858", "#EE6666", "#73C0DE"];
 
   const xData: string[] =
-    (d?.xAxis as Record<string, unknown>)?.data as string[] | undefined ?? [];
-  const series: unknown[] =
-    (d?.series as unknown[]) ?? [];
+    ((d?.xAxis as Record<string, unknown>)?.data as string[] | undefined) ?? [];
+  const series: unknown[] = (d?.series as unknown[]) ?? [];
 
   const graphic: unknown[] = [];
   if (annotationKeyframes && annotationKeyframes.length > 0) {
@@ -106,18 +99,8 @@ function buildBaseOption(
   };
 }
 
-const EChartsFrameController: React.FC<EChartsFrameControllerProps> = (
-  props,
-) => {
-  const {
-    frame,
-    fps,
-    data,
-    annotationKeyframes,
-    timelineSegment,
-    theme,
-    mode,
-  } = props;
+const EChartsFrameController: React.FC<EChartsFrameControllerProps> = (props) => {
+  const { frame, fps, data, annotationKeyframes, timelineSegment, theme, mode } = props;
 
   const chartRef = useRef<ReactECharts>(null);
 
@@ -127,9 +110,7 @@ const EChartsFrameController: React.FC<EChartsFrameControllerProps> = (
     () =>
       annotationKeyframes
         .filter((kf) => kf.type === "continuous")
-        .flatMap(
-          (kf) => (kf as ContinuousKeyframe).pause_triggers ?? [],
-        )
+        .flatMap((kf) => (kf as ContinuousKeyframe).pause_triggers ?? [])
         .map((pt) => ({
           at_progress: pt.at_progress,
           duration_sec: pt.duration_sec,
@@ -165,10 +146,7 @@ const EChartsFrameController: React.FC<EChartsFrameControllerProps> = (
     if (frameState.isPaused) return;
 
     const dataLen = getDataLength(data);
-    const endIdx = Math.max(
-      1,
-      Math.floor(frameState.easedProgress * dataLen),
-    );
+    const endIdx = Math.max(1, Math.floor(frameState.easedProgress * dataLen));
 
     instance.setOption({
       animation: false,

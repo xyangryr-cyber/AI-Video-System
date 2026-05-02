@@ -5,7 +5,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.9.5
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 
 class BRollFitReviewer:
@@ -13,8 +13,8 @@ class BRollFitReviewer:
 
     @staticmethod
     def review_l1(
-        *, broll_candidates: List[Dict[str, Any]], min_relevance: float = 0.3
-    ) -> Dict[str, Any]:
+        *, broll_candidates: list[dict[str, Any]], min_relevance: float = 0.3
+    ) -> dict[str, Any]:
         blocking: list[str] = []
         for c in broll_candidates:
             score = c.get("relevance_score", 0.0)
@@ -26,7 +26,7 @@ class BRollFitReviewer:
         return {"verdict": verdict, "blocking_issues": blocking}
 
     @classmethod
-    def review(cls, *, broll_candidates: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def review(cls, *, broll_candidates: list[dict[str, Any]]) -> dict[str, Any]:
         l1 = cls.review_l1(broll_candidates=broll_candidates)
         l2_called = l1["verdict"] == "PASS"
         return {"verdict": l1["verdict"], "l1_result": l1, "l2_called": l2_called}

@@ -24,26 +24,23 @@ export interface SegmentSequencerProps {
  */
 export function validateKeyframeAlignment(
   keyframes: AnnotationKeyframe[],
-  segment: TimelineSegmentRange
+  segment: TimelineSegmentRange,
 ): boolean {
   for (const kf of keyframes) {
     if ("at_frame" in kf) {
       const dk = kf as DiscreteKeyframe;
-      if (dk.at_frame < segment.startFrame || dk.at_frame > segment.endFrame) {
+      if (dk.at_frame! < segment.startFrame || dk.at_frame! > segment.endFrame) {
         return false;
       }
     } else if ("start_frame" in kf) {
       const ck = kf as ContinuousKeyframe;
-      if (
-        ck.start_frame < segment.startFrame ||
-        ck.end_frame > segment.endFrame
-      ) {
+      if (ck.start_frame! < segment.startFrame || ck.end_frame! > segment.endFrame) {
         return false;
       }
       // Validate pause_triggers are within range
       if (ck.pause_triggers) {
         for (const pt of ck.pause_triggers) {
-          if (pt.at_frame < segment.startFrame || pt.at_frame > segment.endFrame) {
+          if (pt.at_frame! < segment.startFrame || pt.at_frame! > segment.endFrame) {
             return false;
           }
         }
@@ -59,14 +56,16 @@ export function validateKeyframeAlignment(
 export function isFramePaused(
   frame: number,
   keyframes: AnnotationKeyframe[],
-  fps: number
+  fps: number,
 ): boolean {
   for (const kf of keyframes) {
     if ("pause_triggers" in kf) {
       const ck = kf as ContinuousKeyframe;
       if (ck.pause_triggers) {
         for (const pt of ck.pause_triggers) {
-          const triggerFrame = Math.round(pt.at_progress * (ck.end_frame - ck.start_frame) + ck.start_frame);
+          const triggerFrame = Math.round(
+            pt.at_progress * (ck.end_frame! - ck.start_frame!) + ck.start_frame!,
+          );
           if (Math.abs(frame - triggerFrame) < 1) {
             return true;
           }
@@ -128,12 +127,13 @@ const SegmentSequencer: FC<SegmentSequencerProps> = ({ shots, fps }) => {
         // Compute eased progress within this segment
         const localFrame = frame - segment.startFrame;
         const segmentDuration = segment.endFrame - segment.startFrame;
-        const progress = segmentDuration > 0
-          ? interpolate(localFrame, [0, segmentDuration], [0, 1], {
-              extrapolateLeft: "clamp",
-              extrapolateRight: "clamp",
-            })
-          : 0;
+        const progress =
+          segmentDuration > 0
+            ? interpolate(localFrame, [0, segmentDuration], [0, 1], {
+                extrapolateLeft: "clamp",
+                extrapolateRight: "clamp",
+              })
+            : 0;
 
         const TemplateComponent = resolveTemplateByDataType(shot.templateId);
 
@@ -144,12 +144,7 @@ const SegmentSequencer: FC<SegmentSequencerProps> = ({ shots, fps }) => {
             durationInFrames={segmentDuration}
             name={`shot-${idx}`}
           >
-            <LayerStack
-              shot={shot}
-              frame={frame}
-              progress={progress}
-              paused={paused}
-            >
+            <LayerStack shot={shot} frame={frame} progress={progress} paused={paused}>
               {TemplateComponent ? (
                 <TemplateComponent {...shot} />
               ) : (

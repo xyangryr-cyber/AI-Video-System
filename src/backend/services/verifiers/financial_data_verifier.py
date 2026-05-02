@@ -11,7 +11,7 @@ wiring lands when the P8 chart pipeline fetches live data in SPEC-D.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Literal
 
 from src.shared.schemas.claim import Claim, VerificationRecord
@@ -25,7 +25,7 @@ class FinancialDataVerifier:
     ] = "financial_data_service"
 
     def verify(self, claim: Claim) -> VerificationRecord:
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         return VerificationRecord(
             verification_id=f"ver_{claim.claim_id}_fin",
             claim_id=claim.claim_id,

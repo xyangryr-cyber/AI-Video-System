@@ -1,11 +1,11 @@
-import type { ChangeEvent, KeyboardEvent, ReactElement } from "react"
-import { useState } from "react"
-import { ArrowUp } from "lucide-react"
+import type { ChangeEvent, KeyboardEvent, ReactElement } from "react";
+import { useState } from "react";
+import { ArrowUp } from "lucide-react";
 
 interface ChatInputProps {
-  onSend?: (text: string) => void
-  placeholder?: string
-  disabled?: boolean
+  onSend?: (text: string) => void;
+  placeholder?: string;
+  disabled?: boolean;
 }
 
 export function ChatInput({
@@ -13,21 +13,21 @@ export function ChatInput({
   placeholder = "发送消息给 Agent",
   disabled = false,
 }: ChatInputProps): ReactElement {
-  const [value, setValue] = useState("")
+  const [value, setValue] = useState("");
 
   const handleSend = () => {
-    const trimmed = value.trim()
-    if (!trimmed) return
-    onSend?.(trimmed)
-    setValue("")
-  }
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    onSend?.(trimmed);
+    setValue("");
+  };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleSend()
+      e.preventDefault();
+      handleSend();
     }
-  }
+  };
 
   return (
     <div
@@ -55,5 +55,5 @@ export function ChatInput({
         </button>
       </div>
     </div>
-  )
+  );
 }

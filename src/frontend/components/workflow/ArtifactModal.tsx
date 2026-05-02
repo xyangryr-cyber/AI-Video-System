@@ -1,13 +1,13 @@
-import type { ReactElement } from "react"
-import { useArtifact } from "@frontend/hooks/useArtifact"
-import { PhasePreviewRouter } from "@frontend/components/previews/PhasePreviewRouter"
+import type { ReactElement } from "react";
+import { useArtifact } from "@frontend/hooks/useArtifact";
+import { PhasePreviewRouter } from "@frontend/components/previews/PhasePreviewRouter";
 
 interface ArtifactModalProps {
-  open: boolean
-  projectId: string
-  phaseIndex: number
-  phaseLabel: string
-  onClose: () => void
+  open: boolean;
+  projectId: string;
+  phaseIndex: number;
+  phaseLabel: string;
+  onClose: () => void;
 }
 
 export function ArtifactModal({
@@ -17,8 +17,8 @@ export function ArtifactModal({
   phaseLabel,
   onClose,
 }: ArtifactModalProps): ReactElement | null {
-  const { data: artifactData } = useArtifact(projectId, phaseIndex)
-  if (!open) return null
+  const { data: artifactData } = useArtifact(projectId, phaseIndex);
+  if (!open) return null;
 
   return (
     <div
@@ -52,12 +52,9 @@ export function ArtifactModal({
         </div>
 
         <div className="flex-1 overflow-y-auto bg-[#fcfcfc] p-6 relative">
-          <PhasePreviewRouter
-            phase={phaseIndex}
-            artifactData={artifactData ?? null}
-          />
+          <PhasePreviewRouter phase={phaseIndex} artifactData={artifactData ?? null} />
         </div>
       </div>
     </div>
-  )
+  );
 }

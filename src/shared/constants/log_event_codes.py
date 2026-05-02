@@ -16,10 +16,7 @@ constraint" from ordinary ``KeyError`` / ``ValueError`` control flow.
 
 from __future__ import annotations
 
-from typing import FrozenSet
-
-
-ALLOWED_LOG_EVENT_CODES: FrozenSet[str] = frozenset(
+ALLOWED_LOG_EVENT_CODES: frozenset[str] = frozenset(
     {
         "render_failed",
         "material_missing",

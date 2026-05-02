@@ -5,7 +5,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.9
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 _BUILTIN_BROLL = [
     {
@@ -35,10 +35,10 @@ class BRollAgent:
 
     @staticmethod
     def score_relevance(
-        *, shot_context: str, broll_candidates: List[Dict[str, Any]]
-    ) -> List[Dict[str, Any]]:
+        *, shot_context: str, broll_candidates: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
         context_tokens = set(shot_context.lower().split())
-        result: List[Dict[str, Any]] = []
+        result: list[dict[str, Any]] = []
         for c in broll_candidates:
             tags = set(t.lower() for t in c.get("tags", []))
             if not context_tokens:
@@ -51,10 +51,10 @@ class BRollAgent:
 
     @staticmethod
     def filter_quality(
-        *, candidates: List[Dict[str, Any]], min_resolution: str = "1080p"
-    ) -> List[Dict[str, Any]]:
+        *, candidates: list[dict[str, Any]], min_resolution: str = "1080p"
+    ) -> list[dict[str, Any]]:
         min_h = int(min_resolution.replace("p", ""))
-        result: List[Dict[str, Any]] = []
+        result: list[dict[str, Any]] = []
         for c in candidates:
             h = int(c.get("resolution", "0p").replace("p", "0") or "0")
             if h >= min_h:
@@ -63,12 +63,12 @@ class BRollAgent:
 
     @staticmethod
     def filter_by_style(
-        *, candidates: List[Dict[str, Any]], style_lock: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        *, candidates: list[dict[str, Any]], style_lock: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         return list(candidates)
 
     @staticmethod
-    def fetch_broll(*, source: str, query: str) -> Dict[str, Any]:
+    def fetch_broll(*, source: str, query: str) -> dict[str, Any]:
         # 3-level fallback: pexels -> pixabay -> builtin
         for br in _BUILTIN_BROLL:
             if query.lower() in " ".join(br["tags"]).lower():
@@ -84,7 +84,7 @@ class BRollAgent:
         }
 
     @staticmethod
-    def produce(*, storyboard: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def produce(*, storyboard: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Produce B-Roll assignments for broll-type shots.
 
         Extracts search_keywords from each shot, matches against builtin
@@ -94,7 +94,7 @@ class BRollAgent:
         from src.backend.services.material_fallback import MaterialFallback
 
         fallback = MaterialFallback()
-        assignments: List[Dict[str, Any]] = []
+        assignments: list[dict[str, Any]] = []
 
         for shot in storyboard:
             if shot.get("type") != "broll":
@@ -110,9 +110,7 @@ class BRollAgent:
             )
 
             # Pick best match by relevance_score
-            scored_sorted = sorted(
-                scored, key=lambda x: x["relevance_score"], reverse=True
-            )
+            scored_sorted = sorted(scored, key=lambda x: x["relevance_score"], reverse=True)
             best = scored_sorted[0]
 
             if best["relevance_score"] > 0:
@@ -127,9 +125,7 @@ class BRollAgent:
                     "relevance_score": 0.0,
                 }
                 source_used = fb_result.get("source_used", "fallback")
-                file_path = fb_result.get(
-                    "file_path", "phase_9/fallback.mp4"
-                )
+                file_path = fb_result.get("file_path", "phase_9/fallback.mp4")
 
             assignments.append(
                 {

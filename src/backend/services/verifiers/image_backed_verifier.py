@@ -9,7 +9,7 @@ keyframes / B-Roll metadata feed into the visual verifier.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Literal
 
 from src.shared.schemas.claim import Claim, VerificationRecord
@@ -23,7 +23,7 @@ class ImageBackedVerifier:
     ] = "web_search"  # schema enum, image verifier uses web_search bucket for v1
 
     def verify(self, claim: Claim) -> VerificationRecord:
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         return VerificationRecord(
             verification_id=f"ver_{claim.claim_id}_img",
             claim_id=claim.claim_id,

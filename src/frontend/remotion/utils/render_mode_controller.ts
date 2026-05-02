@@ -26,7 +26,7 @@ export function getRenderConfig(mode: RenderMode): RenderConfig {
     return {
       width: 854,
       height: 480,
-      fps: 1,        // single frame (AC-1)
+      fps: 1, // single frame (AC-1)
       quality: 50,
     };
   }
@@ -35,7 +35,7 @@ export function getRenderConfig(mode: RenderMode): RenderConfig {
   return {
     width: 1920,
     height: 1080,
-    fps: 30,       // full animation (AC-2)
+    fps: 30, // full animation (AC-2)
     quality: 100,
   };
 }

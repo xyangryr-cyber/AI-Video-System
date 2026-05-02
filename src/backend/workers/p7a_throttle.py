@@ -12,7 +12,8 @@ from __future__ import annotations
 
 import threading
 from collections import defaultdict, deque
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 
 class ProviderThrottle:

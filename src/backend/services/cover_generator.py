@@ -5,7 +5,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.11.2
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 _SIZES = ["1920x1080", "1280x720", "1080x1080"]
 
@@ -14,8 +14,8 @@ class CoverGenerator:
     """Generate cover images for multi-platform distribution."""
 
     @staticmethod
-    def generate_covers(*, title: str, template: str = "dark") -> List[Dict[str, Any]]:
-        covers: List[Dict[str, Any]] = []
+    def generate_covers(*, title: str, template: str = "dark") -> list[dict[str, Any]]:
+        covers: list[dict[str, Any]] = []
         for size in _SIZES:
             covers.append(
                 {

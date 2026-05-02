@@ -10,10 +10,10 @@ from __future__ import annotations
 import json
 import sqlite3
 import threading
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from src.backend.db.repositories.task_ledger_repository import TaskLedgerRepository
-
 
 # ---------------------------------------------------------------------------
 # Token budget helper (AC-7)
@@ -35,9 +35,7 @@ def truncate_to_token_budget(text: str, budget_tokens: int) -> str:
 # ---------------------------------------------------------------------------
 
 
-def execute_with_timeout(
-    func: Callable[[], Any], timeout_seconds: float = 180.0
-) -> dict[str, Any]:
+def execute_with_timeout(func: Callable[[], Any], timeout_seconds: float = 180.0) -> dict[str, Any]:
     """Run *func* with hard timeout. Returns ``{status: timeout}`` on expiry."""
     result_holder: list[Any] = [None]
     error_holder: list[BaseException | None] = [None]
@@ -65,9 +63,7 @@ def execute_with_timeout(
 # ---------------------------------------------------------------------------
 
 
-def _write_result_ref(
-    repo: TaskLedgerRepository, task_id: str, result: dict[str, Any]
-) -> None:
+def _write_result_ref(repo: TaskLedgerRepository, task_id: str, result: dict[str, Any]) -> None:
     repo.update_result_ref(task_id, json.dumps(result, ensure_ascii=False))
 
 
@@ -86,9 +82,7 @@ DEFAULT_TIMEOUT = 180.0
 class ResearchAgent:
     """Stateless research agent. Returns 3-5 sources for a query."""
 
-    def execute(
-        self, *, query: str, max_sources: int = 3, **kwargs: Any
-    ) -> dict[str, Any]:
+    def execute(self, *, query: str, max_sources: int = 3, **kwargs: Any) -> dict[str, Any]:
         max_sources = max(3, min(max_sources, 5))
         if not query or not query.strip():
             return {"sources": [], "query": query, "status": "empty_query"}

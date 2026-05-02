@@ -79,7 +79,7 @@ export function buildSSML(segments: SegmentEntry[]): SsmlResult {
     if (emphasisWords.size > 0) {
       const textWithEmphasis = current.text.replace(
         new RegExp(`\\b(${[...emphasisWords].join("|")})\\b`, "gi"),
-        '<emphasis level="moderate">$1</emphasis>'
+        '<emphasis level="moderate">$1</emphasis>',
       );
       parts.push(textWithEmphasis);
     } else {

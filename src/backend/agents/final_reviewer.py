@@ -7,22 +7,20 @@ Placed outside reviewers/ to avoid circular import.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 
 class FinalReviewer:
     """Pure L1 final review: 8 quality checks on final cut."""
 
     @staticmethod
-    def review(final_cut: Dict[str, Any]) -> Dict[str, Any]:
-        checks: List[Dict[str, Any]] = []
+    def review(final_cut: dict[str, Any]) -> dict[str, Any]:
+        checks: list[dict[str, Any]] = []
 
         checks.append(
             {
                 "rule": "resolution",
-                "verdict": "PASS"
-                if final_cut.get("resolution") == "1920x1080"
-                else "FAIL",
+                "verdict": "PASS" if final_cut.get("resolution") == "1920x1080" else "FAIL",
             }
         )
         checks.append(
@@ -40,9 +38,7 @@ class FinalReviewer:
         checks.append(
             {
                 "rule": "duration",
-                "verdict": "PASS"
-                if final_cut.get("duration_seconds", 0) > 0
-                else "FAIL",
+                "verdict": "PASS" if final_cut.get("duration_seconds", 0) > 0 else "FAIL",
             }
         )
 

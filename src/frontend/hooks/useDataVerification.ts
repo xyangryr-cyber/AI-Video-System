@@ -18,9 +18,7 @@ export function useDataVerification(initialDataPoints: DataPoint[]) {
   }, []);
 
   const updatePoint = useCallback((id: string, updates: Partial<DataPoint>) => {
-    setDataPoints((prev) =>
-      prev.map((dp) => (dp.id === id ? { ...dp, ...updates } : dp)),
-    );
+    setDataPoints((prev) => prev.map((dp) => (dp.id === id ? { ...dp, ...updates } : dp)));
   }, []);
 
   const manualConfirm = useCallback(
@@ -34,12 +32,9 @@ export function useDataVerification(initialDataPoints: DataPoint[]) {
     [updatePoint],
   );
 
-  const triggerVerify = useCallback(
-    async (_id: string) => {
-      // Calls POST /api/projects/{_id}/subtask with type=verify (handled by parent)
-    },
-    [],
-  );
+  const triggerVerify = useCallback(async (_id: string) => {
+    // Calls POST /api/projects/{_id}/subtask with type=verify (handled by parent)
+  }, []);
 
   return { dataPoints, stats, expandedId, toggleExpand, manualConfirm, triggerVerify };
 }

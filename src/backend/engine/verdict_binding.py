@@ -7,17 +7,17 @@ Authority:
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
-from src.shared.constants.error_codes import ErrorCode, HTTP_STATUS_BY_CODE
+from src.shared.constants.error_codes import HTTP_STATUS_BY_CODE, ErrorCode
 from src.shared.types.verdict import Verdict
 
 
 def build_gate_failure_response(
     *,
-    failed_checks: List[str],
-    passed_checks: List[str],
-) -> Dict[str, Any]:
+    failed_checks: list[str],
+    passed_checks: list[str],
+) -> dict[str, Any]:
     """Build the standard gate failure response with EVID_2001.
 
     Returns a dict with *error_code*, *http_status*, *failed_checks*,
@@ -31,7 +31,7 @@ def build_gate_failure_response(
     }
 
 
-def compute_review_status(task_ledger: List[Dict[str, Any]]) -> str:
+def compute_review_status(task_ledger: list[dict[str, Any]]) -> str:
     """Pure function: compute review_status from task_ledger entries.
 
     Returns one of ``pending``, ``in_progress``, ``passed``, ``failed``.

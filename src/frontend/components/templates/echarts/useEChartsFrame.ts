@@ -30,9 +30,7 @@ export function applyEasing(progress: number, easing: EasingType): number {
     case "ease_out":
       return progress * (2 - progress);
     case "ease_in_out":
-      return progress < 0.5
-        ? 2 * progress * progress
-        : -1 + (4 - 2 * progress) * progress;
+      return progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
     default:
       return progress;
   }
@@ -50,9 +48,7 @@ export function computeFrameState(input: ComputeFrameStateInput): FrameState {
     };
   }
 
-  const sorted = [...pauseTriggers].sort(
-    (a, b) => a.at_progress - b.at_progress,
-  );
+  const sorted = [...pauseTriggers].sort((a, b) => a.at_progress - b.at_progress);
 
   let totalPauseFrames = 0;
 
@@ -63,8 +59,7 @@ export function computeFrameState(input: ComputeFrameStateInput): FrameState {
 
     // AC-3: pause_trigger activates when Math.abs(easedProgress - trigger.at_progress) < 0.01
     if (Math.abs(progress - trigger.at_progress) < 0.01 || progress >= trigger.at_progress) {
-      const triggerFrame =
-        trigger.at_progress * durationInFrames + totalPauseFrames;
+      const triggerFrame = trigger.at_progress * durationInFrames + totalPauseFrames;
       const endFrame = triggerFrame + pauseFrames;
 
       // AC-5: during pause, easedProgress holds at trigger.at_progress

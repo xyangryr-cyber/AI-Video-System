@@ -6,7 +6,7 @@ data/users/{user_id}/brand_kit.json is import-only.
 
 from __future__ import annotations
 
-from typing import Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -18,19 +18,19 @@ class _Strict(BaseModel):
 
 
 class BrandKitLogo(_Strict):
-    path: Optional[str] = None
+    path: str | None = None
     position: LogoPosition
     opacity: float = Field(ge=0.0, le=1.0)
 
 
 class BrandKitWatermark(_Strict):
-    text: Optional[str] = None
+    text: str | None = None
     opacity: float = Field(ge=0.0, le=1.0)
     position: LogoPosition
 
 
 class BrandKitTemplate(_Strict):
-    template_id: Optional[str] = None
+    template_id: str | None = None
     duration: float = Field(ge=0.0)
 
 

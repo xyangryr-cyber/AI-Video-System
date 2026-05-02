@@ -8,15 +8,15 @@ package (avoids known circular import in reviewers/__init__.py).
 
 from __future__ import annotations
 
-from typing import Any, Dict, FrozenSet
+from typing import Any
 
-_VALID_DURATION_CLASSES: FrozenSet[str] = frozenset({"short", "medium", "long"})
+_VALID_DURATION_CLASSES: frozenset[str] = frozenset({"short", "medium", "long"})
 
-_VALID_LEVEL1: FrozenSet[str] = frozenset(
+_VALID_LEVEL1: frozenset[str] = frozenset(
     {"finance", "tech", "education", "news", "lifestyle", "business"}
 )
 
-_VALID_LEVEL2: Dict[str, FrozenSet[str]] = {
+_VALID_LEVEL2: dict[str, frozenset[str]] = {
     "finance": frozenset(
         {
             "stock_market",
@@ -37,15 +37,13 @@ _VALID_LEVEL2: Dict[str, FrozenSet[str]] = {
             "biotech",
         }
     ),
-    "education": frozenset(
-        {"k12", "higher_ed", "vocational", "online_learning", "stem"}
-    ),
+    "education": frozenset({"k12", "higher_ed", "vocational", "online_learning", "stem"}),
     "news": frozenset({"breaking", "analysis", "commentary", "investigation", "recap"}),
     "lifestyle": frozenset({"health", "food", "travel", "fashion", "home"}),
     "business": frozenset({"startup", "management", "marketing", "supply_chain", "hr"}),
 }
 
-_VALID_TEMPLATES: FrozenSet[str] = frozenset(
+_VALID_TEMPLATES: frozenset[str] = frozenset(
     {"chronological", "progressive", "comparative", "problem_solution", "storytelling"}
 )
 
@@ -56,7 +54,7 @@ class CompletenessReviewer:
     Stateless -- no instance state. ``review()`` is a pure function.
     """
 
-    def review(self, req: Dict[str, Any]) -> Dict[str, Any]:
+    def review(self, req: dict[str, Any]) -> dict[str, Any]:
         notes: list[str] = []
         blocking: list[str] = []
 
@@ -104,9 +102,7 @@ class CompletenessReviewer:
         if level1 not in _VALID_LEVEL1:
             blocking.append(f"invalid category.level1: {level1!r}")
         elif level2 not in _VALID_LEVEL2.get(level1, frozenset()):
-            blocking.append(
-                f"category.level2 {level2!r} not valid for level1 {level1!r}"
-            )
+            blocking.append(f"category.level2 {level2!r} not valid for level1 {level1!r}")
 
         # 7. narrative_template valid
         tmpl = req.get("narrative_template", "")

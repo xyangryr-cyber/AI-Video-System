@@ -5,11 +5,9 @@ snapshot versioning, and rollback.
 from __future__ import annotations
 
 import json
-import time
 import sqlite3
+import time
 from typing import Any, Literal, cast
-
-from src.shared.constants.auth import DEFAULT_USER_ID
 
 from src.backend.agents.preference_extractor import (
     ExtractedPreference,
@@ -17,6 +15,7 @@ from src.backend.agents.preference_extractor import (
 )
 from src.backend.db.repositories.event_repo import EventRepository
 from src.backend.db.repositories.preferences_repo import PreferencesRepository
+from src.shared.constants.auth import DEFAULT_USER_ID
 
 _SNAPSHOT_CAP = 20
 
@@ -98,9 +97,7 @@ class PreferenceService:
         self._conn.commit()
 
     def get_global_rules(self) -> str:
-        row = self._conn.execute(
-            "SELECT rules_md FROM global_rules_store WHERE id = 1"
-        ).fetchone()
+        row = self._conn.execute("SELECT rules_md FROM global_rules_store WHERE id = 1").fetchone()
         return row[0] if row else ""
 
     def get_user_preferences(self, user_id: str) -> str:
@@ -121,9 +118,7 @@ class PreferenceService:
             return row[0] or ""
         return row["project_preferences_md"] or ""
 
-    def get_effective_preferences(
-        self, project_id: str, user_id: str = DEFAULT_USER_ID
-    ) -> str:
+    def get_effective_preferences(self, project_id: str, user_id: str = DEFAULT_USER_ID) -> str:
         """Merge global + user + project preferences (AC-7)."""
         global_rules = self.get_global_rules()
         user_prefs = self.get_user_preferences(user_id)
@@ -264,18 +259,14 @@ class PreferenceService:
 
         snapshot = {
             "version": new_version,
-            "global_rules_md": row[0]
-            if isinstance(row, (tuple, list))
-            else row["global_rules_md"],
+            "global_rules_md": row[0] if isinstance(row, (tuple, list)) else row["global_rules_md"],
             "user_preferences_md": row[1]
             if isinstance(row, (tuple, list))
             else row["user_preferences_md"],
             "project_preferences_md": row[2]
             if isinstance(row, (tuple, list))
             else row["project_preferences_md"],
-            "confirmed_at": row[3]
-            if isinstance(row, (tuple, list))
-            else row["last_confirmed_at"],
+            "confirmed_at": row[3] if isinstance(row, (tuple, list)) else row["last_confirmed_at"],
         }
         self._prefs_repo.create_snapshot(
             project_id,
@@ -317,9 +308,7 @@ class PreferenceService:
         ).fetchone()
         if row is None:
             raise ValueError(f"Snapshot version {version} not found for {project_id}")
-        snapshot = json.loads(
-            row[0] if isinstance(row, (tuple, list)) else row["snapshot_json"]
-        )
+        snapshot = json.loads(row[0] if isinstance(row, (tuple, list)) else row["snapshot_json"])
 
         # Restore
         self._prefs_repo.update_all_prefs(

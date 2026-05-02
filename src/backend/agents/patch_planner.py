@@ -20,8 +20,7 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
-
+from typing import Any
 
 __all__ = [
     "PositionCandidate",
@@ -45,8 +44,8 @@ class PatchPlan:
     patch_plan_id: str
     source_artifact: str
     source_version: int
-    insertions: List[Dict[str, object]] = field(default_factory=list)
-    expected_diff_scope: Dict[str, object] = field(default_factory=dict)
+    insertions: list[dict[str, object]] = field(default_factory=list)
+    expected_diff_scope: dict[str, object] = field(default_factory=dict)
 
 
 class PatchPlanner:
@@ -67,20 +66,18 @@ class PatchPlanner:
         outline: dict[str, Any],
         polished_script: dict[str, Any],
         content_intent: str,
-    ) -> List[PositionCandidate]:
+    ) -> list[PositionCandidate]:
         segments = list(polished_script.get("segments") or [])
         if not segments:
             raise ValueError("polished_script must have at least one segment")
 
         intent_tokens = _tokens(content_intent)
         sections_by_id = {
-            s.get("section_id"): s
-            for s in (outline.get("sections") or [])
-            if s.get("section_id")
+            s.get("section_id"): s for s in (outline.get("sections") or []) if s.get("section_id")
         }
         avg_duration = _avg_section_duration(outline)
 
-        scored: List[PositionCandidate] = []
+        scored: list[PositionCandidate] = []
         for idx, seg in enumerate(segments):
             seg_id = seg.get("segment_id")
             if not seg_id:
@@ -94,9 +91,7 @@ class PatchPlanner:
                 section=sections_by_id.get(seg.get("outline_section"), {}),
                 avg_duration=avg_duration,
             )
-            score = (
-                0.3 * narrative_pacing + 0.4 * topic_adjacency + 0.3 * duration_balance
-            )
+            score = 0.3 * narrative_pacing + 0.4 * topic_adjacency + 0.3 * duration_balance
             # Clamp to [0, 1] so the caller contract is simple to assert.
             score = max(0.0, min(1.0, score))
 
@@ -115,9 +110,7 @@ class PatchPlanner:
 
         # Deterministic tie-break: higher score first, then earlier segment index
         # (already implicit via the enumeration order we appended in).
-        scored.sort(
-            key=lambda c: (-c.score, _segment_index(c.after_segment_id, segments))
-        )
+        scored.sort(key=lambda c: (-c.score, _segment_index(c.after_segment_id, segments)))
         return scored[: self._max_candidates]
 
     def plan_insert(
@@ -134,7 +127,7 @@ class PatchPlanner:
             polished_script=polished_script,
             content_intent=content_intent,
         )
-        insertions: List[Dict[str, object]] = [
+        insertions: list[dict[str, object]] = [
             {
                 "after_segment_id": cand.after_segment_id,
                 "content_intent": content_intent,
@@ -143,7 +136,7 @@ class PatchPlanner:
             }
             for cand in candidates
         ]
-        expected_diff_scope: Dict[str, object] = {
+        expected_diff_scope: dict[str, object] = {
             # insert_section is a pure addition: no existing segment may change.
             # regenerate_section would put the target id here instead.
             "allowed_modify_segments": [],
@@ -153,9 +146,7 @@ class PatchPlanner:
             f"{source_artifact}|{source_version}|{content_intent}|"
             f"{','.join(c.after_segment_id for c in candidates)}"
         )
-        patch_plan_id = (
-            "patch_" + hashlib.sha256(plan_seed.encode("utf-8")).hexdigest()[:16]
-        )
+        patch_plan_id = "patch_" + hashlib.sha256(plan_seed.encode("utf-8")).hexdigest()[:16]
         return PatchPlan(
             patch_plan_id=patch_plan_id,
             source_artifact=source_artifact,
@@ -170,7 +161,7 @@ class PatchPlanner:
         polished_script: dict[str, Any],
         patch_plan: PatchPlan,
         new_text: str,
-        outline_section: Optional[str] = None,
+        outline_section: str | None = None,
     ) -> dict[str, Any]:
         if not patch_plan.insertions:
             raise ValueError("patch_plan has no insertions to apply")
@@ -191,7 +182,7 @@ class PatchPlanner:
                     resolved_section = seg.get("outline_section")
                     break
 
-        out_segments: List[dict[str, Any]] = []
+        out_segments: list[dict[str, Any]] = []
         for seg in polished_script.get("segments") or []:
             # Copy-through preserves every existing segment byte-for-byte.
             out_segments.append(dict(seg))
@@ -264,7 +255,7 @@ def _segment_index(segment_id: str, segments: list[dict[str, Any]]) -> int:
 
 
 def _mint_segment_id(*, plan_id: str, after_id: str, existing: set[str]) -> str:
-    base = hashlib.sha256(f"{plan_id}|{after_id}".encode("utf-8")).hexdigest()[:12]
+    base = hashlib.sha256(f"{plan_id}|{after_id}".encode()).hexdigest()[:12]
     candidate = f"seg_ins_{base}"
     # Collision guard (SHA-256 12-hex is already unique in practice, but be safe).
     suffix = 0

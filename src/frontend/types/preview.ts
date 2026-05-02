@@ -13,6 +13,7 @@ export interface VoiceDirection {
   text: string;
   tone?: string;
   pace?: string;
+  notes?: string;
 }
 
 // P2: Collapsible segment data

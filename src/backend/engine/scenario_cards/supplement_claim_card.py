@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import time
-from typing import Any, Dict, Literal
+from typing import Any, Literal
 
 
 class SupplementClaimCard:
@@ -23,18 +23,16 @@ class SupplementClaimCard:
         claim_type: Literal["fact", "data", "event", "citation", "image_backed"],
         source_phase: str,
         source_artifact: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Create a new claim from user supplement, block downstream flow.
 
         The new claim is created with blocking_level='hard' to ensure Gates
         wait for verification, and verification_status='pending'.
         """
         now = time.time()
-        claim_id = (
-            f"claim_supplement_{hashlib.sha256(text.encode('utf-8')).hexdigest()[:12]}"
-        )
+        claim_id = f"claim_supplement_{hashlib.sha256(text.encode('utf-8')).hexdigest()[:12]}"
 
-        new_claim: Dict[str, Any] = {
+        new_claim: dict[str, Any] = {
             "claim_id": claim_id,
             "claim_type": claim_type,
             "text": text,

@@ -17,13 +17,12 @@ the other five are persisted with the idempotency semantics in
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from types import MappingProxyType
-from typing import Mapping, Tuple
-
 
 # v3.15 baseline (9 types). Order matches SPEC-A-contracts.md §SPEC-1B.
-_V315_TYPES: Tuple[str, ...] = (
+_V315_TYPES: tuple[str, ...] = (
     "generate_artifact",
     "regenerate_section",
     "regenerate_shot",
@@ -36,7 +35,7 @@ _V315_TYPES: Tuple[str, ...] = (
 )
 
 # v3.16 BDD additions (6 types). Order matches SPEC §A-BDD-5 lines 1107-1114.
-_V316_ADDITIONS: Tuple[str, ...] = (
+_V316_ADDITIONS: tuple[str, ...] = (
     "challenge_claim",
     "supplement_claim",
     "request_chart",
@@ -45,7 +44,7 @@ _V316_ADDITIONS: Tuple[str, ...] = (
     "insert_section",
 )
 
-TASK_LEDGER_TYPES: Tuple[str, ...] = _V315_TYPES + _V316_ADDITIONS
+TASK_LEDGER_TYPES: tuple[str, ...] = _V315_TYPES + _V316_ADDITIONS
 
 
 @dataclass(frozen=True)
@@ -64,7 +63,7 @@ class IdempotencyRule:
     """
 
     persist: bool = True
-    key_fields: Tuple[str, ...] = ()
+    key_fields: tuple[str, ...] = ()
     ttl_hours: int | None = None
     upsert: bool = False
 

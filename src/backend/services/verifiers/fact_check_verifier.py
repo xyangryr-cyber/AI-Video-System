@@ -9,7 +9,7 @@ LLM/web_search wiring lands when SPEC-D plugs the fact-check LLM path in.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Literal
 
 from src.shared.schemas.claim import Claim, VerificationRecord
@@ -23,7 +23,7 @@ class FactCheckVerifier:
     ] = "fact_check_agent"
 
     def verify(self, claim: Claim) -> VerificationRecord:
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         return VerificationRecord(
             verification_id=f"ver_{claim.claim_id}_fact",
             claim_id=claim.claim_id,

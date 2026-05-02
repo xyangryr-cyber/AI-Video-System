@@ -5,10 +5,10 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.6
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 # Dual type mapping: functional -> semantic
-_TYPE_MAPPING: Dict[str, str] = {
+_TYPE_MAPPING: dict[str, str] = {
     "boom": "reveal",
     "whoosh": "contrast",
     "ding": "rise_positive",
@@ -17,7 +17,7 @@ _TYPE_MAPPING: Dict[str, str] = {
 }
 
 # Built-in SFX library (stub)
-_BUILTIN_SFX: Dict[str, List[Dict[str, Any]]] = {
+_BUILTIN_SFX: dict[str, list[dict[str, Any]]] = {
     "boom": [{"file_path": "builtin/boom_001.wav"}],
     "whoosh": [{"file_path": "builtin/whoosh_001.wav"}],
     "ding": [{"file_path": "builtin/ding_001.wav"}],
@@ -30,15 +30,15 @@ class SFXAgent:
     """P6 SFX producer with dual type system and constraint checks."""
 
     @staticmethod
-    def get_type_mapping() -> Dict[str, str]:
+    def get_type_mapping() -> dict[str, str]:
         return dict(_TYPE_MAPPING)
 
     # -- SFX production (AC-8) --
 
     @staticmethod
-    def produce_sfx(*, timeline: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def produce_sfx(*, timeline: dict[str, Any]) -> list[dict[str, Any]]:
         segments = timeline.get("segments", [])
-        sfx_list: List[Dict[str, Any]] = []
+        sfx_list: list[dict[str, Any]] = []
         types = list(_TYPE_MAPPING.keys())
 
         for i, seg in enumerate(segments):
@@ -68,8 +68,8 @@ class SFXAgent:
 
     @staticmethod
     def check_sparsity(
-        sfx_list: List[Dict[str, Any]], min_interval: float = 15.0
-    ) -> Dict[str, Any]:
+        sfx_list: list[dict[str, Any]], min_interval: float = 15.0
+    ) -> dict[str, Any]:
         if len(sfx_list) < 2:
             return {"verdict": "PASS", "rule": "sparsity"}
 
@@ -88,9 +88,7 @@ class SFXAgent:
     # -- Type diversity (AC-9) --
 
     @staticmethod
-    def check_type_diversity(
-        sfx_list: List[Dict[str, Any]], min_types: int = 3
-    ) -> Dict[str, Any]:
+    def check_type_diversity(sfx_list: list[dict[str, Any]], min_types: int = 3) -> dict[str, Any]:
         unique_types = {s["type"] for s in sfx_list}
         if len(unique_types) < min_types:
             return {
@@ -105,10 +103,10 @@ class SFXAgent:
     @staticmethod
     def check_bgm_overlap(
         *,
-        sfx_list: List[Dict[str, Any]],
-        bgm_transition_timestamps: List[float],
+        sfx_list: list[dict[str, Any]],
+        bgm_transition_timestamps: list[float],
         tolerance: float = 2.0,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         for sfx in sfx_list:
             ts = sfx["timestamp_seconds"]
             for bt in bgm_transition_timestamps:
@@ -123,7 +121,7 @@ class SFXAgent:
     # -- 3-level fallback (AC-10) --
 
     @staticmethod
-    def fetch_sfx(*, source: str, sfx_type: str) -> Dict[str, Any]:
+    def fetch_sfx(*, source: str, sfx_type: str) -> dict[str, Any]:
         # 3-level fallback: builtin -> Freesound -> user upload
         if sfx_type in _BUILTIN_SFX:
             return {

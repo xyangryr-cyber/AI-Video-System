@@ -27,11 +27,7 @@ const TEMPLATE_DEFAULTS: MergedChartStyle = {
  * Build a structured log entry for invalid palette colors.
  * Must match the shape expected by the palette_fallback log event.
  */
-function logPaletteFallback(
-  field: string,
-  requested: string,
-  applied: string,
-): void {
+function logPaletteFallback(field: string, requested: string, applied: string): void {
   const entry = {
     level: "WARN",
     event: "color.palette_fallback",
@@ -80,22 +76,19 @@ export function mergeChartStyle(
     palette,
   );
 
-  const line_width =
-    overrides?.line_width ?? TEMPLATE_DEFAULTS.line_width;
+  const line_width = overrides?.line_width ?? TEMPLATE_DEFAULTS.line_width;
 
   const background_color =
     overrides?.background_color ?? theme.background_color ?? TEMPLATE_DEFAULTS.background_color;
 
-  const grid_visible =
-    overrides?.grid_visible ?? TEMPLATE_DEFAULTS.grid_visible;
+  const grid_visible = overrides?.grid_visible ?? TEMPLATE_DEFAULTS.grid_visible;
 
   const smooth = overrides?.smooth ?? TEMPLATE_DEFAULTS.smooth;
 
   // show_source_label: returns the override value (or template default).
   // The caller gates rendering on verified status per AC-3:
   // show_source_label is only rendered when verified === true.
-  const show_source_label =
-    overrides?.show_source_label ?? TEMPLATE_DEFAULTS.show_source_label;
+  const show_source_label = overrides?.show_source_label ?? TEMPLATE_DEFAULTS.show_source_label;
 
   return {
     line_color,

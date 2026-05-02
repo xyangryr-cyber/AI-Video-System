@@ -16,10 +16,9 @@ from __future__ import annotations
 
 import re
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
-
 
 TASK_ID_PATTERN = re.compile(r"^t_\d{6}$")
 
@@ -90,41 +89,34 @@ class Task(BaseModel):
     phase: int
     type: TaskType
     status: TaskStatus = TaskStatus.PENDING
-    depends_on: Optional[list[str]] = None
-    produces_version: Optional[int] = None
-    target_version: Optional[int] = None
-    params: Dict[str, Any] = Field(default_factory=dict)
-    result_ref: Optional[str] = None
+    depends_on: list[str] | None = None
+    produces_version: int | None = None
+    target_version: int | None = None
+    params: dict[str, Any] = Field(default_factory=dict)
+    result_ref: str | None = None
 
     @model_validator(mode="after")
-    def _enforce_version_fields(self) -> "Task":
+    def _enforce_version_fields(self) -> Task:
         task_type = self.type
         if task_type in _TYPES_WITH_TARGET_VERSION:
             if self.produces_version is not None:
                 raise ValueError(
-                    f"task.type={task_type.value} must not carry "
-                    "produces_version (SPEC-3.2 AC-2)"
+                    f"task.type={task_type.value} must not carry produces_version (SPEC-3.2 AC-2)"
                 )
             if self.target_version is None:
                 raise ValueError(
-                    f"task.type={task_type.value} requires target_version "
-                    "(SPEC-3.5 supersede rule)"
+                    f"task.type={task_type.value} requires target_version (SPEC-3.5 supersede rule)"
                 )
         elif task_type in _TYPES_WITH_PRODUCES_VERSION:
             if self.target_version is not None:
                 raise ValueError(
-                    f"task.type={task_type.value} must not carry "
-                    "target_version (SPEC-3.2 AC-2)"
+                    f"task.type={task_type.value} must not carry target_version (SPEC-3.2 AC-2)"
                 )
         else:
             if self.produces_version is not None:
-                raise ValueError(
-                    f"task.type={task_type.value} must not carry produces_version"
-                )
+                raise ValueError(f"task.type={task_type.value} must not carry produces_version")
             if self.target_version is not None:
-                raise ValueError(
-                    f"task.type={task_type.value} must not carry target_version"
-                )
+                raise ValueError(f"task.type={task_type.value} must not carry target_version")
         return self
 
 

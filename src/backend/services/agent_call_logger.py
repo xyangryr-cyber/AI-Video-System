@@ -9,7 +9,6 @@ Delegates DB writes to AgentCallLogRepository (SPEC-B-002 AC-4).
 from __future__ import annotations
 
 import sqlite3
-from typing import Optional
 
 from src.backend.db.repositories.agent_call_log_repo import AgentCallLogRepository
 
@@ -29,8 +28,8 @@ class AgentCallLogger:
         model: str = "unknown",
         input_summary: str = "",
         output_summary: str = "",
-        phase: Optional[int] = None,
-        project_id: Optional[str] = None,
+        phase: int | None = None,
+        project_id: str | None = None,
     ) -> int:
         safe_tokens = max(int(tokens), 1)
         return self._repo.insert(

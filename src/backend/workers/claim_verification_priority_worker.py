@@ -17,7 +17,6 @@ from src.backend.workers.claim_verification_worker import (
     handle_failure,
 )
 
-
 QUEUE_NAME: str = "claim_verification_priority"
 QUEUE_PRIORITY: str = "high"
 

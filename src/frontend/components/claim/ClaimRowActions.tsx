@@ -6,7 +6,13 @@ interface ClaimRowActionsProps {
   onDismiss: (id: string) => void;
 }
 
-export function ClaimRowActions({ claimId, onVerify, onChallenge, onSupplement, onDismiss }: ClaimRowActionsProps) {
+export function ClaimRowActions({
+  claimId,
+  onVerify,
+  onChallenge,
+  onSupplement,
+  onDismiss,
+}: ClaimRowActionsProps) {
   return (
     <div style={{ display: "flex", gap: "4px" }}>
       <button onClick={() => onVerify(claimId)}>Verify</button>

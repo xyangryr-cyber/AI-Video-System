@@ -26,7 +26,8 @@ without introducing a new shared module (task card forbids it).
 
 from __future__ import annotations
 
-from typing import Any, Mapping, Sequence
+from collections.abc import Mapping, Sequence
+from typing import Any
 
 from src.backend.reviewers.music_fit_reviewer import (
     ReviewReport,
@@ -34,7 +35,6 @@ from src.backend.reviewers.music_fit_reviewer import (
     Verdict,
 )
 from src.shared.schemas.sfx_layout_plan import SfxLayoutPlan
-
 
 SCRIPT_COVERAGE_MIN = 0.5
 KEYWORD_ANCHOR_OVERLAP_MIN = 0.8
@@ -139,17 +139,14 @@ class SfxLayoutReviewer:
                 check_name="keyword_anchor",
                 verdict="FAIL",
                 reason=(
-                    f"at least one trigger anchor_text overlap < "
-                    f"{KEYWORD_ANCHOR_OVERLAP_MIN}."
+                    f"at least one trigger anchor_text overlap < {KEYWORD_ANCHOR_OVERLAP_MIN}."
                 ),
                 metrics={"per_trigger": per_trigger},
             )
         return ReviewVerdict(
             check_name="keyword_anchor",
             verdict="PASS",
-            reason=(
-                f"all triggers anchor_text overlap >= {KEYWORD_ANCHOR_OVERLAP_MIN}."
-            ),
+            reason=(f"all triggers anchor_text overlap >= {KEYWORD_ANCHOR_OVERLAP_MIN}."),
             metrics={"per_trigger": per_trigger},
         )
 
@@ -215,9 +212,7 @@ class SfxLayoutReviewer:
         return ReviewVerdict(
             check_name="sparsity",
             verdict="PASS",
-            reason=(
-                f"sparsity OK: avg_gap={avg_gap:.2f}s, max_per_30s_window={max_count}."
-            ),
+            reason=(f"sparsity OK: avg_gap={avg_gap:.2f}s, max_per_30s_window={max_count}."),
             metrics=metrics,
         )
 
@@ -234,9 +229,7 @@ class SfxLayoutReviewer:
             self.check_explanation_completeness(plan),
             self.check_sparsity(plan),
         ]
-        overall: Verdict = (
-            "FAIL" if any(c.verdict == "FAIL" for c in checks) else "PASS"
-        )
+        overall: Verdict = "FAIL" if any(c.verdict == "FAIL" for c in checks) else "PASS"
         return ReviewReport(verdict=overall, checks=checks)
 
 

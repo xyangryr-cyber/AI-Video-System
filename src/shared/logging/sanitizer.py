@@ -19,13 +19,15 @@ logs.
 from __future__ import annotations
 
 import re
-from typing import Any, Iterable, List, Mapping, Pattern
+from collections.abc import Iterable, Mapping
+from re import Pattern
+from typing import Any
 
 REDACTED: str = "[REDACTED]"
 
 # Order matters: longer / more-specific patterns first so they swallow
 # substrings that a shorter regex would otherwise match.
-_SECRET_PATTERNS: List[str] = [
+_SECRET_PATTERNS: list[str] = [
     # 1. Anthropic API keys (must run before generic sk-...)
     r"sk-ant-[A-Za-z0-9_\-]{20,}",
     # 2. OpenAI API keys (sk-, sk-proj-)
@@ -43,7 +45,7 @@ _SECRET_PATTERNS: List[str] = [
     r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}",
 ]
 
-SECRET_REGEXES: List[Pattern[str]] = [re.compile(p) for p in _SECRET_PATTERNS]
+SECRET_REGEXES: list[Pattern[str]] = [re.compile(p) for p in _SECRET_PATTERNS]
 
 
 def _sanitize_str(value: str) -> str:

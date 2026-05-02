@@ -7,15 +7,21 @@
       "@frontend/*": ["src/frontend/*"],
       "@shared/*": ["src/shared/*"],
       "vitest": ["src/frontend/node_modules/vitest/index.d.cts"],
-      "@testing-library/react": ["src/frontend/node_modules/@testing-library/react/types/index.d.ts"],
-      "@testing-library/user-event": ["src/frontend/node_modules/@testing-library/user-event/dist/types/index.d.ts"],
+      "@testing-library/react": [
+        "src/frontend/node_modules/@testing-library/react/types/index.d.ts"
+      ],
+      "@testing-library/user-event": [
+        "src/frontend/node_modules/@testing-library/user-event/dist/types/index.d.ts"
+      ],
       "react": ["src/frontend/node_modules/@types/react/index.d.ts"],
       "react-dom": ["src/frontend/node_modules/@types/react-dom/index.d.ts"],
       "react/jsx-runtime": ["src/frontend/node_modules/@types/react/jsx-runtime.d.ts"],
       "react/jsx-dev-runtime": ["src/frontend/node_modules/@types/react/jsx-dev-runtime.d.ts"],
       "mock-socket": ["src/frontend/node_modules/mock-socket/index.d.ts"],
       "zustand": ["src/frontend/node_modules/zustand/index.d.ts"],
-      "@tanstack/react-query": ["src/frontend/node_modules/@tanstack/react-query/build/legacy/index.d.ts"],
+      "@tanstack/react-query": [
+        "src/frontend/node_modules/@tanstack/react-query/build/legacy/index.d.ts"
+      ],
       "react-router-dom": ["src/frontend/node_modules/react-router-dom/dist/index.d.ts"],
       "dayjs": ["src/frontend/node_modules/dayjs/index.d.ts"],
       "sonner": ["src/frontend/node_modules/sonner/dist/index.d.ts"],

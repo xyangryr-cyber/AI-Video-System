@@ -7,7 +7,9 @@
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "eslint .",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
     "tsc": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest"
@@ -45,10 +47,14 @@
     "@vitejs/plugin-react": "5.0.4",
     "autoprefixer": "10.4.21",
     "eslint": "9.14.0",
+    "eslint-plugin-react": "^5.0.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
     "jsdom": "25.0.1",
     "mock-socket": "^9.3.1",
+    "prettier": "^3.5.0",
     "tailwindcss": "4.1.14",
     "typescript": "5.8.3",
+    "typescript-eslint": "^8.30.0",
     "vite": "6.2.0",
     "vitest": "2.1.8"
   }

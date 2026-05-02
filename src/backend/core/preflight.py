@@ -19,17 +19,17 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Callable, Dict, Iterable, Literal, Optional
+from typing import Literal
 
 from fastapi import HTTPException
 
 from src.backend.db.repositories.system_status_repo import (
     SystemStatusRepository,
 )
-
 
 CheckStatus = Literal["ok", "degraded", "failed"]
 
@@ -54,7 +54,7 @@ VALIDITY_HOURS = 24
 @dataclass(frozen=True)
 class CheckResult:
     status: CheckStatus
-    message: Optional[str] = None
+    message: str | None = None
 
 
 Runner = Callable[[], CheckResult]
@@ -66,8 +66,10 @@ Runner = Callable[[], CheckResult]
 def _check_llm() -> CheckResult:
     """Verify the LLM service can be imported and model_config.json is valid."""
     try:
-        from src.backend.services.llm_service import VALID_ROLES
-        from src.backend.services.llm_service import resolve_model  # noqa: F401, F811
+        from src.backend.services.llm_service import (
+            VALID_ROLES,
+            resolve_model,  # noqa: F401, F811
+        )
     except ImportError as exc:
         return CheckResult(status="failed", message=f"LLM service import failed: {exc}")
     config_path = Path("config/model_config.json")
@@ -120,7 +122,9 @@ def _check_media_dir() -> CheckResult:
         media_dir.mkdir(parents=True, exist_ok=True)
         return CheckResult(status="ok")
     except OSError as exc:
-        return CheckResult(status="failed", message=f"Cannot create media directory {media_dir}: {exc}")
+        return CheckResult(
+            status="failed", message=f"Cannot create media directory {media_dir}: {exc}"
+        )
 
 
 def _check_llm_review() -> CheckResult:
@@ -174,7 +178,7 @@ def _check_financial_data() -> CheckResult:
     return CheckResult(status="ok", message="financial data service importable")
 
 
-DEFAULT_RUNNERS: Dict[str, Runner] = {
+DEFAULT_RUNNERS: dict[str, Runner] = {
     "llm": _check_llm,
     "llm_review": _check_llm_review,
     "tts": _check_tts,
@@ -192,9 +196,9 @@ def _format_iso(dt: datetime) -> str:
     ``strftime('%Y-%m-%dT%H:%M:%fZ','now')`` default used elsewhere in
     the schema."""
     if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
+        dt = dt.replace(tzinfo=UTC)
     else:
-        dt = dt.astimezone(timezone.utc)
+        dt = dt.astimezone(UTC)
     millis = dt.microsecond // 1000
     return f"{dt.strftime('%Y-%m-%dT%H:%M:%S')}.{millis:03d}Z"
 
@@ -202,11 +206,11 @@ def _format_iso(dt: datetime) -> str:
 def _run_subset(
     conn: sqlite3.Connection,
     names: Iterable[str],
-    runners: Optional[Dict[str, Runner]],
-    now: Optional[datetime],
+    runners: dict[str, Runner] | None,
+    now: datetime | None,
 ) -> None:
     effective = {**DEFAULT_RUNNERS, **(runners or {})}
-    now = now or datetime.now(timezone.utc)
+    now = now or datetime.now(UTC)
     checked_at = _format_iso(now)
     valid_until = _format_iso(now + timedelta(hours=VALIDITY_HOURS))
     repo = SystemStatusRepository(conn)
@@ -217,8 +221,8 @@ def _run_subset(
 
 def run_full_preflight(
     conn: sqlite3.Connection,
-    runners: Optional[Dict[str, Runner]] = None,
-    now: Optional[datetime] = None,
+    runners: dict[str, Runner] | None = None,
+    now: datetime | None = None,
 ) -> None:
     """Run all 9 checks and persist a row per check in ``system_status``."""
     _run_subset(conn, ALL_CHECKS, runners, now)
@@ -226,8 +230,8 @@ def run_full_preflight(
 
 def run_critical_preflight(
     conn: sqlite3.Connection,
-    runners: Optional[Dict[str, Runner]] = None,
-    now: Optional[datetime] = None,
+    runners: dict[str, Runner] | None = None,
+    now: datetime | None = None,
 ) -> None:
     """Run the 5 critical checks only (project-create gate feed)."""
     _run_subset(conn, CRITICAL_CHECKS, runners, now)

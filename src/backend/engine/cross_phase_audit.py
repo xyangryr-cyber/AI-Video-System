@@ -5,7 +5,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.7.7, SPEC-9.10.7, SPEC-9.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 
 class CrossPhaseAudit:
@@ -15,8 +15,8 @@ class CrossPhaseAudit:
 
     @staticmethod
     def audit_data_points(
-        *, shots: List[Dict[str, Any]], script_data_points: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+        *, shots: list[dict[str, Any]], script_data_points: list[dict[str, Any]]
+    ) -> dict[str, Any]:
         dp_ids = {dp["data_point_id"] for dp in script_data_points}
         shot_refs: set[str] = set()
         for shot in shots:
@@ -32,8 +32,8 @@ class CrossPhaseAudit:
 
     @staticmethod
     def audit_time_alignment(
-        *, shots: List[Dict[str, Any]], timeline_segments: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+        *, shots: list[dict[str, Any]], timeline_segments: list[dict[str, Any]]
+    ) -> dict[str, Any]:
         for shot in shots:
             tr = shot["time_range"]
             best_overlap = 0.0
@@ -56,10 +56,10 @@ class CrossPhaseAudit:
     @staticmethod
     def run_audit_1(
         *,
-        shots: List[Dict[str, Any]],
-        script_data_points: List[Dict[str, Any]],
-        timeline_segments: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        shots: list[dict[str, Any]],
+        script_data_points: list[dict[str, Any]],
+        timeline_segments: list[dict[str, Any]],
+    ) -> dict[str, Any]:
         dp_result = CrossPhaseAudit.audit_data_points(
             shots=shots, script_data_points=script_data_points
         )
@@ -82,27 +82,23 @@ class CrossPhaseAudit:
     @staticmethod
     def run_audit_2(
         *,
-        subtitles: List[Dict[str, Any]],
-        polished_script: Dict[str, Any],
-        storyboard: List[Dict[str, Any]],
-        rough_cut: Dict[str, Any],
-        timeline: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        subtitles: list[dict[str, Any]],
+        polished_script: dict[str, Any],
+        storyboard: list[dict[str, Any]],
+        rough_cut: dict[str, Any],
+        timeline: dict[str, Any],
+    ) -> dict[str, Any]:
         inconsistencies: list[str] = []
         # Subtitle text check
         sub_text = " ".join(s.get("text", "") for s in subtitles)
-        polished_text = " ".join(
-            s.get("content", "") for s in polished_script.get("segments", [])
-        )
+        polished_text = " ".join(s.get("content", "") for s in polished_script.get("segments", []))
         if sub_text != polished_text:
             inconsistencies.append("subtitle text mismatch")
         # Duration deviation <= 1s
         rc_dur = rough_cut.get("duration_seconds", 0)
         tl_dur = timeline.get("total_duration_sec", 0)
         if abs(rc_dur - tl_dur) > 1.0:
-            inconsistencies.append(
-                f"duration deviation {abs(rc_dur - tl_dur):.1f}s > 1s"
-            )
+            inconsistencies.append(f"duration deviation {abs(rc_dur - tl_dur):.1f}s > 1s")
         return {
             "verdict": "PASS" if not inconsistencies else "FAIL",
             "inconsistency_count": len(inconsistencies),
@@ -114,12 +110,10 @@ class CrossPhaseAudit:
     @staticmethod
     def run_audit_3(
         *,
-        audit_1: Dict[str, Any],
-        audit_2: Dict[str, Any],
-    ) -> Dict[str, Any]:
-        total = audit_1.get("inconsistency_count", 0) + audit_2.get(
-            "inconsistency_count", 0
-        )
+        audit_1: dict[str, Any],
+        audit_2: dict[str, Any],
+    ) -> dict[str, Any]:
+        total = audit_1.get("inconsistency_count", 0) + audit_2.get("inconsistency_count", 0)
         return {
             "verdict": "PASS" if total == 0 else "FAIL",
             "total_inconsistencies": total,

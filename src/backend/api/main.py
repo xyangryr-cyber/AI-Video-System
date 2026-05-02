@@ -8,7 +8,7 @@ from __future__ import annotations
 import logging
 import os
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from dotenv import load_dotenv
 
@@ -18,17 +18,26 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.backend.api.middleware.error_handler import register_error_handlers
-from src.backend.api.routes import cost, observability, preferences, projects, settings_bridge, system, tasks, websocket
+from src.backend.api.routes import (
+    cost,
+    observability,
+    preferences,
+    projects,
+    settings_bridge,
+    system,
+    tasks,
+    websocket,
+)
 from src.backend.db.connection import create_connection
 
 
 @asynccontextmanager
 async def lifespan(application: FastAPI):
     # startup
-    import os as _os
     from pathlib import Path as _Path
-    from src.backend.db.migration_runner import run_migrations
+
     from src.backend.core.preflight import run_full_preflight
+    from src.backend.db.migration_runner import run_migrations
 
     application.state.db_connection = create_connection()
 
@@ -75,7 +84,7 @@ class JsonLineFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         import json
 
-        ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+        ts = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
         entry: dict[str, object] = {
             "ts": ts,
             "level": record.levelname,

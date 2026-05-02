@@ -2,18 +2,16 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 
 class AgentCallLogEntry(BaseModel):
-    id: Optional[int] = None
+    id: int | None = None
     agent_name: str
     tokens: int = Field(gt=0)
     duration_ms: int = Field(gt=0)
-    phase: Optional[int] = None
-    project_id: Optional[str] = None
+    phase: int | None = None
+    project_id: str | None = None
     model: str
     prompt: str
     response: str

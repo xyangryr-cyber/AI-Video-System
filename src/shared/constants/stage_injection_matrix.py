@@ -15,10 +15,10 @@ matrix only covers stage-scoped injection.
 from __future__ import annotations
 
 import fnmatch
+from collections.abc import Mapping
 from types import MappingProxyType
-from typing import Mapping, Tuple
 
-_MATRIX: dict[str, Tuple[str, ...]] = {
+_MATRIX: dict[str, tuple[str, ...]] = {
     "P4_tts": ("tts.*",),
     "P5_bgm": ("bgm.*",),
     "P6_sfx": ("sfx.*",),
@@ -27,7 +27,7 @@ _MATRIX: dict[str, Tuple[str, ...]] = {
     "P9_broll": ("broll.*",),
 }
 
-STAGE_INJECTION_MATRIX: Mapping[str, Tuple[str, ...]] = MappingProxyType(_MATRIX)
+STAGE_INJECTION_MATRIX: Mapping[str, tuple[str, ...]] = MappingProxyType(_MATRIX)
 
 
 def stage_accepts_key(stage: str, key: str) -> bool:

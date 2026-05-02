@@ -88,22 +88,16 @@ const DataCard: React.FC<TemplateProps> = ({ data, theme }) => {
       </div>
 
       <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 4 }}>
-        <motion.span style={{ fontSize: 32, fontWeight: 700 }}>
-          {displayValue}
-        </motion.span>
+        <motion.span style={{ fontSize: 32, fontWeight: 700 }}>{displayValue}</motion.span>
         <span style={{ fontSize: 14, opacity: 0.5 }}>{cardData.unit}</span>
       </div>
 
       <div style={{ fontSize: 13, color: changeColor, fontWeight: 600, marginBottom: 12 }}>
-        {isPositive ? "+" : ""}{cardData.change} {cardData.changeLabel}
+        {isPositive ? "+" : ""}
+        {cardData.change} {cardData.changeLabel}
       </div>
 
-      <canvas
-        ref={canvasRef}
-        width={280}
-        height={60}
-        style={{ width: "100%", height: 60 }}
-      />
+      <canvas ref={canvasRef} width={280} height={60} style={{ width: "100%", height: 60 }} />
     </motion.div>
   );
 };

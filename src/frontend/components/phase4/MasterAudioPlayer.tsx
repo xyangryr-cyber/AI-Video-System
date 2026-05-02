@@ -48,7 +48,11 @@ export function MasterAudioPlayer({ masterAudio }: Props): ReactElement {
   const duration = 300; // placeholder; real duration from master_audio artifact
 
   return (
-    <div role="region" aria-label="主旁白播放器" className="flex flex-col gap-2 p-3 border rounded-lg bg-white">
+    <div
+      role="region"
+      aria-label="主旁白播放器"
+      className="flex flex-col gap-2 p-3 border rounded-lg bg-white"
+    >
       <audio
         ref={audioRef}
         src={masterAudio.master_audio_url}
@@ -72,7 +76,14 @@ export function MasterAudioPlayer({ masterAudio }: Props): ReactElement {
         </button>
 
         {/* Progress bar */}
-        <div className="flex-1" role="progressbar" aria-label="播放进度" aria-valuenow={currentTime} aria-valuemin={0} aria-valuemax={duration}>
+        <div
+          className="flex-1"
+          role="progressbar"
+          aria-label="播放进度"
+          aria-valuenow={currentTime}
+          aria-valuemin={0}
+          aria-valuemax={duration}
+        >
           <div className="h-1.5 bg-gray-200 rounded-full">
             <div
               className="h-1.5 bg-blue-500 rounded-full transition-all"

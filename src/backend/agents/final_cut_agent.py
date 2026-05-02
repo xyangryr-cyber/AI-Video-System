@@ -6,7 +6,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.11
 from __future__ import annotations
 
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class FinalCutAgent:
@@ -17,9 +17,9 @@ class FinalCutAgent:
         *,
         project_id: str,
         rough_cut_path: str,
-        adjustments: Optional[Dict[str, Any]] = None,
-        title: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        adjustments: dict[str, Any] | None = None,
+        title: str | None = None,
+    ) -> dict[str, Any]:
         """Fine cut adjustments + multi-platform transcoding + cover generation.
 
         PRD 7.13.1 deliverables:
@@ -62,7 +62,7 @@ class FinalCutAgent:
         cover_dimensions = {"width": 1146, "height": 717}
 
         # -- Fine cut adjustments -------------------------------------------
-        adjustments_applied: List[str] = []
+        adjustments_applied: list[str] = []
         if adjustments:
             adjustments_applied = [k for k, v in adjustments.items() if v]
         else:
@@ -88,12 +88,8 @@ class FinalCutAgent:
         }
 
     @staticmethod
-    def run_audit_3(
-        *, audit_1: Dict[str, Any], audit_2: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        total = audit_1.get("inconsistency_count", 0) + audit_2.get(
-            "inconsistency_count", 0
-        )
+    def run_audit_3(*, audit_1: dict[str, Any], audit_2: dict[str, Any]) -> dict[str, Any]:
+        total = audit_1.get("inconsistency_count", 0) + audit_2.get("inconsistency_count", 0)
         return {
             "verdict": "PASS" if total == 0 else "FAIL",
             "total_inconsistencies": total,

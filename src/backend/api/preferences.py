@@ -10,7 +10,7 @@ per current-settings key, labelled ``keep | update | add_stage_override``.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Literal
+from typing import Any, Literal
 
 from fastapi import APIRouter
 from pydantic import BaseModel, ConfigDict, Field
@@ -28,8 +28,8 @@ class WritebackSuggestionsRequest(BaseModel):
 
     project_id: str = Field(min_length=1)
     phase: str = Field(min_length=1)
-    current_settings: Dict[str, Any] = Field(default_factory=dict)
-    historical_preferences: List[StagePreference] = Field(default_factory=list)
+    current_settings: dict[str, Any] = Field(default_factory=dict)
+    historical_preferences: list[StagePreference] = Field(default_factory=list)
     confidence: float = 0.7
 
 
@@ -46,7 +46,7 @@ class WritebackSuggestionItem(BaseModel):
 class WritebackSuggestionsResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    suggestions: List[WritebackSuggestionItem]
+    suggestions: list[WritebackSuggestionItem]
 
 
 @router.post(

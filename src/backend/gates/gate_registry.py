@@ -5,16 +5,18 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md "Gate Registry"
 
 from __future__ import annotations
 
-from typing import Dict, Type
-
 from src.backend.gates.base_gate import BaseGate
+from src.backend.gates.gate_p0 import GateP0
 
-_registry: Dict[int, Type[BaseGate]] = {}
+_registry: dict[int, type] = {}
 
 
-def register_gate(phase: int, gate_cls: Type[BaseGate]) -> None:
+def register_gate(phase: int, gate_cls: type) -> None:
     _registry[phase] = gate_cls
 
 
-def get_gate(phase: int) -> Type[BaseGate]:
+def get_gate(phase: int) -> type:
     return _registry.get(phase, BaseGate)
+
+
+register_gate(0, GateP0)

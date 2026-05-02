@@ -41,9 +41,7 @@ class InputClassifier:
         for r in raw.get("rules") or []:
             decision = r["decision"]
             if decision not in DECISION_LEVELS:
-                raise ValueError(
-                    f"invalid decision on rule {r.get('id')!r}: {decision!r}"
-                )
+                raise ValueError(f"invalid decision on rule {r.get('id')!r}: {decision!r}")
             rules.append(
                 _Rule(
                     id=str(r["id"]),

@@ -27,7 +27,7 @@ Each entry has the shape::
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict, Tuple
+from typing import Any
 
 
 class RouteType(str, Enum):
@@ -38,7 +38,7 @@ class RouteType(str, Enum):
 _ERR = "ErrorResponse"
 
 
-API_ROUTES: Tuple[Dict[str, Any], ...] = (
+API_ROUTES: tuple[dict[str, Any], ...] = (
     # --- Projects: list / CRUD -------------------------------------------
     {
         "type": RouteType.REST.value,

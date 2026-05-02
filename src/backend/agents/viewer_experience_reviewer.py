@@ -7,7 +7,7 @@ Placed outside reviewers/ to avoid circular import.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 
 class ViewerExperienceReviewer:
@@ -25,11 +25,11 @@ class ViewerExperienceReviewer:
     @staticmethod
     def review(
         *,
-        rough_cut_metadata: Dict[str, Any],
-        polished_script: Dict[str, Any],
-        emotion_curve: Dict[str, Any],
-        timeline: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        rough_cut_metadata: dict[str, Any],
+        polished_script: dict[str, Any],
+        emotion_curve: dict[str, Any],
+        timeline: dict[str, Any],
+    ) -> dict[str, Any]:
         dims = {
             "hook_appeal": 7,
             "pacing": 6,

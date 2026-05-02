@@ -10,7 +10,7 @@ concrete master-audio artifacts: narration_master (P4), bgm_mix_master
 
 from __future__ import annotations
 
-from typing import Annotated, List, Literal, Union
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
@@ -34,7 +34,7 @@ class SourceRef(_Strict):
 class _MasterAudioCommon(_Strict):
     file_path: str = Field(pattern=_FILE_PATH_RE)
     based_on_phase: Literal[4, 5, 6]
-    derived_from_segments: List[str] = Field(
+    derived_from_segments: list[str] = Field(
         default_factory=list,
         description="Segment IDs composing this master (each matches ^seg_\\d{2,}$).",
     )
@@ -43,7 +43,7 @@ class _MasterAudioCommon(_Strict):
     version: int = Field(ge=1)
 
 
-def _validate_segment_ids(segments: List[str]) -> None:
+def _validate_segment_ids(segments: list[str]) -> None:
     import re
 
     pat = re.compile(_SEGMENT_ID_RE)
@@ -85,17 +85,11 @@ class FinalAudioMasterArtifact(_MasterAudioCommon):
 
 
 MasterAudioArtifact = Annotated[
-    Union[
-        NarrationMasterArtifact,
-        BgmMixMasterArtifact,
-        FinalAudioMasterArtifact,
-    ],
+    NarrationMasterArtifact | BgmMixMasterArtifact | FinalAudioMasterArtifact,
     Field(discriminator="kind"),
 ]
 
-MasterAudioArtifactAdapter: TypeAdapter[MasterAudioArtifact] = TypeAdapter(
-    MasterAudioArtifact
-)
+MasterAudioArtifactAdapter: TypeAdapter[MasterAudioArtifact] = TypeAdapter(MasterAudioArtifact)
 
 
 def validate_checksum_chain(

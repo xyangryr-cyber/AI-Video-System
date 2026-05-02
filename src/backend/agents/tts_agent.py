@@ -9,7 +9,7 @@ TTSProvider abstraction, timeline.json production.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 from src.backend.services.bytedance_tts_provider import ByteDanceTTSProvider
 from src.backend.services.digit_slowdown import DigitSlowdown
@@ -40,14 +40,14 @@ class TTSAgent:
     @staticmethod
     def select_voice_candidates(
         *,
-        polished_script: Dict[str, Any],
-        voice_preferences: Dict[str, Any] | None = None,
-    ) -> List[Dict[str, Any]]:
+        polished_script: dict[str, Any],
+        voice_preferences: dict[str, Any] | None = None,
+    ) -> list[dict[str, Any]]:
         preferred_id = None
         if voice_preferences:
             preferred_id = voice_preferences.get("preferred_voice_id")
 
-        candidates: List[Dict[str, Any]] = []
+        candidates: list[dict[str, Any]] = []
         if preferred_id:
             # Put preferred voice first with is_recommended=True
             candidates.append(
@@ -72,7 +72,7 @@ class TTSAgent:
         selected_voice_id: str,
         preferred_voice_id: str,
         user_accepted: bool,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if selected_voice_id == preferred_voice_id:
             return {"write_target": "none", "voice_id": selected_voice_id}
         target = "user_preferences_md" if user_accepted else "project_preferences_md"
@@ -81,7 +81,7 @@ class TTSAgent:
     # -- Global voice params (AC-4) --
 
     @staticmethod
-    def build_global_voice_params(*, voice_id: str) -> Dict[str, Any]:
+    def build_global_voice_params(*, voice_id: str) -> dict[str, Any]:
         return {
             "voice_id": voice_id,
             "style": "news",
@@ -96,11 +96,11 @@ class TTSAgent:
     @staticmethod
     def build_segment_overrides(
         *,
-        segment: Dict[str, Any],
+        segment: dict[str, Any],
         digit_slowdown: bool = False,
-        global_voice_params: Dict[str, Any] | None = None,
-    ) -> Dict[str, Any]:
-        overrides: Dict[str, Any] = {}
+        global_voice_params: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        overrides: dict[str, Any] = {}
         vd = segment.get("voice_direction")
         if vd:
             vd_result = VoiceDirectionBridge.convert(vd)
@@ -116,12 +116,12 @@ class TTSAgent:
     def build_timeline(
         self,
         *,
-        polished_script: Dict[str, Any],
+        polished_script: dict[str, Any],
         voice_id: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         segments = polished_script.get("segments", [])
         voice_params = self.build_global_voice_params(voice_id=voice_id)
-        timeline_segments: List[Dict[str, Any]] = []
+        timeline_segments: list[dict[str, Any]] = []
         current_time = 0.0
         sample_rate = 44100
 

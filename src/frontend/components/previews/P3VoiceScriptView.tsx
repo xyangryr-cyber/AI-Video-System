@@ -1,5 +1,5 @@
-import type { VoiceDirection } from '@frontend/types/preview';
-import { FileText, Sparkles } from 'lucide-react';
+import type { VoiceDirection } from "@frontend/types/preview";
+import { FileText, Sparkles } from "lucide-react";
 
 interface P3VoiceScriptViewProps {
   content?: string;
@@ -17,7 +17,10 @@ function estimateDuration(charCount: number): string {
 export function P3VoiceScriptView({ content, voice_directions }: P3VoiceScriptViewProps) {
   if (!content) {
     return (
-      <div data-testid="preview-p3" className="flex flex-col items-center justify-center h-64 text-slate-400">
+      <div
+        data-testid="preview-p3"
+        className="flex flex-col items-center justify-center h-64 text-slate-400"
+      >
         <FileText className="w-12 h-12 mb-2" />
         <p className="text-sm font-medium">暂无精修脚本内容</p>
         <p className="text-xs text-slate-400 mt-1">等待风格精修 Agent 完成口语化优化</p>
@@ -25,26 +28,21 @@ export function P3VoiceScriptView({ content, voice_directions }: P3VoiceScriptVi
     );
   }
 
-  const tone = voice_directions?.[0]?.tone || '默认';
+  const tone = voice_directions?.[0]?.tone || "默认";
   const charCount = content.length;
   const duration = estimateDuration(charCount);
 
   // Check if any voice direction indicates oral-language optimization
-  const hasOralOpt = voice_directions?.some(
-    (vd) => vd.text?.includes('口语化'),
-  ) || voice_directions?.some(
-    (vd) => vd.notes?.includes('口语化') || vd.notes?.includes('energetic'),
-  );
+  const hasOralOpt =
+    voice_directions?.some((vd) => vd.text?.includes("口语化")) ||
+    voice_directions?.some((vd) => vd.notes?.includes("口语化") || vd.notes?.includes("energetic"));
 
   // Split content into paragraphs
   const paragraphs = content.split(/\n+/).filter(Boolean);
   if (paragraphs.length === 0) paragraphs.push(content);
 
   return (
-    <div
-      data-testid="preview-p3"
-      className="bg-white border-2 border-slate-200 rounded-xl p-5"
-    >
+    <div data-testid="preview-p3" className="bg-white border-2 border-slate-200 rounded-xl p-5">
       {/* Header row: style badge + word count */}
       <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
         <div className="flex space-x-2">
@@ -67,9 +65,7 @@ export function P3VoiceScriptView({ content, voice_directions }: P3VoiceScriptVi
             <p
               key={i}
               className={
-                isCallout
-                  ? 'bg-amber-50 border-l-4 border-amber-400 pl-4 py-1 italic'
-                  : ''
+                isCallout ? "bg-amber-50 border-l-4 border-amber-400 pl-4 py-1 italic" : ""
               }
             >
               {isCallout && (

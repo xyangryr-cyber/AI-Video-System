@@ -24,7 +24,7 @@ Allowed HTTP statuses: 400, 404, 409, 422, 500, 503, 504.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Dict, Final
+from typing import Final
 
 
 class ErrorCode(str, Enum):
@@ -68,7 +68,7 @@ class ErrorDomain(str, Enum):
     SYSTEM = "system"
 
 
-HTTP_STATUS_BY_CODE: Final[Dict[ErrorCode, int]] = {
+HTTP_STATUS_BY_CODE: Final[dict[ErrorCode, int]] = {
     ErrorCode.EVID_1001: 400,
     ErrorCode.EVID_1002: 404,
     ErrorCode.EVID_1003: 409,
@@ -93,7 +93,7 @@ HTTP_STATUS_BY_CODE: Final[Dict[ErrorCode, int]] = {
 }
 
 
-MESSAGE_BY_CODE: Final[Dict[ErrorCode, str]] = {
+MESSAGE_BY_CODE: Final[dict[ErrorCode, str]] = {
     ErrorCode.EVID_1001: "Description too short (min 10 chars)",
     ErrorCode.EVID_1002: "Project not found",
     ErrorCode.EVID_1003: "Project is not active",
@@ -118,7 +118,7 @@ MESSAGE_BY_CODE: Final[Dict[ErrorCode, str]] = {
 }
 
 
-DOMAIN_BY_CODE: Final[Dict[ErrorCode, ErrorDomain]] = {
+DOMAIN_BY_CODE: Final[dict[ErrorCode, ErrorDomain]] = {
     ErrorCode.EVID_1001: ErrorDomain.PROJECT,
     ErrorCode.EVID_1002: ErrorDomain.PROJECT,
     ErrorCode.EVID_1003: ErrorDomain.PROJECT,
@@ -146,7 +146,7 @@ DOMAIN_BY_CODE: Final[Dict[ErrorCode, ErrorDomain]] = {
 }
 
 
-ERROR_CODE_ALIASES: Final[Dict[str, ErrorCode]] = {
+ERROR_CODE_ALIASES: Final[dict[str, ErrorCode]] = {
     # Maps human-readable BDD/UX scenario names onto the 17 canonical EVID
     # codes. Keep in lockstep with src/shared/constants/error_codes.ts.
     # Rationale: BDD @error_ux scenarios reference friendly names so the

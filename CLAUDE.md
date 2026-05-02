@@ -5,6 +5,12 @@
 
 ---
 
+<!-- SPECKIT START -->
+**Active Plan**: [specs/001-phase-0-requirements/plan.md](specs/001-phase-0-requirements/plan.md)
+**Spec**: [specs/001-phase-0-requirements/spec.md](specs/001-phase-0-requirements/spec.md)
+**Branch**: `001-phase-0-requirements`
+<!-- SPECKIT END -->
+
 ## Quick Orientation
 
 **What is this?** A web-based AI video production system for financial content creators.
@@ -20,7 +26,7 @@
 | **What to build** | `tasks/SPEC-{..}/` -- atomic task cards |
 | **How to build** | `HARNESS.md` -- global constraints, TDD rules, naming |
 | **What the system does** | `docs/specs/SPEC-*.md` -- authoritative specifications |
-| **Why it's designed this way** | `docs/TECH_PLAN_v3.3.md` -- architecture rationale |
+| **Why it's designed this way** | `docs/` -- architecture rationale |
 | **What's done / what's next** | `PROGRESS.md` -- dev log |
 | **Shared types & schemas** | `src/shared/` -- cross-layer contracts |
 | **Backend code** | `src/backend/` -- API, engine, agents, services |

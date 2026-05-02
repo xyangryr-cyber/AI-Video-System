@@ -6,7 +6,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.11.7
 from __future__ import annotations
 
 import sqlite3
-from typing import Any, Dict, List
+from typing import Any
 
 from src.backend.gates.base_gate import GateResult
 
@@ -18,9 +18,9 @@ class GateP11:
         final_cut_exists: bool,
         reviewer_passed: bool,
         audit_clean: bool,
-        pending_tasks: List[Any],
+        pending_tasks: list[Any],
         preferences_confirmed: bool,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         failed: list[str] = []
         passed: list[str] = []
 

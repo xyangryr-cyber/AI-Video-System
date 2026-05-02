@@ -6,7 +6,7 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.8.7
 from __future__ import annotations
 
 import sqlite3
-from typing import Any, Dict, List
+from typing import Any
 
 from src.backend.gates.base_gate import GateResult
 
@@ -20,9 +20,9 @@ class GateP8:
         renders_complete: bool,
         degraded_shots: int,
         reviewer_passed: bool,
-        pending_tasks: List[Any],
+        pending_tasks: list[Any],
         preferences_confirmed: bool,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         failed: list[str] = []
         passed: list[str] = []
 
@@ -32,9 +32,7 @@ class GateP8:
             passed.append("renders complete")
 
         if degraded_shots > _MAX_DEGRADED_SHOTS:
-            failed.append(
-                f"{degraded_shots} degraded shots exceeds max {_MAX_DEGRADED_SHOTS}"
-            )
+            failed.append(f"{degraded_shots} degraded shots exceeds max {_MAX_DEGRADED_SHOTS}")
         else:
             passed.append(f"degraded shots ({degraded_shots}) within limit")
 
@@ -68,7 +66,7 @@ class GateP8:
         material_readiness: bool = False,
         degraded_shots: int = 0,
         reviewer_passed: bool = False,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         failed: list[str] = []
         passed: list[str] = []
 

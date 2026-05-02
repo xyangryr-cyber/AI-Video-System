@@ -14,11 +14,7 @@ interface Props {
   onSelect: (candidate: BgmCandidate) => void;
 }
 
-export function Phase5CandidateCard({
-  candidate,
-  isSelected,
-  onSelect,
-}: Props): ReactElement {
+export function Phase5CandidateCard({ candidate, isSelected, onSelect }: Props): ReactElement {
   return (
     <article
       aria-pressed={isSelected}
@@ -27,9 +23,7 @@ export function Phase5CandidateCard({
     >
       <div className="text-sm font-medium mb-2">
         {candidate.id}
-        {candidate.is_recommended && (
-          <span className="ml-2 text-xs text-blue-600">推荐</span>
-        )}
+        {candidate.is_recommended && <span className="ml-2 text-xs text-blue-600">推荐</span>}
       </div>
 
       <div className="flex gap-2 mb-2">

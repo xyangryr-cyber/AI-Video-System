@@ -42,10 +42,7 @@ const ALL_RATIOS: AspectRatio[] = ["16:9", "3:4", "1:1"];
  * Generate all 9 covers (3 templates x 3 ratios).
  * Returns an array of 9 CoverResult objects.
  */
-export function generateAllCovers(
-  keyDataPointValue?: number,
-  unit?: string
-): CoverResult[] {
+export function generateAllCovers(keyDataPointValue?: number, unit?: string): CoverResult[] {
   const covers: CoverResult[] = [];
 
   for (const template of ALL_TEMPLATES) {

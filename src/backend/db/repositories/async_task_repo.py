@@ -97,8 +97,7 @@ class AsyncTaskRepository(BaseRepository):
 
     def list_for_project(self, project_id: str) -> list[sqlite3.Row]:
         cur = self.execute(
-            "SELECT * FROM async_tasks WHERE project_id = ? "
-            "ORDER BY created_at ASC, task_id ASC",
+            "SELECT * FROM async_tasks WHERE project_id = ? ORDER BY created_at ASC, task_id ASC",
             (project_id,),
         )
         return list(cur.fetchall())

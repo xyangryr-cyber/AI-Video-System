@@ -20,7 +20,6 @@ Exports:
 from __future__ import annotations
 
 from enum import Enum
-from typing import Dict
 
 
 class ErrorCode(str, Enum):
@@ -45,7 +44,7 @@ class ErrorCode(str, Enum):
     EVID_5003 = "EVID_5003"
 
 
-ERROR_CODE_HTTP_MAP: Dict[str, int] = {
+ERROR_CODE_HTTP_MAP: dict[str, int] = {
     ErrorCode.EVID_1001.value: 400,
     ErrorCode.EVID_1002.value: 404,
     ErrorCode.EVID_1003.value: 409,
@@ -66,7 +65,7 @@ ERROR_CODE_HTTP_MAP: Dict[str, int] = {
 }
 
 
-ERROR_CODE_MESSAGE_MAP: Dict[str, str] = {
+ERROR_CODE_MESSAGE_MAP: dict[str, str] = {
     ErrorCode.EVID_1001.value: "Description too short (min 10 chars)",
     ErrorCode.EVID_1002.value: "Project not found",
     ErrorCode.EVID_1003.value: "Project is not active",

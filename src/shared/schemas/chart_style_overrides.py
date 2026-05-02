@@ -12,21 +12,19 @@ Mirrored in TypeScript by ``src/shared/types/chart_request.ts``.
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, ConfigDict
 
 
 class ChartStyleOverrides(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    line_width: Optional[float] = None
-    line_color: Optional[str] = None
-    smooth: Optional[bool] = None
-    background_color: Optional[str] = None
-    grid_visible: Optional[bool] = None
-    show_source_label: Optional[bool] = None
-    animation_duration_ms: Optional[int] = None
+    line_width: float | None = None
+    line_color: str | None = None
+    smooth: bool | None = None
+    background_color: str | None = None
+    grid_visible: bool | None = None
+    show_source_label: bool | None = None
+    animation_duration_ms: int | None = None
 
 
 __all__ = ["ChartStyleOverrides"]

@@ -69,15 +69,9 @@ const NewsCard: React.FC<TemplateProps> = ({ data, theme }) => {
             loop={false}
           />
           <div>
-            <div style={{ fontWeight: 700, marginBottom: 4 }}>
-              {item.headline}
-            </div>
+            <div style={{ fontWeight: 700, marginBottom: 4 }}>{item.headline}</div>
             {item.lines.map((line, j) => (
-              <motion.div
-                key={j}
-                variants={itemVariants}
-                style={{ fontSize: 14, opacity: 0.85 }}
-              >
+              <motion.div key={j} variants={itemVariants} style={{ fontSize: 14, opacity: 0.85 }}>
                 {line}
               </motion.div>
             ))}

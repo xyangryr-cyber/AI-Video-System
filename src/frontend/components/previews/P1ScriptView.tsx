@@ -1,4 +1,4 @@
-import { FileText } from 'lucide-react';
+import { FileText } from "lucide-react";
 
 interface P1ScriptViewProps {
   content?: string;
@@ -11,9 +11,9 @@ interface OutlineSection {
 }
 
 function parseOutlineSections(content: string): OutlineSection[] {
-  const lines = content.split('\n');
+  const lines = content.split("\n");
   const sections: OutlineSection[] = [];
-  let currentTitle = '';
+  let currentTitle = "";
   let currentLines: string[] = [];
 
   for (const line of lines) {
@@ -21,8 +21,8 @@ function parseOutlineSections(content: string): OutlineSection[] {
     if (headingMatch) {
       if (currentTitle || currentLines.length > 0) {
         sections.push({
-          title: currentTitle || '未命名段落',
-          desc: currentLines.join('\n').trim() || currentTitle,
+          title: currentTitle || "未命名段落",
+          desc: currentLines.join("\n").trim() || currentTitle,
         });
       }
       currentTitle = headingMatch[1].trim();
@@ -35,8 +35,8 @@ function parseOutlineSections(content: string): OutlineSection[] {
   // Flush last section
   if (currentTitle || currentLines.length > 0) {
     sections.push({
-      title: currentTitle || '未命名段落',
-      desc: currentLines.join('\n').trim() || currentTitle,
+      title: currentTitle || "未命名段落",
+      desc: currentLines.join("\n").trim() || currentTitle,
     });
   }
 
@@ -44,7 +44,7 @@ function parseOutlineSections(content: string): OutlineSection[] {
 }
 
 export function P1ScriptView({ content, versions }: P1ScriptViewProps) {
-  if (!content || content.trim() === '') {
+  if (!content || content.trim() === "") {
     return (
       <div
         data-testid="preview-p1"

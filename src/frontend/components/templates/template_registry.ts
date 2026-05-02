@@ -59,9 +59,7 @@ export const TEMPLATE_MAPPING: Record<string, string> = {
  * Resolve a template component by data_type.
  * Returns null when data_type has no mapping; caller should invoke LLM recommendation.
  */
-export function resolveTemplateByDataType(
-  dataType: string
-): React.FC<TemplateProps> | null {
+export function resolveTemplateByDataType(dataType: string): React.FC<TemplateProps> | null {
   const templateId = TEMPLATE_MAPPING[dataType];
   if (templateId == null) {
     // LLM recommendation is invoked only in this branch by the caller.

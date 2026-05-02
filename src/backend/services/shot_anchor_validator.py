@@ -11,7 +11,7 @@ Provides programmatic (0-token) validations for shot splitting:
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 
 class ShotAnchorValidator:
@@ -27,7 +27,7 @@ class ShotAnchorValidator:
         *,
         polished_script: str,
         anchor_text: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """L1-A4: verify anchor_text is an exact substring of polished_script.
 
         Returns dict with ``passed`` (bool), ``rule`` (str).
@@ -51,8 +51,8 @@ class ShotAnchorValidator:
         self,
         *,
         parent_text_len: int,
-        child_shots: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        child_shots: list[dict[str, Any]],
+    ) -> dict[str, Any]:
         """L1-A5: verify child shot intervals have no overlap and no gaps.
 
         Each child_shot dict must contain ``char_start`` and ``char_end``
@@ -117,8 +117,8 @@ class ShotAnchorValidator:
         self,
         *,
         parent_duration: float,
-        child_durations: List[float],
-    ) -> Dict[str, Any]:
+        child_durations: list[float],
+    ) -> dict[str, Any]:
         """L1-A6: verify sum of child durations equals parent duration within 100ms.
 
         Args:
@@ -148,14 +148,14 @@ class ShotAnchorValidator:
     def check_l1_a7_bindings(
         self,
         *,
-        downstream_bindings: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        downstream_bindings: list[dict[str, Any]],
+    ) -> dict[str, Any]:
         """L1-A7: verify downstream_bindings reference valid phases (P8/P9/P10).
 
         Each binding dict must have a ``phase`` key whose value is one of
         P8, P9, P10.
         """
-        invalid_bindings: List[Dict[str, Any]] = []
+        invalid_bindings: list[dict[str, Any]] = []
 
         for binding in downstream_bindings:
             phase = binding.get("phase", "")

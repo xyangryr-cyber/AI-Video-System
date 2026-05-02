@@ -25,8 +25,7 @@ export function buildRenderOptions(job: RenderJob) {
   const config = getRenderConfig("production");
 
   const totalFrames = job.shots.reduce((sum, shot) => {
-    const dur =
-      shot.timelineSegment.endFrame - shot.timelineSegment.startFrame;
+    const dur = shot.timelineSegment.endFrame - shot.timelineSegment.startFrame;
     return sum + dur;
   }, 0);
 
@@ -59,18 +58,18 @@ export function validateRenderInput(job: RenderJob): string[] {
         const dk = kf as { at_frame: number };
         if (dk.at_frame < seg.startFrame || dk.at_frame > seg.endFrame) {
           errors.push(
-            `Shot ${i}: discrete keyframe at_frame=${dk.at_frame} outside segment [${seg.startFrame}, ${seg.endFrame}]`
+            `Shot ${i}: discrete keyframe at_frame=${dk.at_frame} outside segment [${seg.startFrame}, ${seg.endFrame}]`,
           );
         }
       } else if ("start_frame" in kf) {
-        const ck = kf as {
+        const ck = kf as unknown as {
           start_frame: number;
           end_frame: number;
           pause_triggers?: Array<{ at_progress: number }>;
         };
         if (ck.start_frame < seg.startFrame || ck.end_frame > seg.endFrame) {
           errors.push(
-            `Shot ${i}: continuous keyframe [${ck.start_frame}, ${ck.endFrame}] outside segment [${seg.startFrame}, ${seg.endFrame}]`
+            `Shot ${i}: continuous keyframe [${ck.start_frame}, ${ck.end_frame}] outside segment [${seg.startFrame}, ${seg.endFrame}]`,
           );
         }
       }

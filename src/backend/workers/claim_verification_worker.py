@@ -17,7 +17,6 @@ from __future__ import annotations
 
 from typing import Any, Literal, TypedDict
 
-
 QUEUE_NAME: str = "claim_verification"
 QUEUE_PRIORITY: str = "normal"
 

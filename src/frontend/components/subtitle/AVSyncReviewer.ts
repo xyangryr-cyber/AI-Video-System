@@ -31,7 +31,7 @@ const MAX_SUBTITLE_ALIGNMENT_MS = 200;
 export function reviewSubtitleSync(
   subtitleWords: SubtitleWord[],
   audioStartSec: number,
-  keyDataPointValue?: string | number
+  keyDataPointValue?: string | number,
 ): AVSyncResult {
   const failures: AVSyncFailure[] = [];
 
@@ -44,7 +44,9 @@ export function reviewSubtitleSync(
     if (alignmentOffsetMs > MAX_SUBTITLE_ALIGNMENT_MS) {
       failures.push({
         type: "subtitle_alignment",
-        detail: `word '${sw.word}' alignment offset ${alignmentOffsetMs.toFixed(0)}ms exceeds ${MAX_SUBTITLE_ALIGNMENT_MS}ms`,
+        detail: `word '${sw.word}' alignment offset ${alignmentOffsetMs.toFixed(
+          0,
+        )}ms exceeds ${MAX_SUBTITLE_ALIGNMENT_MS}ms`,
         at_sec: sw.start_sec,
       });
     }
@@ -63,7 +65,7 @@ export function reviewSubtitleSync(
       const consistent = checkKeyDataPointConsistency(
         sw.word,
         sw.highlight_type as Parameters<typeof checkKeyDataPointConsistency>[1],
-        keyDataPointValue
+        keyDataPointValue,
       );
       if (!consistent) {
         failures.push({
@@ -88,7 +90,7 @@ export function reviewSubtitleSync(
 export function checkBlankFrames(
   subtitleWords: SubtitleWord[],
   totalDurationSec: number,
-  fps: number = 30
+  fps: number = 30,
 ): AVSyncFailure[] {
   const failures: AVSyncFailure[] = [];
   const totalFrames = Math.round(totalDurationSec * fps);

@@ -67,9 +67,7 @@ export function Phase7AMatrix({
             <div role="rowheader" className="w-24 p-2" title={anchorTexts[shot.shot_id]}>
               {shot.shot_id}
               {anchorTexts[shot.shot_id] && (
-                <span className="block text-gray-400 truncate">
-                  {anchorTexts[shot.shot_id]}
-                </span>
+                <span className="block text-gray-400 truncate">{anchorTexts[shot.shot_id]}</span>
               )}
             </div>
             {allMaterialIds.map((mid) => {
@@ -77,8 +75,7 @@ export function Phase7AMatrix({
               const inShot =
                 mat &&
                 mat.shot_id === shot.shot_id &&
-                (shot.required_materials.includes(mid) ||
-                  shot.optional_materials.includes(mid));
+                (shot.required_materials.includes(mid) || shot.optional_materials.includes(mid));
               const status = inShot && mat ? mat.verification_status : "pending";
 
               return (

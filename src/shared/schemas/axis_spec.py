@@ -14,7 +14,7 @@ Mirrored in TypeScript by ``src/shared/types/chart_request.ts``.
 
 from __future__ import annotations
 
-from typing import Any, Literal, Optional
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool
 
@@ -26,9 +26,9 @@ class XAxisSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     type: XAxisType
-    min: Optional[Any] = None
-    max: Optional[Any] = None
-    tick_format: Optional[str] = None
+    min: Any | None = None
+    max: Any | None = None
+    tick_format: str | None = None
     label: str = Field(min_length=1)
 
 
@@ -36,8 +36,8 @@ class YAxisSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     type: YAxisType
-    min: Optional[float] = None
-    max: Optional[float] = None
+    min: float | None = None
+    max: float | None = None
     zero_based: StrictBool
     unit: str
     label: str = Field(min_length=1)

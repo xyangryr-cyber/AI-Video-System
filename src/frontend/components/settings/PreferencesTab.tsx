@@ -1,10 +1,7 @@
 import type { ReactElement } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { Save } from "lucide-react";
-import {
-  usePreferencesQuery,
-  usePreferencesMutation,
-} from "../../hooks/useSettings";
+import { usePreferencesQuery, usePreferencesMutation } from "../../hooks/useSettings";
 
 export function PreferencesTab(): ReactElement {
   const { data, isLoading } = usePreferencesQuery();
@@ -50,7 +47,10 @@ export function PreferencesTab(): ReactElement {
   };
 
   return (
-    <div data-testid="preferences-tab" className="bg-white rounded-2xl border-2 border-slate-200 overflow-hidden flex flex-col">
+    <div
+      data-testid="preferences-tab"
+      className="bg-white rounded-2xl border-2 border-slate-200 overflow-hidden flex flex-col"
+    >
       {/* Card Header */}
       <div className="p-6 border-b border-slate-200">
         <div className="flex items-center justify-between">
@@ -58,9 +58,7 @@ export function PreferencesTab(): ReactElement {
             <h2 className="text-[0.85rem] font-bold text-[#1e293b] uppercase tracking-[0.05em]">
               偏好全局快照 (snapshot.md)
             </h2>
-            <p className="mt-1 text-sm text-slate-500">
-              编辑全局规则与用户偏好，实时预览合并快照
-            </p>
+            <p className="mt-1 text-sm text-slate-500">编辑全局规则与用户偏好，实时预览合并快照</p>
           </div>
           <button
             onClick={handleExport}
@@ -85,7 +83,10 @@ export function PreferencesTab(): ReactElement {
           />
         </div>
         <div>
-          <label htmlFor="user-preferences" className="block mb-2 text-sm font-medium text-slate-700">
+          <label
+            htmlFor="user-preferences"
+            className="block mb-2 text-sm font-medium text-slate-700"
+          >
             User Preferences
           </label>
           <textarea

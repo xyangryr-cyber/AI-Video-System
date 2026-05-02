@@ -2,10 +2,7 @@ import React from "react";
 import { Chrono } from "react-chrono";
 import { motion } from "motion";
 import type { TemplateProps } from "@shared/types/template_props";
-import {
-  resolveChartData,
-  validateChartMaterial,
-} from "@frontend/render/chart_material_priority";
+import { resolveChartData, validateChartMaterial } from "@frontend/render/chart_material_priority";
 
 interface TimelineEvent {
   title: string;

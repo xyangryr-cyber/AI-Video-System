@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal, Optional
+from typing import Literal
 
 DecisionLevel = Literal["allow", "clarify", "restrict", "refuse", "transfer_human"]
 
@@ -19,5 +19,5 @@ DECISION_LEVELS: tuple[DecisionLevel, ...] = (
 @dataclass(frozen=True)
 class PolicyDecision:
     decision: DecisionLevel
-    matched_rule_id: Optional[str]
+    matched_rule_id: str | None
     reason: str

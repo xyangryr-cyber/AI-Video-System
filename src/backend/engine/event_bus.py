@@ -14,11 +14,11 @@ any side effect.
 from __future__ import annotations
 
 import json
-from typing import Any, Callable, Mapping
+from collections.abc import Callable, Mapping
+from typing import Any
 
 from src.shared.constants.event_types import EventType
 from src.shared.schemas.events import validate_event_payload
-
 
 EventSink = Callable[[str, str, str], int]
 """Contract: ``(project_id, event_type_value, payload_json) -> row_id``.

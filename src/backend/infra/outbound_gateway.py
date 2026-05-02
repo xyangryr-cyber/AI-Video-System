@@ -23,13 +23,13 @@ downstream assertions in the same process.
 from __future__ import annotations
 
 import logging
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Optional, Tuple
+from typing import Any
 from urllib.parse import urlparse
 
 from src.backend.infra.exceptions import OutboundBlockedException
-
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_CONFIG_PATH = PROJECT_ROOT / "config" / "outbound_whitelist.yaml"
@@ -38,14 +38,14 @@ logger = logging.getLogger("src.backend.infra.outbound_gateway")
 
 # SPEC-14.4 alert sink. A plain in-memory list is enough for AC-5 and the
 # integration test; real wiring to the alert pipeline happens in SPEC-B-010.
-_ALERT_SINK: List[Dict[str, Any]] = []
+_ALERT_SINK: list[dict[str, Any]] = []
 
 
 @dataclass(frozen=True)
 class AgentPolicy:
     agent: str
-    allowed_hosts: Tuple[str, ...]
-    blocked_apis: Tuple[str, ...]
+    allowed_hosts: tuple[str, ...]
+    blocked_apis: tuple[str, ...]
     log_level: str = "ERROR"
     exception_name: str = "OutboundBlockedException"
     alert_severity: str = "P0"
@@ -62,7 +62,7 @@ def _normalize_host(value: str) -> str:
     return (parsed.hostname or "").lower()
 
 
-def _load_yaml_data(config_path: Path) -> Dict[str, Any]:
+def _load_yaml_data(config_path: Path) -> dict[str, Any]:
     """Load the outbound_whitelist yaml; fall back to a minimal parser when
     pyyaml is unavailable (matches B-001 regex-parse precedent — the schema
     is narrow and author-controlled)."""
@@ -74,7 +74,7 @@ def _load_yaml_data(config_path: Path) -> Dict[str, Any]:
     return yaml.safe_load(text) or {}
 
 
-def _parse_outbound_yaml_fallback(text: str) -> Dict[str, Any]:
+def _parse_outbound_yaml_fallback(text: str) -> dict[str, Any]:
     """Minimal parser for config/outbound_whitelist.yaml.
 
     Supports exactly the shape emitted by SPEC-B-016:
@@ -84,10 +84,10 @@ def _parse_outbound_yaml_fallback(text: str) -> Dict[str, Any]:
         ``on_block`` / ``alert``.
     Comments (``#``) and blank lines are ignored.
     """
-    entries: List[Dict[str, Any]] = []
-    current: Optional[Dict[str, Any]] = None
-    list_key: Optional[str] = None
-    map_key: Optional[str] = None
+    entries: list[dict[str, Any]] = []
+    current: dict[str, Any] | None = None
+    list_key: str | None = None
+    map_key: str | None = None
     in_outbound = False
 
     def _strip(value: str) -> str:
@@ -157,11 +157,11 @@ def _parse_outbound_yaml_fallback(text: str) -> Dict[str, Any]:
 
 def load_policies(
     config_path: Path = DEFAULT_CONFIG_PATH,
-) -> Dict[str, AgentPolicy]:
+) -> dict[str, AgentPolicy]:
     """Load per-agent outbound policies from ``config_path``."""
     data = _load_yaml_data(Path(config_path))
     entries = data.get("outbound_whitelist") or []
-    policies: Dict[str, AgentPolicy] = {}
+    policies: dict[str, AgentPolicy] = {}
     for item in entries:
         if not isinstance(item, dict) or "agent" not in item:
             continue
@@ -188,12 +188,12 @@ class OutboundGateway:
 
     def __init__(
         self,
-        policies: Optional[Mapping[str, AgentPolicy]] = None,
+        policies: Mapping[str, AgentPolicy] | None = None,
         config_path: Path = DEFAULT_CONFIG_PATH,
     ) -> None:
-        self._explicit_policies: Optional[Mapping[str, AgentPolicy]] = policies
+        self._explicit_policies: Mapping[str, AgentPolicy] | None = policies
         self._config_path = config_path
-        self._policies_cache: Optional[Dict[str, AgentPolicy]] = None
+        self._policies_cache: dict[str, AgentPolicy] | None = None
 
     @property
     def policies(self) -> Mapping[str, AgentPolicy]:
@@ -250,7 +250,7 @@ class OutboundGateway:
         )
 
 
-def get_captured_alerts() -> List[Dict[str, Any]]:
+def get_captured_alerts() -> list[dict[str, Any]]:
     """Return a snapshot of the in-process alert sink (SPEC-14.4 hook)."""
     return list(_ALERT_SINK)
 

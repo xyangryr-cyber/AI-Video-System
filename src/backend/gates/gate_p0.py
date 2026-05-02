@@ -5,43 +5,40 @@ Authority: docs/specs/SPEC-D-pipeline-phases.md SPEC-9.0.3
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
+
+from src.backend.gates.base_gate import BaseGate
 
 
-class GateP0:
-    """Check: requirements present, reviewer PASS, preferences confirmed."""
+class GateP0(BaseGate):
+    """Check: requirements present, reviewer PASS."""
 
-    @staticmethod
-    def check(requirements: Dict[str, Any]) -> Dict[str, Any]:
-        failed: list[str] = []
-        passed: list[str] = []
+    def __init__(self, requirements: dict[str, Any] | None = None) -> None:
+        super().__init__()
+        self.requirements: dict[str, Any] = requirements or {}
+        self.register_checks(["check_requirements_exist", "check_completeness_reviewer"])
 
-        # 1. requirements.json exists (has required fields)
-        if not requirements or not requirements.get("project_id"):
-            failed.append("requirements.json missing or empty")
-        else:
-            passed.append("requirements.json exists")
+    def check_requirements_exist(self) -> tuple[bool, str]:
+        if not self.requirements or not self.requirements.get("project_id"):
+            return False, "requirements.json missing or empty"
+        return True, "requirements.json exists"
 
-        # 2. CompletenessReviewer verdict
-        # Inline review (stateless, no DB dependency)
+    def check_completeness_reviewer(self) -> tuple[bool, str]:
         from src.backend.agents.completeness_reviewer import CompletenessReviewer
 
         reviewer = CompletenessReviewer()
-        verdict = reviewer.review(requirements)
+        verdict = reviewer.review(self.requirements)
         if verdict["verdict"] == "PASS":
-            passed.append("CompletenessReviewer PASS")
-        else:
-            failed.append(f"CompletenessReviewer FAIL: {verdict['blocking_issues']}")
+            return True, "CompletenessReviewer PASS"
+        return False, f"CompletenessReviewer FAIL: {verdict['blocking_issues']}"
 
-        # 3. preferences_confirmed_at non-null
-        prefs = requirements.get("preferences_confirmed_at")
-        if prefs:
-            passed.append("preferences_confirmed")
-        else:
-            failed.append("preferences_confirmed_at is null")
-
+    @staticmethod
+    def check(requirements: dict[str, Any]) -> dict[str, Any]:
+        """Static convenience — for direct test calls and backward compat."""
+        gate = GateP0(requirements)
+        result = gate.run()
         return {
-            "passed": len(failed) == 0,
-            "failed_checks": failed,
-            "passed_checks": passed,
+            "passed": result.passed,
+            "failed_checks": result.failed_checks,
+            "passed_checks": result.passed_checks,
         }

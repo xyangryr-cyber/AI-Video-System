@@ -13,9 +13,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-SCHEMA_FILE = (
-    Path(__file__).resolve().parents[3] / "src" / "backend" / "db" / "schema.sql"
-)
+SCHEMA_FILE = Path(__file__).resolve().parents[3] / "src" / "backend" / "db" / "schema.sql"
 
 
 @pytest.fixture
@@ -23,12 +21,10 @@ def engine():
     conn = sqlite3.connect(":memory:")
     conn.executescript(SCHEMA_FILE.read_text(encoding="utf-8"))
     conn.execute(
-        "INSERT INTO projects(project_id, title, description) "
-        "VALUES('proj_test', 't', 'd')"
+        "INSERT INTO projects(project_id, title, description) VALUES('proj_test', 't', 'd')"
     )
     conn.execute(
-        "INSERT INTO phases(project_id, phase_num, phase_name) "
-        "VALUES('proj_test', 10, 'P10')"
+        "INSERT INTO phases(project_id, phase_num, phase_name) VALUES('proj_test', 10, 'P10')"
     )
     conn.execute(
         "INSERT INTO task_ledger(id, project_id, phase, type, status, params) "
@@ -101,9 +97,7 @@ class TestPhase10ParamsForwarded:
             "rough_cut_path": "phase_10/rough_cut.mp4",
         }
 
-        storyboard = [
-            {"shot_id": "s1", "time_range": {"start_seconds": 0, "end_seconds": 5}}
-        ]
+        storyboard = [{"shot_id": "s1", "time_range": {"start_seconds": 0, "end_seconds": 5}}]
         timeline = {"total_duration_sec": 30.0, "segments": []}
         keyframe_renders = [{"shot_id": "s1", "render_path": "phase_8/s1.png"}]
 
@@ -124,6 +118,7 @@ class TestPhase10ParamsForwarded:
                 )
 
         agent.compose.assert_called_once_with(
+            project_id="proj_test",
             storyboard=storyboard,
             timeline=timeline,
             keyframe_renders=keyframe_renders,

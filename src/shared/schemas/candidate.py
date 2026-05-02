@@ -8,13 +8,13 @@ candidates; the container `CandidateList` enforces that upper bound.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Literal, Optional, Tuple
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
 PreviewType = Literal["audio", "image", "video", "color_palette"]
 
-PREVIEW_TYPES: Tuple[PreviewType, ...] = (
+PREVIEW_TYPES: tuple[PreviewType, ...] = (
     "audio",
     "image",
     "video",
@@ -30,18 +30,18 @@ class Candidate(_Strict):
     candidate_id: str = Field(pattern=r"^cand_[A-Za-z0-9_-]+$")
     preview_url: str = Field(min_length=1)
     preview_type: PreviewType
-    style_tags: List[str]
+    style_tags: list[str]
     description: str = Field(min_length=1)
     is_recommended: bool
-    adjustable_params: Dict[str, Any]
+    adjustable_params: dict[str, Any]
     rationale: str = Field(min_length=1)
-    raw_bgm_url: Optional[str] = None
+    raw_bgm_url: str | None = None
 
 
 class CandidateList(_Strict):
     """Container enforcing the SPEC-0A.2 rule that candidates count <= 3."""
 
-    candidates: List[Candidate] = Field(max_length=3)
+    candidates: list[Candidate] = Field(max_length=3)
 
 
 __all__ = [

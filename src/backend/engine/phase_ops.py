@@ -22,13 +22,13 @@ import json
 import sqlite3
 import threading
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Callable, Literal, Optional
+from typing import Literal
 
 from src.backend.engine.workflow_engine import WorkflowEngine
 from src.shared.constants.error_codes import ErrorCode
 from src.shared.constants.event_types import EventType
-
 
 # -- SQL constants (line-split to dodge SPEC-B-002 AC-4 regex) ------------
 
@@ -82,8 +82,8 @@ class AdvanceResult:
 
     status: AdvanceStatus
     current_phase: int
-    from_phase: Optional[int] = None
-    error_code: Optional[str] = None
+    from_phase: int | None = None
+    error_code: str | None = None
 
 
 @dataclass(frozen=True)
@@ -321,14 +321,11 @@ class PhaseOps:
             raise ActiveTasksExist(f"cannot skip phase {phase_num}: active tasks exist")
 
         row = self._conn.execute(
-            "SELECT preferences_confirmed_at FROM phases "
-            "WHERE project_id = ? AND phase_num = ?",
+            "SELECT preferences_confirmed_at FROM phases WHERE project_id = ? AND phase_num = ?",
             (project_id, phase_num),
         ).fetchone()
         if row is None or row[0] is None:
-            raise SkipNotAllowed(
-                f"cannot skip phase {phase_num}: preferences not confirmed"
-            )
+            raise SkipNotAllowed(f"cannot skip phase {phase_num}: preferences not confirmed")
 
         self._conn.execute(_UPDATE_PHASE_SKIP_SQL, (project_id, phase_num))
         current = self._read_current_phase(project_id)

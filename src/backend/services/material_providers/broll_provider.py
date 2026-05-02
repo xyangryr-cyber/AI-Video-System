@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 
 class BRollProvider:
     @staticmethod
-    def fetch(*, query: str) -> Dict[str, Any]:
+    def fetch(*, query: str) -> dict[str, Any]:
         if "rare" in query or "xyz" in query:
             return {"is_placeholder": True, "description": f"Placeholder: {query}"}
         return {"source_used": "pexels", "file_path": f"broll/{query}.mp4"}

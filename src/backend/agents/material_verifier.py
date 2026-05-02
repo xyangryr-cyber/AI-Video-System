@@ -23,7 +23,7 @@ without supplying a no-op checker.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Protocol
 
@@ -76,9 +76,7 @@ class MaterialVerifier:
             return None
         return matches[0]
 
-    def _transition(
-        self, entry: MaterialEntry, new_status: VerificationStatus
-    ) -> MaterialEntry:
+    def _transition(self, entry: MaterialEntry, new_status: VerificationStatus) -> MaterialEntry:
         validate_verification_status_transition(entry.verification_status, new_status)
         update: dict[str, object] = {"verification_status": new_status}
         if new_status == VerificationStatus.VERIFIED:
@@ -87,7 +85,7 @@ class MaterialVerifier:
 
     @staticmethod
     def _now_iso() -> str:
-        return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
 
 __all__ = ["MaterialVerifier"]

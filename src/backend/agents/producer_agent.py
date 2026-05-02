@@ -31,7 +31,8 @@ cross-request isolation are structural, not enforced at runtime.
 
 from __future__ import annotations
 
-from typing import Any, Callable, Iterable, Iterator, Mapping, Type, TypeVar, cast
+from collections.abc import Callable, Iterable, Iterator, Mapping
+from typing import Any, TypeVar, cast
 
 from pydantic import BaseModel, Field
 
@@ -132,7 +133,7 @@ class ProducerAgent:
     def generate(
         *,
         prompt_fields: Mapping[str, str],
-        response_model: Type[M],
+        response_model: type[M],
         _completion_fn: Callable[..., Any] | None = None,
         role: str = "producer",
         config_path: str | None = None,

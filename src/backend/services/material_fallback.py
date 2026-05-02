@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 from src.backend.services.material_providers.bgm_provider import BGMProvider
 from src.backend.services.material_providers.broll_provider import BRollProvider
@@ -19,7 +19,7 @@ class MaterialFallback:
         self._bgm = BGMProvider()
         self._broll = BRollProvider()
 
-    def fetch_sfx(self, *, sfx_type: str, source: str = "builtin") -> Dict[str, Any]:
+    def fetch_sfx(self, *, sfx_type: str, source: str = "builtin") -> dict[str, Any]:
         builtin = self._sfx.list_builtin()
         found = [s for s in builtin if s["type"] == sfx_type]
         if found:
@@ -35,7 +35,7 @@ class MaterialFallback:
             }
         return {"source_used": "user_upload", "file_path": f"uploads/{sfx_type}.wav"}
 
-    def fetch_bgm(self, *, emotion: str, energy: int) -> Dict[str, Any]:
+    def fetch_bgm(self, *, emotion: str, energy: int) -> dict[str, Any]:
         # Mubert API -> local library (2-level)
         # Stub: Mubert unavailable, fall through to local
         result = self._bgm.fetch(emotion=emotion, energy=energy)
@@ -44,5 +44,5 @@ class MaterialFallback:
         result["source_used"] = result.get("source", "local_library")
         return result
 
-    def fetch_broll(self, *, query: str) -> Dict[str, Any]:
+    def fetch_broll(self, *, query: str) -> dict[str, Any]:
         return self._broll.fetch(query=query)

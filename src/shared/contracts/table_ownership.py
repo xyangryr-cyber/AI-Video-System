@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Tuple
-
 
 class TableOwnership:
     __slots__ = ("table_name", "writer", "write_trigger", "readers")
@@ -11,9 +9,9 @@ class TableOwnership:
     def __init__(
         self,
         table_name: str,
-        writer: str | Tuple[str, ...],
+        writer: str | tuple[str, ...],
         write_trigger: str,
-        readers: Tuple[str, ...],
+        readers: tuple[str, ...],
     ) -> None:
         self.table_name = table_name
         self.writer = writer
@@ -27,7 +25,7 @@ class TableOwnership:
         )
 
 
-TABLE_OWNERSHIP: Tuple[TableOwnership, ...] = (
+TABLE_OWNERSHIP: tuple[TableOwnership, ...] = (
     TableOwnership(
         table_name="projects",
         writer="API",

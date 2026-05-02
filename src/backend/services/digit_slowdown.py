@@ -18,9 +18,7 @@ _DIGIT_DENSE_RE = re.compile(r"[\d.]+%|百分之[\d.]+|[0-9]+\.[0-9]{2,}|\d+点\
 class DigitSlowdown:
     """Detect digit-dense sentences and wrap with SSML slowdown tags."""
 
-    _WRAP_TEMPLATE = (
-        '<speak><prosody rate="slow">{text}<break time="100ms"/></prosody></speak>'
-    )
+    _WRAP_TEMPLATE = '<speak><prosody rate="slow">{text}<break time="100ms"/></prosody></speak>'
 
     @classmethod
     def is_digit_dense(cls, text: str) -> bool:
