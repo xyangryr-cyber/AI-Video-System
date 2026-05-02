@@ -3,35 +3,7 @@
 > **Date**: 2026-05-01
 > **Author**: 许阳 + Claude (brainstorming session)
 > **Source**: `docs/PRD_v3.3_Web交互式视频制作系统.md` (1955 lines, 10 parts)
-> **Methodology**: `split-spec` (硅基员工 #36) + `prd-to-spec` (硅基员工)
-> **Status**: DESIGN — pending user review before SPEC card generation
-> **Replaces**: `docs/specs/SPEC-A..G.md` (horizontal layered, to be archived)
 
----
-
-## 1. Background — 为什么白板重来
-
-### 1.1 旧 SPEC-A..G 的结构性失败
-
-旧拆分方式（A=contracts / B=infra / C=backend / D=pipeline / E=frontend / F=render / G=BDD）按**架构层级**横切，单张 SPEC 的"完成"无法对应"用户能跑通一个完整功能"。后果：
-
-- 每张 SPEC 的验收只能是单元测试，没有集成/端到端测试的安身之处。
-- 已"完成"的 SPEC 在产品上线后被发现"从来没被真正调用过"——典型是 schema 层卡片绿了但没有消费者。
-- BDD §10.A-H 只能塞进 `SPEC-G-bdd-acceptance.md` 大杂烩，跨 SPEC 协调无人负责。
-
-### 1.2 新方法论：Journey-First Vertical Slicing
-
-每张 SPEC 必须能用一句话陈述"用户行为"：`<入口> → <动作> → <可观察结果 + 时限>`。Module 卡是 Journey 卡的内部模块，不能独立交付。每张卡必须落到三种 evidence_type 之一：
-
-| evidence_type | 适用 | 验证形态 |
-|---|---|---|
-| `user_observable` | UI / 用户旅程 | playwright 录像 + 截图 |
-| `consumer_driven` | 后端 / schema / 数据 | 真实下游消费者跑通端到端 |
-| `eval_based` | LLM agent / prompt | eval set ≥ 阈值 + ≤5% 回归 |
-
-三种都套不上 → 拒绝该 SPEC，不降低门槛。
-
----
 
 ## 2. 拍板决议（5 题）
 
