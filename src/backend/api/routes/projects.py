@@ -95,7 +95,7 @@ def list_projects(db: sqlite3.Connection = Depends(get_db)) -> list[dict[str, An
 def create_project(
     body: CreateProjectBody,
     db: sqlite3.Connection = Depends(get_db),
-    background_tasks: BackgroundTasks | None = None,
+    background_tasks: BackgroundTasks = None,
 ) -> dict[str, Any]:
     """Create a project and initialise its 12 phase rows."""
     if background_tasks is None:

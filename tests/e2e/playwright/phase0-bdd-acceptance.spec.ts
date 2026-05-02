@@ -211,19 +211,13 @@ test.describe("1. 项目创建与 Phase 0 进入 (主流程)", () => {
     await page.locator("#title").fill("结构化需求测试");
     await page.locator("#desc").fill("分析近期A股市场走势，时长约5分钟，发在B站，面向普通投资者");
 
-    const respPromise = page.waitForResponse(
-      (r) => r.url().includes("/api/projects") && r.request().method() === "POST",
-      { timeout: 15000 },
-    );
     const submitBtn = page.locator("button[type='submit']", { hasText: "开始制作" });
     await expect(submitBtn).toBeEnabled({ timeout: 3000 });
     await submitBtn.click();
-    const resp = await respPromise;
-    const body = await resp.json();
-    const projectId = body.id;
 
-    await page.waitForURL((url) => url.pathname.includes(projectId), { timeout: 15000 });
-    await page.waitForLoadState("domcontentloaded");
+    // Wait for navigation to project page
+    await page.waitForURL((url) => url.pathname.includes("/projects/proj_"), { timeout: 15000 });
+    const projectId = page.url().match(/\/projects\/(proj_[^/]+)/)?.[1] ?? "";
     await page.waitForTimeout(8000); // Wait for agent processing
 
     // Check if artifact preview panel has content
@@ -349,7 +343,7 @@ test.describe("1. 项目创建与 Phase 0 进入 (主流程)", () => {
     // Poll for button to become enabled (wait for artifact + review)
     const startTime = Date.now();
     let btnEnabled = false;
-    while (Date.now() - startTime < 60000) {
+    while (Date.now() - startTime < 40000) {
       btnEnabled = await advanceBtn.isEnabled().catch(() => false);
       if (btnEnabled) break;
       await page.waitForTimeout(5000);

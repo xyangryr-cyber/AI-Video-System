@@ -5,7 +5,7 @@
 export type TrustLevel = "user_verified" | "source_verified" | "llm_generated";
 
 export interface KeyDataPoint {
-  data_point_id: string;           // 'dp_' + suffix
+  data_point_id: string; // 'dp_' + suffix
   label: string;
   value: string | number;
   unit: string;
@@ -19,26 +19,21 @@ export interface KeyDataPoint {
 export interface VoiceParams {
   voice_id: string;
   style: string;
-  style_degree: number;            // [0.01, 2.0]
+  style_degree: number; // [0.01, 2.0]
   rate_wpm: number;
   pitch: number;
   volume: number;
 }
 
 export interface SegmentVoiceOverrides {
-  rate_multiplier: number;         // [0.8, 1.2]
+  rate_multiplier: number; // [0.8, 1.2]
   emotion: string;
   style_degree: number;
   emphasis_words: string[];
   volume: number;
 }
 
-export type HighlightType =
-  | "key_data"
-  | "percentage"
-  | "number"
-  | "proper_noun"
-  | null;
+export type HighlightType = "key_data" | "percentage" | "number" | "proper_noun" | null;
 
 export interface SubtitleWord {
   word: string;
@@ -47,17 +42,12 @@ export interface SubtitleWord {
   highlight_type: HighlightType;
 }
 
-export type DiscreteAction =
-  | "highlight"
-  | "zoom_in"
-  | "zoom_out"
-  | "annotate"
-  | "dim"
-  | "reset";
+export type DiscreteAction = "highlight" | "zoom_in" | "zoom_out" | "annotate" | "dim" | "reset";
 
 export interface DiscreteKeyframe {
   type: "discrete";
   time_offset_sec: number;
+  at_frame?: number;
   action: DiscreteAction;
   target: string;
   annotation?: string;
@@ -73,6 +63,7 @@ export interface ProgressMapping {
 
 export interface PauseTrigger {
   at_progress: number;
+  at_frame?: number;
   duration_sec: number;
   narration_keyword: string;
   action: string;
@@ -83,6 +74,8 @@ export interface ContinuousKeyframe {
   type: "continuous";
   start_sec: number;
   end_sec: number;
+  start_frame?: number;
+  end_frame?: number;
   easing: ContinuousEasing;
   progress_mapping: ProgressMapping[];
   pause_triggers?: PauseTrigger[];
@@ -93,6 +86,7 @@ export type AnnotationKeyframe = DiscreteKeyframe | ContinuousKeyframe;
 export interface ThemeChartStyle {
   axis_color: string;
   grid_color: string;
+  background_color?: string;
   label_font_size: number;
   tooltip_style: Record<string, unknown>;
 }

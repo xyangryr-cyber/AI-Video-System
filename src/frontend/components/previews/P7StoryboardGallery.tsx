@@ -55,7 +55,7 @@ export function P7StoryboardGallery({ shots }: P7StoryboardGalleryProps) {
         const shotId = (shot as RawShot).shot_id || shot.id || "?";
         const duration =
           shot.duration_sec ||
-          (shot as RawShot).time_range?.end_seconds - (shot as RawShot).time_range?.start_seconds ||
+          ((shot as RawShot).time_range?.end_seconds ?? 0) - ((shot as RawShot).time_range?.start_seconds ?? 0) ||
           0;
         const description =
           shot.description || (shot as RawShot).narration_text || (shot as RawShot).content || "";

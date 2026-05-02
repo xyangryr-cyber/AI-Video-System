@@ -29,18 +29,18 @@ export function validateKeyframeAlignment(
   for (const kf of keyframes) {
     if ("at_frame" in kf) {
       const dk = kf as DiscreteKeyframe;
-      if (dk.at_frame < segment.startFrame || dk.at_frame > segment.endFrame) {
+      if (dk.at_frame! < segment.startFrame || dk.at_frame! > segment.endFrame) {
         return false;
       }
     } else if ("start_frame" in kf) {
       const ck = kf as ContinuousKeyframe;
-      if (ck.start_frame < segment.startFrame || ck.end_frame > segment.endFrame) {
+      if (ck.start_frame! < segment.startFrame || ck.end_frame! > segment.endFrame) {
         return false;
       }
       // Validate pause_triggers are within range
       if (ck.pause_triggers) {
         for (const pt of ck.pause_triggers) {
-          if (pt.at_frame < segment.startFrame || pt.at_frame > segment.endFrame) {
+          if (pt.at_frame! < segment.startFrame || pt.at_frame! > segment.endFrame) {
             return false;
           }
         }
@@ -64,7 +64,7 @@ export function isFramePaused(
       if (ck.pause_triggers) {
         for (const pt of ck.pause_triggers) {
           const triggerFrame = Math.round(
-            pt.at_progress * (ck.end_frame - ck.start_frame) + ck.start_frame,
+            pt.at_progress * (ck.end_frame! - ck.start_frame!) + ck.start_frame!,
           );
           if (Math.abs(frame - triggerFrame) < 1) {
             return true;

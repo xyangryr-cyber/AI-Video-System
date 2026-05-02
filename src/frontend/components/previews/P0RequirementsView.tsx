@@ -25,7 +25,8 @@ function formatCategory(req: RequirementsJSON): string {
   const cat = req["category"];
   if (typeof cat === "string" && cat.trim()) return cat.trim();
   if (cat && typeof cat === "object") {
-    const parts = [cat["level1"], cat["level2"]].filter(Boolean);
+    const c = cat as Record<string, unknown>;
+    const parts = [c["level1"], c["level2"]].filter(Boolean);
     if (parts.length) return parts.join(" / ");
   }
   return "";

@@ -121,7 +121,7 @@ const PreviewComposition: FC<PreviewCompositionProps> = (props) => {
   return (
     <Composition
       id="preview-composition"
-      component={SegmentTimeline}
+      component={SegmentTimeline as unknown as FC<Record<string, unknown>>}
       durationInFrames={Math.max(1, props.timeline.total_duration_sec)}
       fps={1}
       width={854}

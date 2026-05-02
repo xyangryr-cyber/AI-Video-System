@@ -62,14 +62,14 @@ export function validateRenderInput(job: RenderJob): string[] {
           );
         }
       } else if ("start_frame" in kf) {
-        const ck = kf as {
+        const ck = kf as unknown as {
           start_frame: number;
           end_frame: number;
           pause_triggers?: Array<{ at_progress: number }>;
         };
         if (ck.start_frame < seg.startFrame || ck.end_frame > seg.endFrame) {
           errors.push(
-            `Shot ${i}: continuous keyframe [${ck.start_frame}, ${ck.endFrame}] outside segment [${seg.startFrame}, ${seg.endFrame}]`,
+            `Shot ${i}: continuous keyframe [${ck.start_frame}, ${ck.end_frame}] outside segment [${seg.startFrame}, ${seg.endFrame}]`,
           );
         }
       }
